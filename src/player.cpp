@@ -5,6 +5,10 @@
 #include "player.hpp"
 #include "math.hpp"
 
+Player::Player()
+{
+}
+
 Player::Player(PLAYER_TYPE type, RenderWindow window)
 {
     switch (type)
@@ -26,7 +30,6 @@ Player::Player(PLAYER_TYPE type, RenderWindow window)
 
 void Player::handleEvent()
 {
-
     velocity.x = velocity.y = 0;
     bool flippable = true;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -89,7 +92,8 @@ void Player::handleEvent()
         }
         velocity.x += SPEED;
     }
-    
+
+    currentKeyStates = NULL;
 }
 
 void Player::move()

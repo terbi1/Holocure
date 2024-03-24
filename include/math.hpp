@@ -5,7 +5,6 @@
 
 struct Vector2f
 {
-
     Vector2f()
         : x(0.0f), y(0.0f)
     {
@@ -22,7 +21,49 @@ struct Vector2f
     }
 
     float x, y;
+    Vector2f operator+(Vector2f other)
+    {
+        return Vector2f{x + other.x, y + other.y};
+    }
 
+    void operator+=(Vector2f other)
+    {
+        x += other.x;
+        y += other.y;
+    }
+
+    Vector2f operator-(Vector2f other)
+    {
+        return Vector2f{x - other.x, y - other.y};
+    }
+
+    void operator-=(Vector2f other)
+    {
+        x -= other.x;
+        y -= other.y;
+    }
+
+    Vector2f operator*(Vector2f other)
+    {
+        return Vector2f{x * other.x, y * other.y};
+    }
+
+    void operator*=(float scalar)
+    {
+        x *= scalar;
+        y *= scalar;
+    }
+
+    Vector2f operator/(Vector2f other)
+    {
+        return Vector2f{x / other.x, y / other.y};
+    }
+
+    void operator/=(float scalar)
+    {
+        x /= scalar;
+        y /= scalar;
+    }
 };
 
 struct Circle 

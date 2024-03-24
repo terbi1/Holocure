@@ -9,12 +9,13 @@
 #include "math.hpp"
 #include "Data.hpp"
 
-void init();
-
 class RenderWindow 
 {    
 public:
-    RenderWindow(const char* p_title, int p_w, int p_h);
+    RenderWindow();
+    ~RenderWindow();
+
+    void init(const char* p_title, int p_w, int p_h);
     SDL_Texture* loadTexture(const char* p_filePath);
     void cleanUp();
     void clear();
@@ -28,6 +29,7 @@ private:
     TTF_Font* font = NULL;
     SDL_Renderer* renderer = NULL;
     SDL_Window* window = NULL;
+    int tabs;
 };
 
     

@@ -5,7 +5,8 @@
 
 #include "RenderWindow.hpp"
 
-void init() {
+void RenderWindow::init(const char* p_title, int p_w, int p_h) 
+{
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         std::cout << "SDL_Init failed. SDL ERROR: " << SDL_GetError();
@@ -20,11 +21,6 @@ void init() {
         std::cout << "Could not initailize SDL2_ttf, error: " << TTF_GetError() << std::endl; 
     }
 
-}
-
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
-    :window(NULL), renderer(NULL)
-{
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
 
     if(window == NULL) {
@@ -39,6 +35,12 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
     }
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+}
+
+RenderWindow::RenderWindow() {
+}
+
+RenderWindow::~RenderWindow() {
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
@@ -64,9 +66,14 @@ void RenderWindow::cleanUp() {
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
     window = NULL;
     renderer = NULL;
+    font = NULL;
 
+    IMG_Quit();
+    SDL_Quit();
+    TTF_Quit();
 }
 
 void RenderWindow::renderBackground(int x, int y, SDL_Texture* background, int camX, int camY) { 
@@ -87,15 +94,15 @@ TTF_Font* RenderWindow::getFont() {
 
 void RenderWindow::tiledRender(SDL_Texture* background, SDL_Rect camera, Vector2f player_pos)
 {
-    int addX = ceil(player_pos.x / 2560);
-    int addY = ceil(player_pos.y / 2560);
+    int addX = ceil(player_pos.x / (BACKGROUND_WIDTH * 2));
+    int addY = ceil(player_pos.y / (BACKGROUND_HEIGHT * 2));
     
 	for (int y = -1; y <= 1; y++)
 	{
 		for (int x = -1; x <= 1; x++)
 		{
-			int posX = player_pos.x + x * 2560 - addX * 2560;
-			int posY = player_pos.y + y * 2560 - addY * 2560;
+			int posX = player_pos.x + x * (BACKGROUND_WIDTH * 2) - addX * (BACKGROUND_WIDTH * 2);
+			int posY = player_pos.y + y * (BACKGROUND_HEIGHT * 2) - addY * (BACKGROUND_HEIGHT * 2);
 
             renderBackground(-posX, -posY, background, camera.x, camera.y);
 		}

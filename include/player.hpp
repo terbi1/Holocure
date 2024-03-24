@@ -29,6 +29,7 @@ struct healthBar{
 class Player
 {
 public:
+    Player();
     Player(PLAYER_TYPE, RenderWindow window);
     void handleEvent();
     // bool attack(Entity enemy);
@@ -48,6 +49,7 @@ public:
     int arrowAngle{0};
     float currentExp{0};
     int LEVEL{1};
+    int currentFrame{0};
 private:
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     float SPEED {3};

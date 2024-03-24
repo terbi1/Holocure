@@ -3,14 +3,16 @@
 Weapon::Weapon(WEAPON_ID type, SDL_Renderer* renderer) 
     :ID(type)
 {
-    switch(ID) {
+    switch((int)ID) {
         case AXE:
+        aoe.frames = 6;
         aoe.damage = 10;
         cd = 1000;
         lastAttack = SDL_GetTicks();
         aoe.sprites.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
         break;
         case SPIDER_COOKING:
+        aoe.frames = 1;
         aoe.damage = 1;
         cd = 1000;
         lastAttack = SDL_GetTicks();

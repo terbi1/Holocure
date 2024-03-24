@@ -27,6 +27,8 @@ struct damagingArea {
     std::vector<int> hitEnemiesID;
     void render(SDL_Renderer* renderer, Player player, int frame, int camX, int camY);
     std::vector<int> enemy_ID;
+    int frames;
+    int currentFrame{0};
 };
 
 struct Weapon {

@@ -2,8 +2,10 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-// #include "GameState.h"
-// #include "Tabs_Settings.h"
+
+#include "GameState.hpp"
+#include "utils.hpp"
+#include "Data.hpp"
 
 class Game {
 
@@ -11,7 +13,7 @@ public:
     Game();
     ~Game();
 
-    void init(const char* title, int xPos, int yPos, int SCREEN_WIDTH, int SCREEN_HEIGHT, bool fullscreen);
+    void init(const char* p_title, int p_w, int p_h);
     void loadmedia();
     void handleEvents();
     void playMusic();
@@ -23,14 +25,12 @@ public:
         return isRunning;
     }
 private:
-    bool isRunning;
+    bool isRunning{true};
     SDL_Window *window;
     SDL_Renderer *renderer;
-    // FPS_Processor* gFPS_Processor;
-    // Game_State *gameState;
-    // BallteProcessor* battleProcessor;
-    // int tabs;
-    // Tabs_Menu tabs_menu;
-    // HelpsAndCredit* helpsAndCredit;
-    // UserSettings* userSettings;
+    Game_State *gameState;
+    int tabs;
+    Tabs_Title* tabs_title;
+    Tabs_Room1* tabs_room1;
+    TTF_Font* font;
 };

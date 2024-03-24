@@ -4,9 +4,14 @@
 #include <SDL2/SDL_image.h>
 #include <cmath>
 #include <vector>
+#include <unordered_map>
 
 #include "math.hpp"
 #include "RenderWindow.hpp"
+#include "Data.hpp"
+#include "Structure.hpp"
+#include "ResourceManager.hpp"
+
 
 const int ANIMATION_FRAMES = 3;
 
@@ -33,4 +38,4 @@ private:
     Vector2f velocity;
 };
 
-void spawn(std::vector<Enemy>& gang, RenderWindow window, Vector2f playerPos);
+void spawn(std::vector<Enemy>& gang, RenderWindow window, Vector2f playerPos, ENEMY_TYPE type);

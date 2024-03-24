@@ -12,39 +12,50 @@
 #include "enemy.hpp"
 #include "physics.hpp"
 #include "drop.hpp"
-#include "Data.hpp"
+#include "Game.hpp"
+#include "Room1.hpp"
+#include "Hud.hpp"
 
 int main(int argc, char *args[])
 {
-
-    init();
-
     srand(time(NULL));
 
-    RenderWindow window("Holocure", SCREEN_WIDTH, SCREEN_HEIGHT);
+    RenderWindow window;
+    window.init("Holocure", SCREEN_WIDTH, SCREEN_HEIGHT);
+    Tabs_Title titlePage;
+    Tabs currentTab = Room1;
+    titlePage.setUpMenu(window.getRenderer());
+    Tabs_Room1 room;
+    room.roomInit(window.getRenderer());
+    HUD hud;
+    hud.initHUD(window.getRenderer());
+    hud.HUD_Timer.start();
 
-    SDL_Texture *background = window.loadTexture("res/gfx/BG_newgrass.png");
-    SDL_Texture* expBarBase = window.loadTexture("res/gfx/hud_expbar_bg.png");
-    SDL_Texture* expBarTop = window.loadTexture("res/gfx/hud_expbar_anim_89.png");
-    SDL_Texture* expDrop = window.loadTexture("res/gfx/spr_EXP/spr_EXP_0.png");
+
+    // SDL_Texture *background = window.loadTexture("res/gfx/BG_newgrass.png");
+    // SDL_Texture *expBarBase = window.loadTexture("res/gfx/hud_expbar_bg.png");
+    // SDL_Texture *expBarTop = window.loadTexture("res/gfx/hud_expbar_anim_89.png");
+
+    SDL_Texture *expDrop = window.loadTexture("res/gfx/spr_EXP/spr_EXP_0.png");
 
     // Setup the texture
-    SDL_Texture* textureText = NULL;
+    SDL_Texture *textureText = NULL;
 
     // Free the surface
     // We are done with it after we have uploaded to the texture
 
-    // SDL_FreeSurface(surfaceText); 
+    // SDL_FreeSurface(surfaceText);
 
     SDL_Rect timeRect;
-    timeRect.w = 100; timeRect.h = 25;
-    timeRect.x = SCREEN_WIDTH/2 - timeRect.w/2; timeRect.y = 50;
-    
-    SDL_FRect expBaseBar{0,0,SCREEN_WIDTH,34};
-    SDL_Rect expTopBarSRC{0,0,0,26};
-    SDL_FRect expTopBar{0,-3,0,34};
-    SDL_Rect levelRect{940, 5, 75, 25};
+    timeRect.w = 100;
+    timeRect.h = 25;
+    timeRect.x = SCREEN_WIDTH / 2 - timeRect.w / 2;
+    timeRect.y = 50;
 
+    // SDL_FRect expBaseBar{0, 0, SCREEN_WIDTH, 34};
+    // SDL_Rect expTopBarSRC{0, 0, 0, 26};
+    // SDL_FRect expTopBar{0, -3, 0, 34};
+    // SDL_Rect levelRect{940, 5, 75, 25};
 
     Player sui(SUISEI, window);
     sui.health.value = 50;
@@ -61,7 +72,7 @@ int main(int argc, char *args[])
 
     std::vector<Drop> dropItems;
     std::vector<Drop>::iterator itDrop;
-    
+
     SDL_Event event;
 
     const float timeStep = 0.01f;
@@ -71,22 +82,18 @@ int main(int argc, char *args[])
 
     bool gameRunning = true;
 
-    // SDL_Rect wall{0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT};
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
     int frame = 0;
     // int invincibleFrame = 0;
-    int attackFrame = 0;
+    // int attackFrame = 0;
     int deadFrame = 0;
     int expForNextLevel = 100;
-    //Current time start time
-	Uint32 startTime = 0;
 
-	//In memory text stream
-	std::stringstream timeText;
-    std::stringstream levelText {"LV: "};
+    // In memory text stream
+    std::stringstream timeText;
+    std::stringstream levelText{"LV: "};
     // float attackTime = 0;
-
 
     while (gameRunning)
     {
@@ -104,152 +111,197 @@ int main(int argc, char *args[])
                 {
                     gameRunning = false;
                 }
-
-                // player event
-                sui.handleEvent();
-            }
-
-            // spawn enemies
-            if(currentTime - lastSpawn >= 1) {
-            while(deadgang.size() < 100) {
-                for(int i = 0; i < 5; ++i)
-                    spawn(deadgang, window, sui.getPos());
-                break;
-            }
-                lastSpawn = currentTime;
             }
 
             // time stepping
             accumulator -= timeStep;
-            // player move
-            sui.move();
 
-            //enemy move
-            for(int i = 0; i < (int)deadgang.size(); ++i) {
-                deadgang[i].move(sui.getPos());
-            }
+            if (currentTab == Room1)
+            {
+                hud.HUD_Timer.unpause();
+                // player event
+                sui.handleEvent();
+                // spawn enemies
+                if (currentTime - lastSpawn >= 1)
+                {
+                    while (deadgang.size() < 100)
+                    {
+                        for (int i = 0; i < 5; ++i)
+                            spawn(deadgang, window, sui.getPos(), SHRIMP);
+                        break;
+                    }
+                    lastSpawn = currentTime;
+                }
 
-            for(int i = 0; i < (int)deadgang.size(); ++i) {
-                for(int j = 0; j < (int)deadgang.size(); ++j) {
-                    if(i == j) continue;
-                    if(checkCircleCollision(deadgang[i].collider, deadgang[j].collider)) {
-                        collisionEvent(deadgang[i], deadgang[j]);
+                // player move
+                sui.move();
+
+                // enemy move
+                for (int i = 0; i < (int)deadgang.size(); ++i)
+                {
+                    deadgang[i].move(sui.getPos());
+                }
+
+                for (int i = 0; i < (int)deadgang.size(); ++i)
+                {
+                    for (int j = 0; j < (int)deadgang.size(); ++j)
+                    {
+                        if (i == j)
+                            continue;
+                        if (checkCircleCollision(deadgang[i].collider, deadgang[j].collider))
+                        {
+                            collisionEvent(deadgang[i], deadgang[j]);
+                        }
                     }
                 }
-            }
 
-            // Center the camera over the dot
+                // Center the camera over the dot
 
-            camera.x = (sui.getPos().x + sui.hitBox.w / 2) - SCREEN_WIDTH / 2;
-            camera.y = (sui.getPos().y + sui.hitBox.h / 2) - SCREEN_HEIGHT / 2;
+                camera.x = (sui.getPos().x + sui.hitBox.w / 2) - SCREEN_WIDTH / 2;
+                camera.y = (sui.getPos().y + sui.hitBox.h / 2) - SCREEN_HEIGHT / 2;
 
-            // moving animation frame
-            ++frame;
-            ++deadFrame;
-            if ((frame / 2 / sui.state) > (sui.state - 1))
-            {
-                frame = 0;
-            }
-            if (deadFrame / 4 / 3 > 2)
-            {
-                deadFrame = 0;
-            }
-            if(axe.isActive)
-            {
-                if(attackFrame == 4)
-                    for(int i = 0; i < deadgang.size(); ++i)
-                        inflictDamage(axe, deadgang[i], sui, window.getRenderer(), camera.x, camera.y);
-
-                ++attackFrame;
-                if ((attackFrame / 4) > 5)
+                // moving animation frame
+                ++frame;
+                ++deadFrame;
+                if ((frame / 2 / sui.state) > (sui.state - 1))
                 {
-                    attackFrame = 0;
-                    axe.isActive = false;
-                    axe.lastAttack = SDL_GetTicks();
+                    frame = 0;
                 }
-            }
-            for (auto itGang = deadgang.begin(); itGang != deadgang.end(); ++itGang)
-            {
-                inflictDamage(spiderCooking, *itGang, sui, window.getRenderer(), camera.x, camera.y);
-                if(itGang -> health <= 0) {
-                    dropItems.push_back(Drop(EXP, itGang -> collider.center));
-                    deadgang.erase(itGang);
+                if (deadFrame / 4 / 3 > 2)
+                {
+                    deadFrame = 0;
                 }
-            }
-            if(dropItems.size() > 0)
-            for(auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop) {
-                if(dropItems.size() <= 0) break;
-                Vector2f temp = itDrop -> pos;
-                float dis = distance(sui.centerPoint, temp);
-                std::cout << dis;
-                if(dis <= 10.0){
-                    dropItems.erase(itDrop);
-                    sui.currentExp += 1000;
-                    --itDrop;
-                }
-                else itDrop->pickedUp(sui.centerPoint);
-                
-            }
-            while(sui.currentExp >= expForNextLevel) {
-                sui.currentExp -= expForNextLevel;
-                expForNextLevel += 50;
-                ++sui.LEVEL;
+                // if (axe.isActive)
+                // {
+                //     if (attackFrame == 4)
+                //         for (int i = 0; i < deadgang.size(); ++i)
+                //             inflictDamage(axe, deadgang[i], sui, window.getRenderer(), camera.x, camera.y);
 
+                //     ++attackFrame;
+                //     if ((attackFrame / 4) > 5)
+                //     {
+                //         attackFrame = 0;
+                //         axe.isActive = false;
+                //         axe.lastAttack = SDL_GetTicks();
+                //     }
+                // }
+                // for (auto itGang = deadgang.begin(); itGang != deadgang.end(); ++itGang)
+                // {
+                //     inflictDamage(spiderCooking, *itGang, sui, window.getRenderer(), camera.x, camera.y);
+                //     if (itGang->health <= 0)
+                //     {
+                //         dropItems.push_back(Drop(EXP, itGang->collider.center));
+                //         deadgang.erase(itGang);
+                //     }
+                // }
+                if (dropItems.size() > 0)
+                    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
+                    {
+                        if (dropItems.size() <= 0)
+                            break;
+                        Vector2f temp = itDrop->pos;
+                        float dis = distance(sui.centerPoint, temp);
+                        if (dis <= 10.0)
+                        {
+                            dropItems.erase(itDrop);
+                            sui.currentExp += 1000;
+                            --itDrop;
+                        }
+                        else
+                            itDrop->pickedUp(sui.centerPoint);
+                    }
+                while (sui.currentExp >= expForNextLevel)
+                {
+                    sui.currentExp -= expForNextLevel;
+                    expForNextLevel += 50;
+                    ++sui.LEVEL;
+                }
+                // expTopBarSRC.w = sui.currentExp / expForNextLevel * 648;
+                // expTopBar.w = sui.currentExp / expForNextLevel * (SCREEN_WIDTH + 10);
+                // levelText.str("");
+                // levelText << "LV: "<< sui.LEVEL;
+                hud.update(sui, expForNextLevel);
+                room.handleEvents();
+                currentTab = room.getDirect();
             }
-            expTopBarSRC.w = sui.currentExp / expForNextLevel * 648;
-            expTopBar.w = sui.currentExp / expForNextLevel * (SCREEN_WIDTH + 10);
-            levelText.str("");
-            levelText << "LV: "<< sui.LEVEL;
+            else
+            {
+                hud.HUD_Timer.pause();
+                titlePage.handleEvents();
+                currentTab = titlePage.getDirect();
+            }
         }
 
-        timeText.str("");
-        // int minute = (SDL_GetTicks() - startTime) / 1000 / 60;
-        int minute = utils::timeInMinutes(SDL_GetTicks() - startTime);
-        int second = utils::timeInSeconds(SDL_GetTicks() - startTime) - minute * 60;
-        if(minute < 10) timeText << 0;
-		timeText << minute << ":";
-        if(second < 10) timeText << 0;
-        timeText << second; 
         // clear window
         window.clear();
+        switch ((int)currentTab)
+        {
+        case Room1:
+        {
+            // timeText.str("");
+            // Uint32 minute = timer.getTicks(Minute);
+            // Uint32 second = timer.getTicks(Second) - minute * 60;
+            // int minute = utils::timeInMinutes(SDL_GetTicks() - startTime);
+            // int second = utils::timeInSeconds(SDL_GetTicks() - startTime) - minute * 60;
+            // if (minute < 10) timeText << 0;
+            // timeText << minute << ":";
+            // if (second < 10) timeText << 0;
+            // timeText << second;
+            // start drawing
+            // window.renderBackground(background, camera);
+            // window.tiledRender(background, camera, sui.getPos());
+            room.render(window.getRenderer(), sui.getPos());
+            // sui.health.dst = {sui.hitBox.x, sui.hitBox.y + sui.hitBox.h, sui.hitBox.w, 6};
+            // inflictDamage(axe, deadbeat, sui, window.getRenderer(), camera.x, camera.y);
 
-        // start drawing
-        // window.renderBackground(background, camera);
-        window.tiledRender(background, camera, sui.getPos());
-        // sui.health.dst = {sui.hitBox.x, sui.hitBox.y + sui.hitBox.h, sui.hitBox.w, 6};
-        // inflictDamage(axe, deadbeat, sui, window.getRenderer(), camera.x, camera.y);
+            for (int i = 0; i < (int)dropItems.size(); ++i)
+            {
+                SDL_Rect dst{dropItems[i].pos.x - camera.x, dropItems[i].pos.y - camera.y, int(12 * 1.5), int(13 * 1.5)};
+                SDL_RenderCopy(window.getRenderer(), expDrop, NULL, &dst);
+                SDL_RenderDrawPoint(window.getRenderer(), dropItems[i].pos.x - camera.x, dropItems[i].pos.y - camera.y);
+            }
 
-        for(int i = 0; i < (int)dropItems.size(); ++i) {
-            SDL_Rect dst{dropItems[i].pos.x - camera.x,dropItems[i].pos.y - camera.y, int(12 * 1.5), int(13 * 1.5)};
-            SDL_RenderCopy(window.getRenderer(), expDrop, NULL, &dst);
-            SDL_RenderDrawPoint(window.getRenderer(), dropItems[i].pos.x - camera.x, dropItems[i].pos.y - camera.y);
+            for (int i = 0; i < (int)deadgang.size(); ++i)
+            {
+                deadgang[i].render(window.getRenderer(), deadFrame / 4 / 3, camera.x, camera.y);
+            }
+
+            // renderWeapon(window.getRenderer(), axe, sui, attackFrame / 4, camera.x, camera.y);
+
+            // if (!axe.isActive)
+            // {
+
+            //     axe.timePassed = SDL_GetTicks() - axe.lastAttack;
+
+            //     if (axe.timePassed >= axe.cd)
+            //     {
+            //         axe.isActive = true;
+            //         axe.timePassed = 0;
+            //     }
+            // }
+
+            // renderWeapon(window.getRenderer(), spiderCooking, sui, 0, camera.x, camera.y);
+
+            sui.render(window.getRenderer(), frame / 2 / sui.state, camera.x, camera.y);
+
+            // SDL_RenderCopyF(window.getRenderer(), expBarBase, NULL, &expBaseBar);
+            // SDL_RenderCopyF(window.getRenderer(), expBarTop, &expTopBarSRC, &expTopBar);
+            // window.loadFromRenderedText(levelText.str().c_str(), {255,255,255}, textureText);
+            // SDL_RenderCopy(window.getRenderer(),textureText,NULL,&levelRect);
+
+            hud.render(window.getRenderer());
+
+            // window.loadFromRenderedText(timeText.str().c_str(), {255, 255, 255}, textureText);
+            // SDL_RenderCopy(window.getRenderer(), textureText, NULL, &timeRect);
+            break;
         }
 
-        for(int i = 0; i < (int)deadgang.size(); ++i) {
-            deadgang[i].render(window.getRenderer(), deadFrame / 4 / 3, camera.x, camera.y);
+        case Title:
+        {
+            titlePage.render(window.getRenderer());
+            break;
         }
-
-        renderWeapon(window.getRenderer(), axe, sui, attackFrame / 4, camera.x, camera.y);
-        
-        if(!axe.isActive) {
-            
-            axe.timePassed = SDL_GetTicks() - axe.lastAttack;
-            
-            if(axe.timePassed >= axe.cd) {axe.isActive = true; axe.timePassed = 0;}
         }
-
-        renderWeapon(window.getRenderer(), spiderCooking, sui, 0, camera.x, camera.y);
-
-        sui.render(window.getRenderer(), frame / 2 / sui.state, camera.x, camera.y);
-        
-        SDL_RenderCopyF(window.getRenderer(), expBarBase, NULL, &expBaseBar);
-        SDL_RenderCopyF(window.getRenderer(), expBarTop, &expTopBarSRC, &expTopBar);
-        window.loadFromRenderedText(timeText.str().c_str(), {255,255,255}, textureText);
-        // if(textureText == NULL) std::cout << 0;
-        SDL_RenderCopy(window.getRenderer(),textureText,NULL,&timeRect);
-        window.loadFromRenderedText(levelText.str().c_str(), {255,255,255}, textureText);
-
-        SDL_RenderCopy(window.getRenderer(),textureText,NULL,&levelRect);
 
         window.display();
     }
@@ -271,8 +323,6 @@ int main(int argc, char *args[])
     SDL_DestroyTexture(textureText);
 
     window.cleanUp();
-    IMG_Quit();
-    SDL_Quit();
-    TTF_CloseFont(window.getFont());
+
     return 0;
 }
