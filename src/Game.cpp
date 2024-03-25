@@ -17,67 +17,65 @@ Game::~Game()
 {
 }
 
-void Game::init(const char* p_title, int p_w, int p_h) 
+void Game::init(const char *p_title, int p_w, int p_h)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cout << "SDL_Init failed. SDL ERROR: " << SDL_GetError();
-    }
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		std::cout << "SDL_Init failed. SDL ERROR: " << SDL_GetError();
+	}
 
-    if (!IMG_Init(IMG_INIT_PNG))
-    {
-        std::cout << "IMG_Init failed. Error: " << IMG_GetError();
-    }
+	if (!IMG_Init(IMG_INIT_PNG))
+	{
+		std::cout << "IMG_Init failed. Error: " << IMG_GetError();
+	}
 
-    if(TTF_Init() == -1){
-        std::cout << "Could not initailize SDL2_ttf, error: " << TTF_GetError() << std::endl; 
-    }
+	if (TTF_Init() == -1)
+	{
+		std::cout << "Could not initailize SDL2_ttf, error: " << TTF_GetError() << std::endl;
+	}
 
-    window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
 
-    if(window == NULL) {
-        std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
-    }
+	if (window == NULL)
+	{
+		std::cout << "Window failed to init. Error: " << SDL_GetError() << std::endl;
+	}
 
-    font = TTF_OpenFont("res/gfx/font/8bitOperatorPlus8-Regular.ttf",12);
-    // Confirm that it was loaded
+	font = TTF_OpenFont("res/gfx/font/8bitOperatorPlus8-Regular.ttf", 12);
+	// Confirm that it was loaded
 
-    if(font == NULL){
-        std::cout << "Could not load font" << TTF_GetError() <<std::endl;
-    }
+	if (font == NULL)
+	{
+		std::cout << "Could not load font" << TTF_GetError() << std::endl;
+	}
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
 void Game::loadmedia()
 {
-	tabs_title->setUpMenu(renderer);
-	tabs_room1->roomInit(renderer);
+	tabs_title.setUpMenu(renderer);
+	tabs_room1.roomInit(renderer);
+	gameState.loadMedia(renderer);
+	playerHUD.initHUD(renderer);
+	playerHUD.HUD_Timer.start();
 }
-void Game::handleEvents()							
+void Game::handleEvents()
 {
-    SDL_Event event; 
-    while (SDL_PollEvent(&event) != 0)
-    {
-        if (event.type == SDL_QUIT)
-        {
-            isRunning = false;
-            return;
-        }
-
-        switch (tabs)
+		switch ((int)currentTab)
 		{
-		    case Title:
-		    	tabs_title->handleEvents();
-		    	tabs = tabs_title->getDirect();
-		    	break;
-		    case Room1:
-		    	gameState->handleEvent();
-		    	tabs = gameState->getDirect();
-		    	break;
+		case Title:
+			tabs_title.handleEvents();
+			currentTab = tabs_title.getDirect();
+			break;
+		case Room1:
+			tabs_room1.handleEvents();
+			currentTab = tabs_room1.getDirect();
+			gameState.handleEvent();
+			break;
 		}
-    }
-} 
+	
+}
 // void Game::playMusic()
 // {
 // 	switch (tabs)
@@ -110,43 +108,48 @@ void Game::handleEvents()
 // 	}
 // }
 
-void Game::update()
+void Game::update(float currentTime)
 {
-	switch (tabs){
-		case Title:
-			gameState->reset();
-			break;
-		case InGame:
-			gameState->update();
-			break;
+	switch ((int)currentTab)
+	{
+	case Title:
+		gameState.reset();
+		playerHUD.HUD_Timer.pause();
+		break;
+	case Room1:
+		playerHUD.HUD_Timer.unpause();
+		playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
+		gameState.update(currentTime);
+		break;
 	}
 }
 
 void Game::render()
 {
-    SDL_SetRenderDrawColor( renderer, 0, 0, 0, 0 );
-    SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderClear(renderer);
 	// static LTexture backGround {backGroundPicture, renderer};
 	// backGround.render(renderer, 0, 0);
-	
-	switch (tabs)
+
+	switch ((int)currentTab)
 	{
 	case Title:
-		tabs_title->render(renderer);
+		tabs_title.render(renderer);
 		break;
 	case Room1:
-		tabs_room1->render(renderer, gameState->getPlayer().getPos());
-		gameState->render(renderer);
+		tabs_room1.render(renderer, gameState.getPlayer().getPos());
+		gameState.render(renderer);
+		playerHUD.render(renderer);
 		break;
 	}
-    SDL_RenderPresent(renderer);
+	SDL_RenderPresent(renderer);
 }
 
 void Game::clean()
 {
-	TTF_CloseFont( font );
-    SDL_DestroyRenderer( renderer );
-	SDL_DestroyWindow( window );
+	TTF_CloseFont(font);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	font = NULL;
 	window = NULL;
 	renderer = NULL;

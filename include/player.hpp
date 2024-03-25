@@ -5,6 +5,9 @@
 
 #include "math.hpp"
 #include "RenderWindow.hpp"
+#include "Structure.hpp"
+#include "ResourceManager.hpp"
+#include "Data.hpp"
 
 const int IDLE_FRAMES = 4;
 const int RUN_FRAMES = 6;
@@ -30,16 +33,18 @@ class Player
 {
 public:
     Player();
-    Player(PLAYER_TYPE, RenderWindow window);
+    void loadTexture(PLAYER_TYPE, SDL_Renderer* renderer);
     void handleEvent();
     // bool attack(Entity enemy);
     void move();
     Vector2f getPos() {
         return pos;
     }
-    SDL_Texture* idleAnimation[IDLE_FRAMES];
-    SDL_Texture* runAnimation[RUN_FRAMES];
-    SDL_Texture* arrow;
+    // SDL_Texture* idleAnimation[IDLE_FRAMES];
+    // SDL_Texture* runAnimation[RUN_FRAMES];
+    LTexture idleAnimation[IDLE_FRAMES];
+    LTexture runAnimation[RUN_FRAMES];
+    LTexture arrow;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     State state{IDLE};
     SDL_Rect hitBox{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 24, 26};

@@ -17,10 +17,10 @@ void HUD::initHUD(SDL_Renderer* renderer)
     portrait.loadFromFile(Portrait_Suisei, renderer);
 }
 
-void HUD::update(Player player, int expForNextLevel)
+void HUD::update(Player player, int reqNextLevel)
 {
-    expTopBarSRC.w = player.currentExp / expForNextLevel * 648;
-    expTopBar.w = player.currentExp / expForNextLevel * (SCREEN_WIDTH + 10);
+    expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
+    expTopBar.w = player.currentExp / reqNextLevel * (SCREEN_WIDTH + 10);
     levelText.str("");
     levelText << "LV: "<< player.LEVEL;
     timeText.str("");
@@ -37,9 +37,7 @@ void HUD::render(SDL_Renderer* renderer)
     expBar[0].render(renderer, &expBaseBar);
     expBar[1].renderF(renderer, &expTopBar, &expTopBarSRC);
 
-    
     portrait.render(renderer, &portraitRectDST, &portraitRectSRC);
-    
 
     textureText.loadFromRenderedText(levelText.str().c_str(),{255,255,255},HUD_font, renderer);
     textureText.render(renderer, &levelRect);

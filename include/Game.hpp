@@ -6,6 +6,9 @@
 #include "GameState.hpp"
 #include "utils.hpp"
 #include "Data.hpp"
+#include "Tabs_Title.hpp"
+#include "Room1.hpp"
+#include "Hud.hpp"
 
 class Game {
 
@@ -17,7 +20,7 @@ public:
     void loadmedia();
     void handleEvents();
     void playMusic();
-    void update();
+    void update(float currentTime);
     void render();
     void clean();
     bool running()
@@ -28,9 +31,11 @@ private:
     bool isRunning{true};
     SDL_Window *window;
     SDL_Renderer *renderer;
-    Game_State *gameState;
     int tabs;
-    Tabs_Title* tabs_title;
-    Tabs_Room1* tabs_room1;
+    Tabs currentTab{Title};
+    GameState gameState;
+    Tabs_Title tabs_title;
+    Tabs_Room1 tabs_room1;
+    HUD playerHUD;
     TTF_Font* font;
 };

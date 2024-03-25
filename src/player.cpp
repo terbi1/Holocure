@@ -9,23 +9,18 @@ Player::Player()
 {
 }
 
-Player::Player(PLAYER_TYPE type, RenderWindow window)
+void Player::loadTexture(PLAYER_TYPE type, SDL_Renderer* renderer)
 {
-    switch (type)
-    {
-    case SUISEI:
-        idleAnimation[0] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_0.png");
-        idleAnimation[1] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_1.png");
-        idleAnimation[2] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_2.png");
-        idleAnimation[3] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_3.png");
-        runAnimation[0] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_0.png");
-        runAnimation[1] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_1.png");
-        runAnimation[2] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_2.png");
-        runAnimation[3] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_3.png");
-        runAnimation[4] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_4.png");
-        runAnimation[5] = window.loadTexture("res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_5.png");
-        return;
-    }
+    idleAnimation[0].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[0], renderer));
+    idleAnimation[1].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[1], renderer));
+    idleAnimation[2].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[2], renderer));
+    idleAnimation[3].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[3], renderer));        
+    runAnimation[0].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[0], renderer));      
+    runAnimation[1].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[1], renderer));      
+    runAnimation[2].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[2], renderer));      
+    runAnimation[3].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[3], renderer));
+    runAnimation[4].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[4], renderer));
+    runAnimation[5].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[5], renderer));
 }
 
 void Player::handleEvent()
@@ -138,21 +133,21 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     switch (state)
     {
     case IDLE:
-        SDL_QueryTexture(idleAnimation[frame], NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(idleAnimation[frame].getTexture(), NULL, NULL, &dst.w, &dst.h);
         dst.w *= 1.5;
         dst.h *= 1.5;
-        SDL_RenderCopyEx(renderer, arrow, NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, arrow.getTexture(), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
         dst.y -= 20;
-        SDL_RenderCopyEx(renderer, idleAnimation[frame], NULL, &dst, 0, NULL, flip);
+        SDL_RenderCopyEx(renderer, idleAnimation[frame].getTexture(), NULL, &dst, 0, NULL, flip);
         // return;
         break;
     case RUN:
-        SDL_QueryTexture(runAnimation[frame], NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(runAnimation[frame].getTexture(), NULL, NULL, &dst.w, &dst.h);
         dst.w *= 1.5;
         dst.h *= 1.5;
-        SDL_RenderCopyEx(renderer, arrow, NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, arrow.getTexture(), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
         dst.y -= 20;
-        SDL_RenderCopyEx(renderer, runAnimation[frame], NULL, &dst, 0, NULL, flip);
+        SDL_RenderCopyEx(renderer, runAnimation[frame].getTexture(), NULL, &dst, 0, NULL, flip);
         // return;
         break;
     }
