@@ -1,124 +1,326 @@
 #include "weapon.hpp"
 
-Weapon::Weapon(WEAPON_ID type, SDL_Renderer* renderer) 
-    :ID(type)
+DamagingArea::DamagingArea()
 {
-    switch((int)ID) {
-        case AXE:
-        aoe.frames = 6;
-        aoe.damage = 10;
-        cd = 1000;
-        lastAttack = SDL_GetTicks();
-        aoe.sprites.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
+}
+
+Weapon::Weapon(WEAPON_ID type)
+    : ID(type)
+{
+    dmgArea.weaponID = ID;
+    switch ((int)ID)
+    {
+    case AXE:
+    {
+        dmgArea.duration = 0.18;
+        timeBetweenAttacks = 1.38;
+        dmgArea.hitLimit = -1;
+        dmgArea.damage = 120;
+        dmgArea.frameTime = 0.03;
+        dmgArea.hitCooldown = 0.5;
         break;
-        case SPIDER_COOKING:
-        aoe.frames = 1;
-        aoe.damage = 1;
-        cd = 1000;
-        lastAttack = SDL_GetTicks();
-        aoe.sprites.getResource(renderer, "res/gfx/spr_spidercooking.png");
+    }
+    case SPIDER_COOKING:
+    {
+        dmgArea.duration = 10;
+        dmgArea.frames = 0;
+        timeBetweenAttacks = 10.02;
+        dmgArea.hitLimit = -1;
+        dmgArea.damage = 90;
+        dmgArea.frameTime = 10;
+        dmgArea.hitCooldown = 0.75;
         break;
+    }
+    case CEO_TEARS:
+    {
+        dmgArea.duration = 1.5;
+        dmgArea.frames = 0;
+        timeBetweenAttacks = 0.5;
+        dmgArea.hitLimit = 1;
+        dmgArea.damage = 100;
+        dmgArea.frameTime = 1.5;
+        dmgArea.attackCount = 1;
+        break;
+    }
+    case FAN_BEAM:
+    {
+        dmgArea.duration = 0.3;
+        dmgArea.frames = 9;
+        timeBetweenAttacks = 3;
+        dmgArea.hitLimit = -1;
+        dmgArea.damage = 300;
+        dmgArea.frameTime = 0.03;
+        dmgArea.hitCooldown = 1;
+        break;
+    }
+    case BL_BOOK:
+    {
+        dmgArea.duration = 2;
+        dmgArea.frames = 0;
+        timeBetweenAttacks = 6;
+        dmgArea.hitLimit = 7;
+        dmgArea.damage = 140;
+        dmgArea.frameTime = 0.03;
+        dmgArea.hitCooldown = 0.33;
+        dmgArea.radius = 100;
+        dmgArea.attackCount = 3;
+        break;
+    }
+    case PSYCHO_AXE:
+    {
+        dmgArea.damage = 120;
+        timeBetweenAttacks = 4;
+        dmgArea.attackCount = 1;
+        dmgArea.hitLimit = 10;
+        dmgArea.hitCooldown = 0.83;
+        dmgArea.duration = 3;
+        dmgArea.frames = 7;
+        dmgArea.frameTime = 0.03;
+        dmgArea.radius = 100;
+        break;
+    }
     }
 }
 
-void renderWeapon(SDL_Renderer *renderer, Weapon& weapon, Player player, int frame, int camX, int camY)
+void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, int frame, int camX, int camY)
 {
-    switch((int)weapon.ID) 
+    AnimatedSprite sprite;
+
+    switch ((int)weapon.weaponID)
     {
-        case AXE:
-        {
-        
-        if(!weapon.isActive) return; 
+    case AXE:
+
+    {
+        sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
 
         SDL_Rect src;
-        src.x = 0; src.y = 0;
-        src.w = 107; src.h = 144;
+        src.x = 0;
+        src.y = 0;
+        src.w = 107;
+        src.h = 144;
 
         SDL_Rect dst;
-        dst.w = 107 * 2; dst.h = 144 * 2;
-        dst.x = player.centerPoint.x - camX; dst.y = player.centerPoint.y - dst.h / 2 -  camY;
+        dst.w = 107 * 1.5;
+        dst.h = 144 * 1.5;
+        dst.x = weapon.center.x - camX;
+        dst.y = weapon.center.y - dst.h / 2 - camY;
 
-        switch (player.arrowAngle)
+        switch (weapon.angle)
         {
         case 0:
             break;
         case 180:
-            dst.x += -dst.w; 
+            dst.x += -dst.w;
             break;
         case -90:
-            dst.x += -dst.w / 2; dst.y += -dst.w / 2;
+            dst.x += -dst.w / 2;
+            dst.y += -dst.w / 2;
             break;
         case 90:
-            dst.x += -dst.w / 2 ; dst.y += dst.w / 2;
+            dst.x += -dst.w / 2;
+            dst.y += dst.w / 2;
             break;
         }
 
-        weapon.aoe.sprites.Draw(dst.x, dst.y, dst.w, dst.h);
-        weapon.aoe.sprites.PlayFrame(src.x, src.y, src.w, src.h, frame);
-        weapon.aoe.sprites.Render(renderer, player.flip, player.arrowAngle);
+        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
+        sprite.PlayFrame(src.x, src.y, src.w, src.h, frame);
+        sprite.Render(renderer, weapon.flip, weapon.angle);
         return;
-        }
-        case SPIDER_COOKING:
-        {
-            weapon.aoe.sprites.Draw(player.centerPoint.x - 107/2 - camX, player.centerPoint.y - 107/2 - camY, 107, 107);
-            weapon.aoe.sprites.PlayFrame(0, 0, 107, 107, 0);
-            weapon.aoe.sprites.Render(renderer, player.flip, player.arrowAngle);
-        }
+    }
+
+    case SPIDER_COOKING:
+
+    {
+        sprite.getResource(renderer, "res/gfx/spr_spidercooking.png");
+
+        sprite.Draw(weapon.center.x - 107 * 2 / 2 - camX, weapon.center.y - 107 * 2 / 2 - camY, 107 * 2, 107 * 2);
+        SDL_SetTextureAlphaMod(sprite.getTexture(), 50);
+        sprite.PlayFrame(0, 0, 107, 107, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+
+    case CEO_TEARS:
+    {
+        sprite.getResource(renderer, "res/gfx/spr_CEOTears.png");
+
+        sprite.Draw(weapon.center.x - 10 - camX, weapon.center.y - 8 - camY, 20, 16);
+        sprite.PlayFrame(0, 0, 10, 8, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+
+    case FAN_BEAM:
+    {
+
+        sprite.getResource(renderer, FanBeam_Animation[weapon.currentFrame].c_str());
+
+        SDL_Rect dst;
+        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+        dst.x = weapon.center.x - camX + 50;
+        dst.y = weapon.center.y - dst.h / 2 - camY;
+
+        if (weapon.flip == SDL_FLIP_HORIZONTAL)
+            dst.x += -dst.w - 100;
+
+        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
+        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
+        sprite.Render(renderer, weapon.flip, weapon.angle);
+        return;
+    }
+
+    case BL_BOOK:
+    {
+        sprite.getResource(renderer, BLBook_Animation.c_str());
+
+        sprite.Draw(weapon.center.x - 18 - camX, weapon.center.y - 23 - camY, 36, 46);
+        sprite.PlayFrame(0, 0, 18, 23, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+
+    case PSYCHO_AXE:
+    {
+        sprite.getResource(renderer, PsychoAxe_Animation[weapon.currentFrame].c_str());
+
+        sprite.Draw(weapon.center.x - 46 - camX, weapon.center.y - 46 - camY, 92, 92);
+        sprite.PlayFrame(0, 0, 46, 46, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
     }
 }
 
-void inflictDamage(Weapon& weapon, Enemy& enemy, Player player, SDL_Renderer* renderer, int camX, int camY) {
-    if(!weapon.isActive) return;
+int damageCal(DamagingArea weapon, Player player)
+{
+    float weaponDamage = weapon.damage / 100;
 
-    switch((int)weapon.ID) {
-        case AXE:
-        {
-            SDL_Rect hitBox;
-            hitBox.w = 107 * 2; hitBox.h = 144 * 2;
-            hitBox.x = player.centerPoint.x; hitBox.y = player.centerPoint.y - hitBox.h / 2;
+    float totalWeaponDamage = weaponDamage;
 
-            switch (player.arrowAngle)
-            {
-            case 0:
-                break;
-            case 180:
-                hitBox.x -= hitBox.w;
-                break;
-            case -90:
-                std::swap(hitBox.w, hitBox.h);
-                hitBox.x -= hitBox.w / 2; hitBox.y -= - hitBox.w / 2 + hitBox.h;
-                break;
-            case 90:
-                std::swap(hitBox.w, hitBox.h);
-                hitBox.x -= hitBox.w / 2; hitBox.y -= - hitBox.w / 2;
-                break;
-            }
+    float attackDamage = 10 * totalWeaponDamage * player.atk / 100;
 
-            if(checkAABBCircleCollision(hitBox, enemy.collider)) {
-                enemy.isHit = true;
-                enemy.health -= weapon.aoe.damage;
-            }
-
-            hitBox.x -= camX; hitBox.y -= camY;
-            SDL_SetRenderDrawColor(renderer, 255,0,0,0);
-            SDL_RenderDrawRect(renderer, &hitBox);
-            
-            return;
-        }
-        case SPIDER_COOKING:
-        {
-
-            SDL_Rect hitBox;
-            hitBox.x = player.centerPoint.x; hitBox.y = player.centerPoint.y;
-
-            if(checkCircleCollision(Circle{player.centerPoint, 100/2}, enemy.collider)) {
-                enemy.isHit = true;
-                enemy.health -= weapon.aoe.damage;
-            }
-
-            // weapon.aoe.sprites.Draw(player.centerPoint.x - 107/2 - camX, player.centerPoint.y - 107/2 - camY, 107, 107);
-            // weapon.aoe.sprites.PlayFrame(0, 0, 107, 107, 0);
-            // weapon.aoe.sprites.Render(renderer, player.flip, player.arrowAngle);
-        }
+    if (attackDamage > 2)
+    {
+        attackDamage += randomFloat(-std::max(attackDamage * 0.1f, 2.0f), std::max(attackDamage * 0.1f, 2.0f));
     }
+
+    return (int)attackDamage;
+}
+
+void inflictDamage(DamagingArea &weapon, Player player, Enemy &enemy, float currentTime)
+{
+    --weapon.hitLimit;
+    enemy.isHit = true;
+    enemy.health -= damageCal(weapon, player);
+    weapon.hitID[enemy.ID] = weapon.hitCooldown;
+}
+
+bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTime)
+{
+
+    if (weapon.hitID.find(enemy.ID) != weapon.hitID.end())
+        return false;
+
+    switch ((int)weapon.weaponID)
+    {
+    case AXE:
+    {
+        SDL_Rect hitBox;
+        hitBox.w = 107 * 1.5;
+        hitBox.h = 144 * 1.5;
+        hitBox.x = weapon.center.x;
+        hitBox.y = weapon.center.y - hitBox.h / 2;
+        switch (weapon.angle)
+        {
+        case 0:
+            break;
+        case 180:
+            hitBox.x -= hitBox.w;
+            break;
+        case -90:
+            std::swap(hitBox.w, hitBox.h);
+            hitBox.x -= hitBox.w / 2;
+            hitBox.y -= -hitBox.w / 2 + hitBox.h;
+            break;
+        case 90:
+            std::swap(hitBox.w, hitBox.h);
+            hitBox.x -= hitBox.w / 2;
+            hitBox.y -= -hitBox.w / 2;
+            break;
+        }
+
+        if (checkAABBCircleCollision(hitBox, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case SPIDER_COOKING:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 107 * 2 / 2}, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case CEO_TEARS:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 8}, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case FAN_BEAM:
+    {
+        SDL_Rect hitBox;
+        hitBox.w = 460;
+        hitBox.h = 13;
+        hitBox.x = weapon.center.x + 50;
+        hitBox.y = weapon.center.y - hitBox.h / 2;
+
+        if (weapon.flip == SDL_FLIP_HORIZONTAL)
+            hitBox.x += -hitBox.w - 100;
+
+        if (checkAABBCircleCollision(hitBox, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case BL_BOOK:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 20}, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case PSYCHO_AXE:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 30}, enemy.collider))
+        {
+            inflictDamage(weapon, player, enemy, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+    }
+
 }

@@ -8,6 +8,7 @@
 
 #include "Data.hpp"
 #include "Structure.hpp"
+#include "math.hpp"
 
 enum TimeUnit
 {
@@ -62,6 +63,17 @@ private:
 	bool mStarted;
 };
 
+struct DamageNumber
+{
+    int dmg{};
+    Vector2f pos;
+    SDL_Color color;
+    SDL_Rect dmgBox{pos.x, pos.y, 18, 18};
+    float duration{0.3};
+    void render(SDL_Renderer* renderer, TTF_Font* font, LTexture textureText, int camX, int camY);
+    void update(float timeStep);
+};
+
 // xử lý fps: print, capping
 // class FPS_Processor
 // {
@@ -109,5 +121,3 @@ private:
 // 		void render(SDL_Renderer* renderer, int x = 0, int y = 0);
 //         bool isInside(int x, int y);
 // };
-// extern LButton* backButton;
-// extern LButton* replayButton;

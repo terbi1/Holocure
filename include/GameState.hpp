@@ -15,6 +15,9 @@
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "RenderWindow.hpp"
+#include "Hud.hpp"
+
+
 
 class GameState 
 {
@@ -27,30 +30,40 @@ public:
     bool getPlaying();
     void setPlaying(bool _playing);
     bool getPause();
-    void update(float currentTime);
+    void updateSpawnPool(int minuteTimer, int secondTimer);
+    void update(float timeStep, float currentTime);
     void render(SDL_Renderer *renderer);
     void reset();
     void handleEvent();
-    void pauseGame();
     void startCD();
     bool gameOver();
+    int EnemyCount{0};
     Player getPlayer() {
         return player;
     }
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     int reqNextLevel{61};
 private:
+    TTF_Font *DMG_font = NULL;
+    LTexture dmgText;
     bool playing;
-    bool pause;
+    bool pause{false};
     int time;
     Tabs direct{Room1};
     // GameOverAnnouncement* gameOverAnnouncement;
-    bool isOver;
+    bool isOver{false};
     bool recordScore;
+    Vector2f moved;
     Player player;
+    HUD playerHUD;
     int enemyFrame{0};
-    float lastSpawnTime{0};
     std::vector<Enemy> enemies;
     std::vector<Weapon> weapons;
-    std::vector<Drop> dropItems;
+    std::vector<ExpDrop> dropItems;
+    std::vector<DamagingArea> activeAttack;
+    std::unordered_set<ENEMY_TYPE> spawnPool;
+    std::vector<DamageNumber> dmgNumbers;
+    float lastSpawn{-100};
+    float spawnCooldown{5};
+    float spawnRate;
 };

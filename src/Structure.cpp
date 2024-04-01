@@ -253,6 +253,21 @@ bool LTimer::isPaused()
 
 #pragma endregion LTimer
 
+
+void DamageNumber::render(SDL_Renderer* renderer, TTF_Font* font, LTexture textureText, int camX, int camY)
+{
+	dmgBox.x -= camX;
+	dmgBox.y -= camY;
+	std::string dmgText = std::to_string(dmg);
+    textureText.loadFromRenderedText(dmgText,color,font, renderer);
+    textureText.render(renderer, &dmgBox);
+}
+
+void DamageNumber::update(float timeStep)
+{
+    dmgBox.y -= 1;
+    duration -= timeStep;
+}
 // FPS_Processor::FPS_Processor()
 // {
 // 	countedFrames = 0;

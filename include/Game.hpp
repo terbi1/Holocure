@@ -20,7 +20,7 @@ public:
     void loadmedia();
     void handleEvents();
     void playMusic();
-    void update(float currentTime);
+    void update(float deltaTime, float currentTime);
     void render();
     void clean();
     bool running()
@@ -36,6 +36,6 @@ private:
     GameState gameState;
     Tabs_Title tabs_title;
     Tabs_Room1 tabs_room1;
-    HUD playerHUD;
+    // HUD playerHUD;
     TTF_Font* font;
 };

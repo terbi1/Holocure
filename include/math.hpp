@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 
+const float PI = 3.14159274101257324219;
+
 struct Vector2f
 {
     Vector2f()
@@ -48,6 +50,11 @@ struct Vector2f
         return Vector2f{x * other.x, y * other.y};
     }
 
+    Vector2f operator*(float scalar)
+    {
+        return Vector2f{x * scalar, y * scalar};
+    }
+
     void operator*=(float scalar)
     {
         x *= scalar;
@@ -68,8 +75,8 @@ struct Vector2f
 
 struct Circle 
 {
-    Vector2f center;
-    float radius;
+    Vector2f center{0,0};
+    float radius{0};
     // Circle(Vector2f m_center, float m_radius) {
     //     center = m_center;
     //     radius = m_radius;
@@ -81,3 +88,13 @@ Vector2f vectorNormalize(Vector2f vector);
 float pointDirection(Vector2f vectorA, Vector2f vectorB);
 
 float distance(Vector2f point1, Vector2f point2);
+
+float randomFloat();
+ 
+int randomInt(int a, int b);
+
+float randomFloat(int a, int b);
+
+void circularMotion(Vector2f& pos, Vector2f center, float angle);
+
+void spiralMotion(Vector2f& pos, Vector2f center, float speed, float angle);

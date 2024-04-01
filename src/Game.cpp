@@ -57,24 +57,35 @@ void Game::loadmedia()
 	tabs_title.setUpMenu(renderer);
 	tabs_room1.roomInit(renderer);
 	gameState.loadMedia(renderer);
-	playerHUD.initHUD(renderer);
-	playerHUD.HUD_Timer.start();
+	// playerHUD.initHUD(renderer);
+	// playerHUD.HUD_Timer.start();
 }
+
 void Game::handleEvents()
 {
-		switch ((int)currentTab)
+	SDL_Event event;
+
+	while (SDL_PollEvent(&event) != 0)
+	{
+		if (event.type == SDL_QUIT)
 		{
-		case Title:
-			tabs_title.handleEvents();
-			currentTab = tabs_title.getDirect();
-			break;
-		case Room1:
-			tabs_room1.handleEvents();
-			currentTab = tabs_room1.getDirect();
-			gameState.handleEvent();
-			break;
+			isRunning = false;
+			return;
 		}
-	
+	}
+
+	switch ((int)currentTab)
+	{
+	case Title:
+		tabs_title.handleEvents();
+		currentTab = tabs_title.getDirect();
+		break;
+	case Room1:
+		// tabs_room1.handleEvents();
+		currentTab = gameState.getDirect();
+		gameState.handleEvent();
+		break;
+	}
 }
 // void Game::playMusic()
 // {
@@ -108,18 +119,18 @@ void Game::handleEvents()
 // 	}
 // }
 
-void Game::update(float currentTime)
+void Game::update(float deltaTime, float currentTime)
 {
 	switch ((int)currentTab)
 	{
 	case Title:
-		gameState.reset();
-		playerHUD.HUD_Timer.pause();
+		// gameState.reset();
+		// playerHUD.HUD_Timer.pause();
 		break;
 	case Room1:
-		playerHUD.HUD_Timer.unpause();
-		playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
-		gameState.update(currentTime);
+		// playerHUD.HUD_Timer.unpause();
+		// playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
+		gameState.update(deltaTime, currentTime);
 		break;
 	}
 }
@@ -137,9 +148,9 @@ void Game::render()
 		tabs_title.render(renderer);
 		break;
 	case Room1:
-		tabs_room1.render(renderer, gameState.getPlayer().getPos());
+		tabs_room1.render(renderer, gameState.getPlayer().collider.center);
 		gameState.render(renderer);
-		playerHUD.render(renderer);
+		// playerHUD.render(renderer, gameState.getPause());
 		break;
 	}
 	SDL_RenderPresent(renderer);

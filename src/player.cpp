@@ -88,17 +88,15 @@ void Player::handleEvent()
         velocity.x += SPEED;
     }
 
-    currentKeyStates = NULL;
 }
 
 void Player::move()
 {
 
     // update the position
-    pos.x += velocity.x;
-    pos.y += velocity.y;
-    centerPoint.x += velocity.x;
-    centerPoint.y += velocity.y;
+    // pos.x += velocity.x;
+    // pos.y += velocity.y;
+    collider.center += velocity;
     // update sprite states
     if (velocity.x == 0 && velocity.y == 0)
         state = IDLE;
@@ -114,12 +112,12 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 {
 
     SDL_Rect dst;
-    dst.x = pos.x - camX - 34;
-    dst.y = pos.y - camY - 30;
+    dst.x = collider.center.x - camX - 48;
+    dst.y = collider.center.y - camY - 54;
     // dst.w = 34;
     // dst.h = 34;
 
-    SDL_Rect hitBoxDST = {centerPoint.x - 75, centerPoint.y - 75, 150, 150};
+    SDL_Rect hitBoxDST = {collider.center.x - 75, collider.center.y - 75, 150, 150};
     hitBoxDST.x -= camX;
     hitBoxDST.y -= camY;
 
@@ -153,7 +151,7 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     }
     SDL_SetRenderDrawColor(renderer, 0xFF, 0, 0, 0xFF);
     // SDL_RenderDrawPoint(renderer, pos.x + 32 - camX, pos.y + 32 - camY);
-    SDL_RenderDrawPoint(renderer, centerPoint.x - camX, centerPoint.y - camY);
+    SDL_RenderDrawPoint(renderer, collider.center.x - camX, collider.center.y - camY);
 
-    SDL_RenderDrawRect(renderer, &hitBoxDST);
+    // SDL_RenderDrawRect(renderer, &hitBoxDST);
 }

@@ -21,13 +21,13 @@ enum State {
     RUN = 6
 };
 
-struct healthBar{
-    float value;
-    SDL_Texture* base;
-    SDL_Texture* hp;
-    SDL_Rect src;
-    SDL_Rect dst;
-};
+// struct healthBar{
+//     float value;
+//     SDL_Texture* base;
+//     SDL_Texture* hp;
+//     SDL_Rect src;
+//     SDL_Rect dst;
+// };
 
 class Player
 {
@@ -49,15 +49,19 @@ public:
     State state{IDLE};
     SDL_Rect hitBox{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 24, 26};
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
-    healthBar health;
+    int health{70};
+    Circle collider{Vector2f{SCREEN_WIDTH / 2 + 16, SCREEN_HEIGHT / 2 + 26}, 10};
     Vector2f centerPoint{SCREEN_WIDTH / 2 + 16, SCREEN_HEIGHT / 2 + 26};
     int arrowAngle{0};
     float currentExp{0};
     int LEVEL{1};
     int currentFrame{0};
+    float atk{130};
+    float crit{10};
+    float critMod{50};
 private:
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-    float SPEED {3};
+    float SPEED {1.3};
     Vector2f velocity{0,0};
 };
 
