@@ -13,7 +13,8 @@ Tabs Tabs_Title::getDirect() {
 
 
 void Tabs_Title::setUpMenu(SDL_Renderer* renderer) {
-    titleBackground.loadFromFile(BG_Title, renderer);
+    // titleBackground.loadFromFile(BG_Title, renderer);
+    titleBackground.loadFromFile(Black_Screen, renderer);
 }
 
 void Tabs_Title::render(SDL_Renderer* renderer) {

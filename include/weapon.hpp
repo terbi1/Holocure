@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "physics.hpp"
-#include "enemy.hpp"
+// #include "enemy.hpp"
 #include "math.hpp"
 #include "player.hpp"
 #include "AnimatedSprites.hpp"
@@ -15,13 +15,15 @@
 const int frames = 8;
 
 enum WEAPON_ID {
+    FUBU_BEAM,
     AXE,
     SPIDER_COOKING,
     X_POTATO,
     CEO_TEARS,
     FAN_BEAM,
     BL_BOOK,
-    PSYCHO_AXE
+    PSYCHO_AXE,
+    IDOL_SONG
 };
 
 struct DamagingArea
@@ -40,12 +42,13 @@ struct DamagingArea
     int frames;
     int attackCount{1};
     float frameTime;
-    float lastFrameTime;
+    float lastFrameTime{-100};
     int angle{0};
     float radius;
     float hitCooldown;
     SDL_RendererFlip flip{SDL_FLIP_NONE};
-    int i{0};
+    int count{0};
+    bool ofPlayer{true};
 };
 
 struct Weapon {
@@ -59,6 +62,7 @@ struct Weapon {
     Vector2f center{0,0};
     std::unordered_set<int> hitID;
     DamagingArea dmgArea;
+    
 };
 
 
@@ -66,6 +70,12 @@ void renderWeapon(SDL_Renderer* renderer, DamagingArea& weapon, Player player, i
 
 int damageCal(DamagingArea weapon, Player player);
 
-void inflictDamage(DamagingArea& weapon, Player player, Enemy& enemy, float currentTime);
+// void inflictDamage(DamagingArea& weapon, Player player, Enemy& enemy, float currentTime);
 
-bool hitEnemy(DamagingArea& weapon, Enemy& enemy, Player player, float currentTime);
+void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID, float currentTime);
+
+// bool hitEnemy(DamagingArea& weapon, Enemy& enemy, Player player, float currentTime);
+
+bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player, float currentTime);
+
+bool hitPlayer(DamagingArea& weapon, Player& player, float currentTime);

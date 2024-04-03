@@ -53,6 +53,17 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 1;
         break;
     }
+    case FUBU_BEAM:
+    {
+        dmgArea.duration = 1.17;
+        dmgArea.frames = 38;
+        timeBetweenAttacks = 3;
+        dmgArea.hitLimit = -1;
+        dmgArea.frameTime = 0.03;
+        dmgArea.hitCooldown = 1;
+        dmgArea.ofPlayer = false;
+        break;
+    }
     case BL_BOOK:
     {
         dmgArea.duration = 2;
@@ -79,6 +90,18 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.radius = 100;
         break;
     }
+    case IDOL_SONG:
+    {
+        dmgArea.damage = 130;
+        timeBetweenAttacks = 3.33;
+        dmgArea.attackCount = 2;
+        dmgArea.hitLimit = -1;
+        dmgArea.hitCooldown = 0.33;
+        dmgArea.duration = 2.5;
+        dmgArea.frames = 4;
+        dmgArea.frameTime = 0.03;
+        break;
+    }
     }
 }
 
@@ -89,7 +112,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     switch ((int)weapon.weaponID)
     {
     case AXE:
-
     {
         sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
 
@@ -188,6 +210,48 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
+
+    case IDOL_SONG:
+    {
+        sprite.getResource(renderer, IdolSong_Animation.c_str());
+
+        sprite.Draw(weapon.center.x - 29 - camX, weapon.center.y - 27 - camY, 58, 54);
+        sprite.PlayFrame(0, 0, 29, 27, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case FUBU_BEAM:
+    {
+        if(weapon.currentFrame < 30)
+        {
+            SDL_Rect dst;
+            dst.w = SCREEN_WIDTH;
+            dst.h = 234;
+            dst.x = weapon.center.x - camX + 120;
+            dst.y = weapon.center.y - dst.h / 2 - camY;
+            if (weapon.flip == SDL_FLIP_HORIZONTAL)
+            dst.x += -dst.w - 230;
+            SDL_SetRenderDrawColor(renderer, 255,0,0, 50 * (weapon.currentFrame / 3 % 2 + 1));
+            SDL_RenderFillRect(renderer, &dst);
+            return;
+        }
+        sprite.getResource(renderer, FubuBeam_Animation[weapon.currentFrame - 30].c_str());
+
+        SDL_Rect dst;
+        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, NULL, &dst.h);
+        dst.w = SCREEN_WIDTH;
+        dst.h *= 18;
+        dst.x = weapon.center.x - camX + 120;
+        dst.y = weapon.center.y - dst.h / 2 - camY;
+
+        if (weapon.flip == SDL_FLIP_HORIZONTAL)
+            dst.x += -dst.w - 230;
+
+        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
+        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
+        sprite.Render(renderer, weapon.flip, weapon.angle);
+        return;
+    }
     }
 }
 
@@ -207,18 +271,18 @@ int damageCal(DamagingArea weapon, Player player)
     return (int)attackDamage;
 }
 
-void inflictDamage(DamagingArea &weapon, Player player, Enemy &enemy, float currentTime)
+void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID, float currentTime)
 {
     --weapon.hitLimit;
-    enemy.isHit = true;
-    enemy.health -= damageCal(weapon, player);
-    weapon.hitID[enemy.ID] = weapon.hitCooldown;
+    isHit = true;
+    enemyHealth -= damageCal(weapon, player);
+    weapon.hitID[enemyID] = weapon.hitCooldown;
 }
 
-bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTime)
+bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player, float currentTime)
 {
 
-    if (weapon.hitID.find(enemy.ID) != weapon.hitID.end())
+    if (weapon.hitID.find(enemyID) != weapon.hitID.end())
         return false;
 
     switch ((int)weapon.weaponID)
@@ -249,9 +313,9 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
             break;
         }
 
-        if (checkAABBCircleCollision(hitBox, enemy.collider))
+        if (checkAABBCircleCollision(hitBox, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
             return true;
         }
     return false;
@@ -260,9 +324,9 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
 
     case SPIDER_COOKING:
     {
-        if (checkCircleCollision(Circle{weapon.center, 107 * 2 / 2}, enemy.collider))
+        if (checkCircleCollision(Circle{weapon.center, 107 * 2 / 2}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
             return true;
         }
     return false;
@@ -271,9 +335,9 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
 
     case CEO_TEARS:
     {
-        if (checkCircleCollision(Circle{weapon.center, 8}, enemy.collider))
+        if (checkCircleCollision(Circle{weapon.center, 8}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
             return true;
         }
     return false;
@@ -291,9 +355,9 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
         if (weapon.flip == SDL_FLIP_HORIZONTAL)
             hitBox.x += -hitBox.w - 100;
 
-        if (checkAABBCircleCollision(hitBox, enemy.collider))
+        if (checkAABBCircleCollision(hitBox, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
             return true;
         }
     return false;
@@ -302,9 +366,9 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
 
     case BL_BOOK:
     {
-        if (checkCircleCollision(Circle{weapon.center, 20}, enemy.collider))
+        if (checkCircleCollision(Circle{weapon.center, 20}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
             return true;
         }
     return false;
@@ -313,14 +377,56 @@ bool hitEnemy(DamagingArea &weapon, Enemy &enemy, Player player, float currentTi
 
     case PSYCHO_AXE:
     {
-        if (checkCircleCollision(Circle{weapon.center, 30}, enemy.collider))
+        if (checkCircleCollision(Circle{weapon.center, 30}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemy, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            return true;
+        }
+    return false;
+
+    }
+
+    case IDOL_SONG:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 28}, enemyCollider))
+        {
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            return true;
+        }
+        return false;
+    }
+    }
+
+    return false;
+}
+
+bool hitPlayer(DamagingArea& weapon, Player& player, float currentTime)
+{
+    if (weapon.hitID.find(1) != weapon.hitID.end())
+        return false;
+    
+    switch((int)weapon.weaponID)
+    {
+        case FUBU_BEAM:
+        {
+        if(weapon.currentFrame < 30) return false;
+        SDL_Rect hitBox;
+        hitBox.w = SCREEN_WIDTH;
+        hitBox.h = 180;
+        hitBox.x = weapon.center.x + 120;
+        hitBox.y = weapon.center.y - hitBox.h / 2;
+
+        if (weapon.flip == SDL_FLIP_HORIZONTAL)
+            hitBox.x += -hitBox.w - 230;
+
+        if (checkAABBCircleCollision(hitBox, player.collider))
+        {
+            player.health -= 15;
+            weapon.hitID[1] = weapon.hitCooldown;
             return true;
         }
     return false;
 
     }
     }
-
 }

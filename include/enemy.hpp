@@ -12,6 +12,7 @@
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "ResourceManager.hpp"
+#include "weapon.hpp"
 
 
 const int ANIMATION_FRAMES = 3;
@@ -21,6 +22,10 @@ enum ENEMY_TYPE {
     SHRIMP,
     TAKODACHI,
     KFP_EMPLOYEE,
+    DARK_SHRIMP,
+    BLOOM,
+    GLOOM,
+    FUBUZILLA
 };
 
 class Enemy
@@ -37,8 +42,13 @@ public:
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};
     int currentFrame{0};
+    LTexture animation;
     float cd{0};
     int expValue;
+    float frameTime{0.2};
+    float lastFrameTime;
+    int frames;
+    DamagingArea bossAttack;
 private:
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;

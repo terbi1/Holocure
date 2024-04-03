@@ -9,20 +9,6 @@ Player::Player()
 {
 }
 
-void Player::loadTexture(PLAYER_TYPE type, SDL_Renderer* renderer)
-{
-    idleAnimation[0].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[0], renderer));
-    idleAnimation[1].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[1], renderer));
-    idleAnimation[2].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[2], renderer));
-    idleAnimation[3].importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[3], renderer));        
-    runAnimation[0].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[0], renderer));      
-    runAnimation[1].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[1], renderer));      
-    runAnimation[2].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[2], renderer));      
-    runAnimation[3].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[3], renderer));
-    runAnimation[4].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[4], renderer));
-    runAnimation[5].importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[5], renderer));
-}
-
 void Player::handleEvent()
 {
     velocity.x = velocity.y = 0;
@@ -114,44 +100,27 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     SDL_Rect dst;
     dst.x = collider.center.x - camX - 48;
     dst.y = collider.center.y - camY - 54;
-    // dst.w = 34;
-    // dst.h = 34;
 
-    SDL_Rect hitBoxDST = {collider.center.x - 75, collider.center.y - 75, 150, 150};
-    hitBoxDST.x -= camX;
-    hitBoxDST.y -= camY;
+    // SDL_Rect hitBoxDST = {collider.center.x - 75, collider.center.y - 75, 150, 150};
+    // hitBoxDST.x -= camX;
+    // hitBoxDST.y -= camY;
 
-    // SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-
-    // SDL_RenderCopy(renderer, health.base, &health.src, &health.dst);
-    // SDL_RenderCopy(renderer, health.hp, &health.src, &health.dst);
-
-    // std::cout << pos.x << ' ' << pos.y << '\n';
-
-    switch (state)
+    switch((int)state)
     {
-    case IDLE:
-        SDL_QueryTexture(idleAnimation[frame].getTexture(), NULL, NULL, &dst.w, &dst.h);
-        dst.w *= 1.5;
-        dst.h *= 1.5;
-        SDL_RenderCopyEx(renderer, arrow.getTexture(), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
-        dst.y -= 20;
-        SDL_RenderCopyEx(renderer, idleAnimation[frame].getTexture(), NULL, &dst, 0, NULL, flip);
-        // return;
-        break;
-    case RUN:
-        SDL_QueryTexture(runAnimation[frame].getTexture(), NULL, NULL, &dst.w, &dst.h);
-        dst.w *= 1.5;
-        dst.h *= 1.5;
-        SDL_RenderCopyEx(renderer, arrow.getTexture(), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
-        dst.y -= 20;
-        SDL_RenderCopyEx(renderer, runAnimation[frame].getTexture(), NULL, &dst, 0, NULL, flip);
-        // return;
-        break;
+        case IDLE: animation.importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[frame].c_str(), renderer)); break;
+        case RUN: animation.importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[frame].c_str(), renderer)); break;
     }
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0, 0, 0xFF);
+    
+    SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
+    dst.w *= 1.5;
+    dst.h *= 1.5;
+    SDL_RenderCopyEx(renderer, ResourceManager::getInstance().getTexture(PlayerArrow, renderer), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
+    dst.y -= 20;
+    SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
+
+    // SDL_SetRenderDrawColor(renderer, 0xFF, 0, 0, 0xFF);
     // SDL_RenderDrawPoint(renderer, pos.x + 32 - camX, pos.y + 32 - camY);
-    SDL_RenderDrawPoint(renderer, collider.center.x - camX, collider.center.y - camY);
+    // SDL_RenderDrawPoint(renderer, collider.center.x - camX, collider.center.y - camY);
 
     // SDL_RenderDrawRect(renderer, &hitBoxDST);
 }
