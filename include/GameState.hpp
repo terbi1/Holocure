@@ -32,7 +32,7 @@ public:
     bool getPause();
     void updateSpawnPool(int minuteTimer, int secondTimer);
     void bossSpawn(int minuteTimer, int secondTimer);
-    void update(float timeStep, float currentTime);
+    void update(float timeStep);
     void render(SDL_Renderer *renderer);
     void reset();
     void handleEvent();
@@ -65,8 +65,7 @@ private:
     std::unordered_set<ENEMY_TYPE> spawnPool;
     std::vector<ENEMY_TYPE> bosses; 
     std::vector<DamageNumber> dmgNumbers;
-    float lastSpawn{-100};
-    float spawnCooldown{5};
+    float spawnCooldown{0};
     float spawnRate;
     bool boss {false};
 };

@@ -15,6 +15,7 @@ void HUD::initHUD(SDL_Renderer* renderer, int health)
     expBar[0].loadFromFile(HUD_expBarBase, renderer);
     expBar[1].loadFromFile(HUD_expBarTop, renderer);
     portrait.loadFromFile(Portrait_Suisei, renderer);
+    portrait.loadFromFile(Portrait_Suisei, renderer);
     pauseScreen.loadFromFile(Black_Screen, renderer);
     pauseScreen.setAlpha(100);
     title.loadFromFile(Title_Suisei, renderer);

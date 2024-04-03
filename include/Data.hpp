@@ -39,6 +39,9 @@ const std::string BLBook_Animation = {"res/gfx/spr_BLBook.png"};
 const std::string PsychoAxe_Animation[8] = {"res/gfx/spr_PsychoAxe/spr_PsychoAxe_0.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_1.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_2.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_3.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_4.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_5.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_6.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_7.png"};
 const std::string IdolSong_Animation = {"res/gfx/spr_MusicalNote/spr_MusicalNote_0.png"};
 const std::string FubuBeam_Animation[9] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
+const std::string LavaPoolStart_Animation[9] = {"res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_0.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_1.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_2.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_3.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_4.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_5.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_6.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_7.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_8.png"};
+const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"};
+const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
 
 #pragma endregion
 
@@ -51,15 +54,17 @@ const std::string Shrimp_Animation[3]{"res/gfx/spr_Shrimp/spr_Shrimp_0.png", "re
 const std::string Takodachi_Animation[3]{"res/gfx/spr_takodachi/spr_takodachi_0.png", "res/gfx/spr_takodachi/spr_takodachi_1.png", "res/gfx/spr_takodachi/spr_takodachi_2.png"};
 const std::string KFP_Animation[3]{"res/gfx/spr_KFP/spr_KFP_0.png", "res/gfx/spr_KFP/spr_KFP_1.png", "res/gfx/spr_KFP/spr_KFP_2.png"};
 const std::string DarkShrimp_Animation[3]{"res/gfx/spr_Shrimp2/spr_Shrimp2_0.png", "res/gfx/spr_Shrimp2/spr_Shrimp2_1.png", "res/gfx/spr_Shrimp2/spr_Shrimp2_2.png"};
+const std::string Bloom_Animation[3]{"res/gfx/spr_AngelFairy/spr_AngelFairy_0.png","res/gfx/spr_AngelFairy/spr_AngelFairy_1.png","res/gfx/spr_AngelFairy/spr_AngelFairy_2.png"};
+const std::string Gloom_Animation[3]{"res/gfx/spr_DevilFairy/spr_DevilFairy_0.png","res/gfx/spr_DevilFairy/spr_DevilFairy_1.png","res/gfx/spr_DevilFairy/spr_DevilFairy_2.png"};
 const std::string Fubuzilla_Animation[12]{"res/gfx/spr_fubuzilla/spr_fubuzilla_0.png","res/gfx/spr_fubuzilla/spr_fubuzilla_1.png","res/gfx/spr_fubuzilla/spr_fubuzilla_2.png","res/gfx/spr_fubuzilla/spr_fubuzilla_3.png","res/gfx/spr_fubuzilla/spr_fubuzilla_4.png","res/gfx/spr_fubuzilla/spr_fubuzilla_5.png","res/gfx/spr_fubuzilla/spr_fubuzilla_6.png","res/gfx/spr_fubuzilla/spr_fubuzilla_7.png","res/gfx/spr_fubuzilla/spr_fubuzilla_8.png","res/gfx/spr_fubuzilla/spr_fubuzilla_9.png","res/gfx/spr_fubuzilla/spr_fubuzilla_10.png","res/gfx/spr_fubuzilla/spr_fubuzilla_11.png"};
 
 #pragma endregion
 
 const std::string font_8bitPLus{"res/gfx/font/8bitOperatorPlus8-Regular.ttf"};
 
-// int expForNextLevel = 100;
-
-const float spriteFrameTime{0.04};
+const float spriteFrameTime{0.03};
+const float enemyFrameTime{0.2};
+const float SPAWN_CD{5};
 
 const int MAX_WEAPON = 6;
 
@@ -71,10 +76,3 @@ enum Tabs
     Settings,
     Pause
 };
-
-// Player sui;
-// sui.health.value = 50;
-// sui.health.hp = window.loadTexture("res/gfx/hud_HUD_HP_green_0.png");
-// sui.health.base = window.loadTexture("res/gfx/hud_HUD_HP_green_1.png");
-// sui.health.src = {0, 0, 129, 6};
-// sui.arrow = window.loadTexture("res/gfx/spr_Arrow/spr_Arrow_0.png");

@@ -4,6 +4,7 @@
 
 #include "Data.hpp"
 #include "Structure.hpp"
+#include "ResourceManager.hpp"
 
 class Tabs_Title{
     // public:

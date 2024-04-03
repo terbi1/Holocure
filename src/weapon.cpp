@@ -102,6 +102,18 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frameTime = 0.03;
         break;
     }
+    case ELITE_LAVA:
+    {
+        dmgArea.damage = 80;
+        timeBetweenAttacks = 5;
+        dmgArea.attackCount = 1;
+        dmgArea.hitLimit = -1;
+        dmgArea.hitCooldown = 0.75;
+        dmgArea.duration = 2.97;
+        dmgArea.frames = 99;
+        dmgArea.frameTime = 0.03;
+        break;
+    }
     }
 }
 
@@ -252,6 +264,34 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, weapon.flip, weapon.angle);
         return;
     }
+
+    case ELITE_LAVA:
+    {
+        // std::cout << weapon.currentFrame << '\n';
+        if(weapon.currentFrame < 9) 
+        {
+            sprite.getResource(renderer, LavaPoolStart_Animation[weapon.currentFrame].c_str());
+        }
+        else if(weapon.currentFrame > 93)
+        {
+            sprite.getResource(renderer, LavaPoolEnd_Animation[weapon.currentFrame - 94].c_str());
+            std::cout << 0;
+        }
+        else
+        {
+            sprite.getResource(renderer, LavaPool.c_str());
+        }
+
+        SDL_Rect dst;
+        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+        dst.x = weapon.center.x - dst.w / 2 - camX;
+        dst.y = weapon.center.y - dst.h / 2 - camY;
+
+        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
+        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
+        sprite.Render(renderer, weapon.flip, weapon.angle);
+        return;
+    }
     }
 }
 
@@ -271,7 +311,7 @@ int damageCal(DamagingArea weapon, Player player)
     return (int)attackDamage;
 }
 
-void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID, float currentTime)
+void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID)
 {
     --weapon.hitLimit;
     isHit = true;
@@ -279,7 +319,7 @@ void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& 
     weapon.hitID[enemyID] = weapon.hitCooldown;
 }
 
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player, float currentTime)
+bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player)
 {
 
     if (weapon.hitID.find(enemyID) != weapon.hitID.end())
@@ -315,7 +355,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
 
         if (checkAABBCircleCollision(hitBox, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -326,7 +366,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     {
         if (checkCircleCollision(Circle{weapon.center, 107 * 2 / 2}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -337,7 +377,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     {
         if (checkCircleCollision(Circle{weapon.center, 8}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -357,7 +397,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
 
         if (checkAABBCircleCollision(hitBox, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -368,7 +408,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     {
         if (checkCircleCollision(Circle{weapon.center, 20}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -379,7 +419,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     {
         if (checkCircleCollision(Circle{weapon.center, 30}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
     return false;
@@ -390,9 +430,14 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     {
         if (checkCircleCollision(Circle{weapon.center, 28}, enemyCollider))
         {
-            inflictDamage(weapon, player, enemyHealth, isHit, enemyID, currentTime);
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
+        return false;
+    }
+    
+    case ELITE_LAVA:
+    {
         return false;
     }
     }
@@ -400,7 +445,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     return false;
 }
 
-bool hitPlayer(DamagingArea& weapon, Player& player, float currentTime)
+bool hitPlayer(DamagingArea& weapon, Player& player)
 {
     if (weapon.hitID.find(1) != weapon.hitID.end())
         return false;

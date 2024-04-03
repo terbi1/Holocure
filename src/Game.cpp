@@ -120,7 +120,7 @@ void Game::handleEvents()
 // 	}
 // }
 
-void Game::update(float deltaTime, float currentTime)
+void Game::update(float timeStep)
 {
 	switch ((int)currentTab)
 	{
@@ -131,7 +131,7 @@ void Game::update(float deltaTime, float currentTime)
 	case Room1:
 		// playerHUD.HUD_Timer.unpause();
 		// playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
-		gameState.update(deltaTime, currentTime);
+		gameState.update(timeStep);
 		break;
 	}
 }

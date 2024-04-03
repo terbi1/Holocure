@@ -46,9 +46,8 @@ public:
     float cd{0};
     int expValue;
     float frameTime{0.2};
-    float lastFrameTime;
     int frames;
-    DamagingArea bossAttack;
+    float timePassed{0};
 private:
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;

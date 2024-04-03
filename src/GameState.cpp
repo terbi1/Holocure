@@ -21,6 +21,7 @@ void GameState::loadMedia(SDL_Renderer *renderer)
     weapons.push_back(Weapon(BL_BOOK));
     weapons.push_back(Weapon(PSYCHO_AXE));
     weapons.push_back(Weapon(IDOL_SONG));
+    // weapons.push_back(Weapon(ELITE_LAVA));
 
     playerHUD.initHUD(renderer, player.health);
     playerHUD.HUD_Timer.start();
@@ -66,21 +67,39 @@ void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
     if (minuteTimer == 8 && secondTimer == 30)
         spawnPool.erase(DARK_SHRIMP);
 
+    if (minuteTimer == 5 && secondTimer == 0)
+    {
+        spawnPool.insert(BLOOM);
+        spawnPool.insert(GLOOM);
+    }
+    if (minuteTimer == 11 && secondTimer == 0)
+    {
+        spawnPool.erase(BLOOM);
+        spawnPool.erase(GLOOM);
+    }
+
     spawnRate = (minuteTimer * 60 + secondTimer) / 20 + 10;
 }
 
 void GameState::bossSpawn(int minuteTimer, int secondTimer)
 {
-    if(minuteTimer == 0 && secondTimer == 0)
+    if(minuteTimer == 1 && secondTimer == 0)
     {
         spawn(enemies, player.collider.center, FUBUZILLA, EnemyCount);
         ++EnemyCount;
         weapons.push_back(Weapon(FUBU_BEAM));
+        boss = true;
     }
 }
 
-void GameState::update(float timeStep, float currentTime)
+void GameState::update(float timeStep)
 {
+    if (player.health <= 0)
+    {
+        isOver = true;
+        SDL_ResetKeyboard();
+    }
+
     if (pause)
     {
         playerHUD.HUD_Timer.pause();
@@ -98,12 +117,13 @@ void GameState::update(float timeStep, float currentTime)
     if(!boss)
     {
         bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
-        boss = true;
+        
     }
 
     updateSpawnPool(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
 
-    if (currentTime >= lastSpawn + spawnCooldown)
+    spawnCooldown -= timeStep;
+    if (spawnCooldown <= 0)
     {
         int temp = rand() % (int)spawnPool.size();
         std::unordered_set<ENEMY_TYPE>::iterator it;
@@ -112,10 +132,10 @@ void GameState::update(float timeStep, float currentTime)
             ++it;
         for (int i = 0; i < spawnRate; ++i)
         {
-            lastSpawn = currentTime;
+            
             spawn(enemies, player.collider.center, *it, EnemyCount);
             ++EnemyCount;
-            enemies.back().lastFrameTime = currentTime;
+            spawnCooldown = SPAWN_CD;
         }
     }
 
@@ -140,14 +160,18 @@ void GameState::update(float timeStep, float currentTime)
     // enemy move
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
-        it->move(player.collider.center);
-        
-        if(currentTime - it->lastFrameTime >= it->frameTime)
+        // it->timePassed += timeStep;
+        it->frameTime -= timeStep;
+
+        if(it->frameTime <= 0)
         {
             ++it->currentFrame;
             if(it->currentFrame > it->frames) it->currentFrame = 0;
-            it->lastFrameTime = currentTime;
+            it->frameTime = enemyFrameTime;
         }
+
+        it->move(player.collider.center);
+        
         for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
         {
             if (it == it2)
@@ -167,11 +191,7 @@ void GameState::update(float timeStep, float currentTime)
             it->cd = EnemyCD;
             player.health -= it->atk;
             dmgNumbers.push_back(DamageNumber{it->atk,player.collider.center, {255,0,0}});
-            // if (player.health <= 0)
-            // {
-            //     isOver = true;
-            //     SDL_ResetKeyboard();
-            // }
+            
         }
 
         if(it->type == FUBUZILLA)
@@ -184,12 +204,11 @@ void GameState::update(float timeStep, float currentTime)
     // initiate attacks
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        if (currentTime - it->lastAttack < it->timeBetweenAttacks)
-            continue;
+        it->cooldown -= timeStep;
 
-        it->lastAttack = currentTime;
-        it->dmgArea.lastFrameTime = currentTime;
-        it->dmgArea.start = currentTime;
+        if(it->cooldown > 0) continue;
+
+        it->cooldown = it->timeBetweenAttacks;
 
         for(int i = 0; i < it->dmgArea.attackCount; ++i)
         {
@@ -245,6 +264,11 @@ void GameState::update(float timeStep, float currentTime)
             it->dmgArea.flip = temp2;
             break;
         }
+        case ELITE_LAVA:
+        {
+            it->dmgArea.center = player.collider.center;
+            break;
+        }
         }
         activeAttack.push_back(it->dmgArea);
         }
@@ -253,12 +277,23 @@ void GameState::update(float timeStep, float currentTime)
     // active attacks
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
-        if (currentTime - it->start >= it->duration)
+        it->frameTime -= timeStep;
+        it->duration -= timeStep;
+
+        if(it->duration <= 0)
         {
             activeAttack.erase(it);
             --it;
             continue;
         }
+        
+        if(it->frameTime <= 0)
+        {
+            it->frameTime = spriteFrameTime;
+            ++it->currentFrame;
+            if(it->currentFrame > it->frames) it->currentFrame = 0;
+        }
+
         switch ((int)it->weaponID)
         {
         case CEO_TEARS:
@@ -281,7 +316,7 @@ void GameState::update(float timeStep, float currentTime)
         }
         case PSYCHO_AXE:
         {
-            spiralMotion(it->center, player.collider.center, 0.01, currentTime - it->start);
+            spiralMotion(it->center, player.collider.center, 0.01, 3 - it->duration);
             break;
         }
         case IDOL_SONG:
@@ -291,7 +326,7 @@ void GameState::update(float timeStep, float currentTime)
             else temp = -1;
 
             it->center.y += temp;
-            it->center.x = temp * sin((currentTime - it->start) * 10) * 100 + it->direction.x;
+            it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 + it->direction.x;
             
             break;
         }
@@ -300,13 +335,13 @@ void GameState::update(float timeStep, float currentTime)
             it->center = temp;
             break;
         }
-        }
-        if (currentTime - it->lastFrameTime >= it->frameTime)
+        case ELITE_LAVA:
         {
-            it->lastFrameTime = currentTime;
-            ++it->currentFrame;
-            if(it->currentFrame > it->frames) it->currentFrame = 0;
+            it->center = player.collider.center;
+            break;
         }
+        }
+
         if(it->ofPlayer)
         {
         for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
@@ -320,7 +355,7 @@ void GameState::update(float timeStep, float currentTime)
                     it->hitID.erase(it2->ID);
             }
 
-            if(hitEnemy(*it, it2->collider, it2->health, it2->isHit, it2->ID, player, currentTime))
+            if(hitEnemy(*it, it2->collider, it2->health, it2->isHit, it2->ID, player))
             {
 
                 dmgNumbers.push_back(DamageNumber{damageCal(*it, player),it2->collider.center, {255,255,255}});
@@ -336,7 +371,7 @@ void GameState::update(float timeStep, float currentTime)
         }
         else
         {
-            if(hitPlayer(*it, player,currentTime))
+            if(hitPlayer(*it, player))
             dmgNumbers.push_back(DamageNumber{15,player.collider.center, {255,0,0}});
         }
     }

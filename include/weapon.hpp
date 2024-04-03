@@ -23,14 +23,15 @@ enum WEAPON_ID {
     FAN_BEAM,
     BL_BOOK,
     PSYCHO_AXE,
-    IDOL_SONG
+    IDOL_SONG,
+    ELITE_LAVA
 };
 
 struct DamagingArea
 {
     WEAPON_ID weaponID;
     DamagingArea();
-    float timePassed;
+    float timePassed{0};
     float start;
     float duration;
     float damage;
@@ -38,7 +39,7 @@ struct DamagingArea
     Vector2f direction;
     int hitLimit;
     std::unordered_map<int, float> hitID;
-    int currentFrame{0};
+    int currentFrame{-1};
     int frames;
     int attackCount{1};
     float frameTime;
@@ -62,7 +63,7 @@ struct Weapon {
     Vector2f center{0,0};
     std::unordered_set<int> hitID;
     DamagingArea dmgArea;
-    
+    float cooldown{0};
 };
 
 
@@ -72,10 +73,10 @@ int damageCal(DamagingArea weapon, Player player);
 
 // void inflictDamage(DamagingArea& weapon, Player player, Enemy& enemy, float currentTime);
 
-void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID, float currentTime);
+void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID);
 
 // bool hitEnemy(DamagingArea& weapon, Enemy& enemy, Player player, float currentTime);
 
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player, float currentTime);
+bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player);
 
-bool hitPlayer(DamagingArea& weapon, Player& player, float currentTime);
+bool hitPlayer(DamagingArea& weapon, Player& player);

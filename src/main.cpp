@@ -29,7 +29,7 @@ int main(int argc, char *args[])
             accumulator -= timeStep;
 
             game.handleEvents();
-            game.update(timeStep, currentTime);
+            game.update(timeStep);
         }
 
         //start drawing

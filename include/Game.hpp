@@ -20,7 +20,7 @@ public:
     void loadmedia();
     void handleEvents();
     void playMusic();
-    void update(float deltaTime, float currentTime);
+    void update(float timeStep);
     void render();
     void clean();
     bool running()

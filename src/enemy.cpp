@@ -15,7 +15,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 2;
         speed = 0.35;
         expValue = 6;
-        collider.radius = 9;
+        collider.radius = 18;
         frames = 2;
         break;
     }
@@ -25,7 +25,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 4;
         speed = 0.4;
         expValue = 7;
-        collider.radius = 20;
+        collider.radius = 15;
         frames = 2;
         break;
     }
@@ -35,7 +35,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 4;
         speed = 0.4;
         expValue = 8;
-        collider.radius = 17;
+        collider.radius = 18;
         frames = 2;
         break;
     }
@@ -45,7 +45,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 2;
         speed = 1;
         expValue = 3;
-        collider.radius = 9;
+        collider.radius = 14;
         frames = 2;
         break;
     }
@@ -55,7 +55,18 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 5;
         speed = 0.6;
         expValue = 12;
-        collider.radius = 9;
+        collider.radius = 15;
+        frames = 2;
+        break;
+    }
+    case BLOOM:
+    case GLOOM:
+    {
+        health = 30;
+        atk = 6;
+        speed = 0.7;
+        expValue = 12;
+        collider.radius = 15;
         frames = 2;
         break;
     }
@@ -112,6 +123,14 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     case FUBUZILLA:
         currentTexture = Fubuzilla_Animation[frame];
         multiplier = 4;
+        break;
+    case BLOOM:
+        currentTexture = Bloom_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case GLOOM:
+        currentTexture = Gloom_Animation[frame];
+        multiplier = 1.5;
         break;
     }
 
