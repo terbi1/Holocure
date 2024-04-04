@@ -14,13 +14,13 @@ void GameState::loadMedia(SDL_Renderer *renderer)
 {
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(),24);
 
-    weapons.push_back(Weapon(AXE));
-    weapons.push_back(Weapon(SPIDER_COOKING));
-    weapons.push_back(Weapon(CEO_TEARS));
+    // weapons.push_back(Weapon(AXE));
+    // weapons.push_back(Weapon(SPIDER_COOKING));
+    // weapons.push_back(Weapon(CEO_TEARS));
     weapons.push_back(Weapon(FAN_BEAM));
-    weapons.push_back(Weapon(BL_BOOK));
-    weapons.push_back(Weapon(PSYCHO_AXE));
-    weapons.push_back(Weapon(IDOL_SONG));
+    // weapons.push_back(Weapon(BL_BOOK));
+    // weapons.push_back(Weapon(PSYCHO_AXE));
+    // weapons.push_back(Weapon(IDOL_SONG));
     // weapons.push_back(Weapon(ELITE_LAVA));
 
     playerHUD.initHUD(renderer, player.health);
@@ -236,7 +236,7 @@ void GameState::update(float timeStep)
         case FAN_BEAM:
         {
             it->dmgArea.center = player.collider.center;
-            it->dmgArea.flip = player.flip;
+            if(player.flip == SDL_FLIP_HORIZONTAL) it->dmgArea.angle = 180;
             break;
         }
         case BL_BOOK:
@@ -261,12 +261,13 @@ void GameState::update(float timeStep)
         case FUBU_BEAM:
         {
             it->dmgArea.center = temp;
-            it->dmgArea.flip = temp2;
+            if(temp2 == SDL_FLIP_HORIZONTAL) it->dmgArea.angle = 180;
+            // it->dmgArea.flip = temp2;
             break;
         }
         case ELITE_LAVA:
         {
-            it->dmgArea.center = player.collider.center;
+            it->dmgArea.center = Vector2f{randomFloat( - SCREEN_WIDTH / 3, SCREEN_WIDTH / 3), randomFloat(- SCREEN_HEIGHT / 3, SCREEN_HEIGHT / 3)} + player.collider.center;
             break;
         }
         }
@@ -337,7 +338,6 @@ void GameState::update(float timeStep)
         }
         case ELITE_LAVA:
         {
-            it->center = player.collider.center;
             break;
         }
         }
@@ -376,6 +376,7 @@ void GameState::update(float timeStep)
         }
     }
 
+    // create drops
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
         if (it->health <= 0)
@@ -431,7 +432,6 @@ void GameState::render(SDL_Renderer *renderer)
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
 
-    player.render(renderer, player.currentFrame / 2 / player.state, camera.x, camera.y);
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
@@ -449,6 +449,8 @@ void GameState::render(SDL_Renderer *renderer)
         renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
     }
 
+    player.render(renderer, player.currentFrame / 2 / player.state, camera.x, camera.y);
+
     for(auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
     {
         SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
@@ -457,7 +459,6 @@ void GameState::render(SDL_Renderer *renderer)
     }
 
     playerHUD.render(renderer, pause, isOver);
-
 
 }
 

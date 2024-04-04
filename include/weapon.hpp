@@ -32,7 +32,6 @@ struct DamagingArea
     WEAPON_ID weaponID;
     DamagingArea();
     float timePassed{0};
-    float start;
     float duration;
     float damage;
     Vector2f center;
@@ -47,7 +46,7 @@ struct DamagingArea
     int angle{0};
     float radius;
     float hitCooldown;
-    SDL_RendererFlip flip{SDL_FLIP_NONE};
+    // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
     bool ofPlayer{true};
 };
@@ -55,13 +54,8 @@ struct DamagingArea
 struct Weapon {
     WEAPON_ID ID;
     Weapon(WEAPON_ID type);
-    bool isActive{true};
     int level{1};
     float timeBetweenAttacks;
-    float lastAttack{-100};
-    int damage;
-    Vector2f center{0,0};
-    std::unordered_set<int> hitID;
     DamagingArea dmgArea;
     float cooldown{0};
 };
