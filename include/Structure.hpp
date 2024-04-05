@@ -9,6 +9,7 @@
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "math.hpp"
+#include "ResourceManager.hpp"
 
 enum TimeUnit
 {
@@ -121,3 +122,34 @@ struct DamageNumber
 // 		void render(SDL_Renderer* renderer, int x = 0, int y = 0);
 //         bool isInside(int x, int y);
 // };
+
+class LButton
+{
+public:
+LButton();
+LButton(std::string m_text, SDL_Rect m_box)
+	:text(m_text), box(m_box)
+{}
+void render(SDL_Renderer* renderer);
+void setCurrentButton()
+{
+	isCurrentButton = true;
+}
+void notCurrentButton()
+{
+	isCurrentButton = false;
+}
+bool getState()
+{
+	return isCurrentButton;
+}
+bool handleEvent();
+SDL_Rect box;
+
+private:
+std::string texture;
+std::string text{};
+bool isCurrentButton{false};
+// bool isPressed{false};
+// LTexture texture[2];
+};

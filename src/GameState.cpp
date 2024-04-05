@@ -14,10 +14,10 @@ void GameState::loadMedia(SDL_Renderer *renderer)
 {
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(),24);
 
-    // weapons.push_back(Weapon(AXE));
+    weapons.push_back(Weapon(AXE));
     // weapons.push_back(Weapon(SPIDER_COOKING));
     // weapons.push_back(Weapon(CEO_TEARS));
-    weapons.push_back(Weapon(FAN_BEAM));
+    // weapons.push_back(Weapon(FAN_BEAM));
     // weapons.push_back(Weapon(BL_BOOK));
     // weapons.push_back(Weapon(PSYCHO_AXE));
     // weapons.push_back(Weapon(IDOL_SONG));
@@ -248,7 +248,7 @@ void GameState::update(float timeStep)
         }
         case PSYCHO_AXE:
         {
-            it->dmgArea.center = player.collider.center;
+            it->dmgArea.rotatingCenter = player.collider.center;
             break;
         }
         case IDOL_SONG:
@@ -262,7 +262,7 @@ void GameState::update(float timeStep)
         {
             it->dmgArea.center = temp;
             if(temp2 == SDL_FLIP_HORIZONTAL) it->dmgArea.angle = 180;
-            // it->dmgArea.flip = temp2;
+            else it->dmgArea.angle = 0;
             break;
         }
         case ELITE_LAVA:
@@ -317,7 +317,8 @@ void GameState::update(float timeStep)
         }
         case PSYCHO_AXE:
         {
-            spiralMotion(it->center, player.collider.center, 0.01, 3 - it->duration);
+            it->timePassed += timeStep;
+            spiralMotion(it->center, it->rotatingCenter, 0.01, it->timePassed);
             break;
         }
         case IDOL_SONG:
@@ -417,6 +418,8 @@ void GameState::update(float timeStep)
         player.currentExp -= reqNextLevel;
         reqNextLevel = pow(4 * (player.LEVEL + 1), 2.1) - pow(4 * player.LEVEL, 2.1);
         ++player.LEVEL;
+        ++weapons[0].level;
+        weapons[0].updateStats();
     }
     // expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
     // expTopBar.w = player.currentExp / reqNextLevel *(SCREEN_WIDTH +10);

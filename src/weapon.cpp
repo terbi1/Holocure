@@ -18,6 +18,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.damage = 120;
         dmgArea.hitCooldown = 0.5;
         dmgArea.frames = 5;
+        dmgArea.size = {107,144};
         break;
     }
     case SPIDER_COOKING:
@@ -83,6 +84,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.duration = 3;
         dmgArea.frames = 7;
         dmgArea.radius = 100;
+        dmgArea.size = {46,46};
         break;
     }
     case IDOL_SONG:
@@ -110,6 +112,65 @@ Weapon::Weapon(WEAPON_ID type)
     }
 }
 
+void Weapon::setHitLimit(int newHitLimit)
+{
+    dmgArea.hitLimit = newHitLimit;
+}
+
+void Weapon::setDamage(float newDamage)
+{
+    dmgArea.damage = newDamage;
+}
+void Weapon::setAttackInterval(float newInterval)
+{
+    timeBetweenAttacks = newInterval;
+}
+void Weapon::setArea(float areaIncrease)
+{
+    dmgArea.size *= (100.0 + areaIncrease) / 100.0;
+}
+void Weapon::setDuration(float newDuration)
+{
+    dmgArea.duration = newDuration;
+}
+
+void Weapon::setAttackCount(int newCount)
+{
+    dmgArea.attackCount = newCount;
+}
+void Weapon::updateStats()
+{
+    switch((int)ID)
+    {
+        case PSYCHO_AXE:
+        {
+            switch(level)
+            {
+                case 2:
+                setArea(20);
+                setDamage(156);
+                return;
+                case 3:
+                setAttackInterval(3.2);
+                return;
+                case 4:
+                setArea(20);
+                setDamage(207);
+                case 5:
+                setHitLimit(-1);
+                setDuration(4);
+                return;
+                case 6:
+                setArea(50);
+                return;
+                case 7:
+                setDamage(311);
+                return;
+            }
+        }
+    }
+}
+
 void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, int frame, int camX, int camY)
 {
     AnimatedSprite sprite;
@@ -120,32 +181,29 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
 
-        SDL_Rect src;
-        src.x = 0;
-        src.y = 0;
-        src.w = 107;
-        src.h = 144;
+        SDL_Rect src{0,0,107,144};
 
         SDL_Rect dst;
-        dst.w = 107 * 1.5;
-        dst.h = 144 * 1.5;
+        dst.w = weapon.size.x * 1.5;
+        dst.h = weapon.size.y * 1.5;
         dst.x = weapon.center.x - camX;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
         switch (weapon.angle)
         {
         case 0:
+            dst.x -= dst.w / 8;
             break;
         case 180:
-            dst.x += -dst.w;
+            dst.x += -dst.w + dst.w / 8;
             break;
         case -90:
             dst.x += -dst.w / 2;
-            dst.y += -dst.w / 2;
+            dst.y += -dst.w / 2 + dst.h / 8;
             break;
         case 90:
             dst.x += -dst.w / 2;
-            dst.y += dst.w / 2;
+            dst.y += dst.w / 2 - dst.h / 8;
             break;
         }
 
@@ -209,7 +267,7 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, PsychoAxe_Animation[weapon.currentFrame].c_str());
 
-        sprite.Draw(weapon.center.x - 46 - camX, weapon.center.y - 46 - camY, 92, 92);
+        sprite.Draw(weapon.center.x - weapon.size.x - camX, weapon.center.y - weapon.size.y - camY, weapon.size.x * 2, weapon.size.y * 2);
         sprite.PlayFrame(0, 0, 46, 46, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
@@ -317,26 +375,27 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     case AXE:
     {
         SDL_Rect hitBox;
-        hitBox.w = 107 * 1.5;
-        hitBox.h = 144 * 1.5;
+        hitBox.w = weapon.size.x * 1.5;
+        hitBox.h = weapon.size.y * 1.5;
         hitBox.x = weapon.center.x;
         hitBox.y = weapon.center.y - hitBox.h / 2;
         switch (weapon.angle)
         {
         case 0:
+            hitBox.x -= hitBox.w / 8;
             break;
         case 180:
-            hitBox.x -= hitBox.w;
+            hitBox.x -= hitBox.w + hitBox.w / 8;
             break;
         case -90:
             std::swap(hitBox.w, hitBox.h);
             hitBox.x -= hitBox.w / 2;
-            hitBox.y -= -hitBox.w / 2 + hitBox.h;
+            hitBox.y -= -hitBox.w / 2 + hitBox.h - hitBox.h / 8;
             break;
         case 90:
             std::swap(hitBox.w, hitBox.h);
             hitBox.x -= hitBox.w / 2;
-            hitBox.y -= -hitBox.w / 2;
+            hitBox.y -= -hitBox.w / 2 + hitBox.h / 8;
             break;
         }
 
@@ -393,7 +452,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
     }
     case PSYCHO_AXE:
     {
-        if (checkCircleCollision(Circle{weapon.center, 30}, enemyCollider))
+        if (checkCircleCollision(Circle{weapon.center, weapon.size.x * 2 / 3}, enemyCollider))
         {
             inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;

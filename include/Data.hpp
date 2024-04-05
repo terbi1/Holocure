@@ -18,6 +18,7 @@ const std::string EXP_Drop[6]{"res/gfx/spr_EXP/spr_EXP_0.png", "res/gfx/spr_EXP/
 const std::string Black_Screen{"res/gfx/rm_PauseRoom.png"};
 const std::string Pause_Menu{"res/gfx/hud_pausemenu.png"};
 const std::string HealthBar[2]{"res/gfx/hud_HUD_HP_green_1.png", "res/gfx/hud_HUD_HP_green_0.png"};
+const std::string Button[2]{"res/gfx/hud_initButtons/hud_initButtons_0.png", "res/gfx/hud_initButtons/hud_initButtons_1.png"};
 
 #pragma endregion
 

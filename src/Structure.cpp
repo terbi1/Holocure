@@ -253,6 +253,7 @@ bool LTimer::isPaused()
 
 #pragma endregion LTimer
 
+#pragma region DamageNumber
 
 void DamageNumber::render(SDL_Renderer* renderer, TTF_Font* font, LTexture textureText, int camX, int camY)
 {
@@ -268,6 +269,9 @@ void DamageNumber::update(float timeStep)
     dmgBox.y -= 1;
     duration -= timeStep;
 }
+
+#pragma endregion
+
 // FPS_Processor::FPS_Processor()
 // {
 // 	countedFrames = 0;
@@ -445,3 +449,29 @@ void DamageNumber::update(float timeStep)
 // 	}
 // 	return true;
 // }
+
+LButton::LButton()
+{}
+
+void LButton::render(SDL_Renderer* renderer)
+{
+	// if(!isCurrentButton) texture[0].render(renderer, &box);
+	// else texture[0].render(renderer, &box);
+
+	if(!isCurrentButton) texture = Button[0];
+	else texture = Button[1]; 
+
+	SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(texture, renderer), NULL, &box);
+}
+
+bool LButton::handleEvent()
+{
+	const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
+
+	if(currentKeyStates[SDL_SCANCODE_Z] || currentKeyStates[SDL_SCANCODE_KP_ENTER])
+	{
+		return true;
+	}
+
+	return false;
+}
