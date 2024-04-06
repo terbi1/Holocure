@@ -24,7 +24,8 @@ enum WEAPON_ID {
     BL_BOOK,
     PSYCHO_AXE,
     IDOL_SONG,
-    ELITE_LAVA
+    ELITE_LAVA,
+    FALLING_BLOCKS
 };
 
 struct DamagingArea
@@ -47,6 +48,7 @@ struct DamagingArea
     float lastFrameTime{-100};
     int angle{0};
     float radius;
+    float fallTime;
     float hitCooldown;
     // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
@@ -60,6 +62,7 @@ struct Weapon {
     float timeBetweenAttacks;
     DamagingArea dmgArea;
     float cooldown{0};
+    float specialDuration[2] = {5,5};
     void setHitLimit(int hitLimit);
     void setDamage(float damage);
     void setAttackInterval(float interval);

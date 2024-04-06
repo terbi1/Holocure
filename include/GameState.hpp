@@ -38,6 +38,7 @@ public:
     void handleEvent();
     void startCD();
     bool gameOver();
+    float specialCD{0};
     int EnemyCount{0};
     Player getPlayer() {
         return player;

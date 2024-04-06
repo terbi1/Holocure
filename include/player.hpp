@@ -43,6 +43,7 @@ public:
     float atk{130};
     float crit{10};
     float critMod{50};
+    float specialCD{10};
 private:
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     float SPEED {1.3};

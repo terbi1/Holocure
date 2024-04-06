@@ -122,6 +122,7 @@ void GameState::update(float timeStep)
     updateSpawnPool(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
 
     spawnCooldown -= timeStep;
+
     if (spawnCooldown <= 0)
     {
         int temp = rand() % (int)spawnPool.size();
@@ -155,6 +156,7 @@ void GameState::update(float timeStep)
     SDL_RendererFlip temp2;
     player.move();
     moved = player.collider.center - temp;
+    if(specialCD > 0) specialCD -= timeStep;
 
     // enemy move
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
@@ -269,6 +271,22 @@ void GameState::update(float timeStep)
             it->dmgArea.center = Vector2f{randomFloat( - SCREEN_WIDTH / 3, SCREEN_WIDTH / 3), randomFloat(- SCREEN_HEIGHT / 3, SCREEN_HEIGHT / 3)} + player.collider.center;
             break;
         }
+        case FALLING_BLOCKS:
+        {
+            it->specialDuration[1] -= it->timeBetweenAttacks;
+            if(it->specialDuration[1] <= 0)
+            {
+                it->specialDuration[1] = it->specialDuration[0];
+                weapons.erase(it);
+                --it;
+                continue;
+            }
+            it->dmgArea.center = Vector2f{randomInt(-4, 4) * 128, - SCREEN_HEIGHT / 2} + player.collider.center;
+            it->dmgArea.fallTime = (rand() % 4 + 1) * 0.5;
+            it->dmgArea.count = rand() % 4;
+            std::cout << it->dmgArea.fallTime << '\n';
+            break;
+        }
         }
         activeAttack.push_back(it->dmgArea);
         }
@@ -338,6 +356,15 @@ void GameState::update(float timeStep)
         }
         case ELITE_LAVA:
         {
+            break;
+        }
+        case FALLING_BLOCKS:
+        {
+            if(it->fallTime > 0) 
+            {
+                it->center.y += 5;
+                it->fallTime -= timeStep;
+            }
             break;
         }
         }
@@ -476,11 +503,17 @@ void GameState::reset()
 
 void GameState::handleEvent()
 {
+    
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_ESCAPE] && !pause && !isOver)
     {
         pause = true;
+    }
+    else if(currentKeyStates[SDL_SCANCODE_X] && specialCD <= 0)
+    {
+        weapons.push_back(Weapon(FALLING_BLOCKS));
+        specialCD = player.specialCD;
     }
     // else if (currentKeyStates[SDL_SCANCODE_X] && pause)
     // {
@@ -495,10 +528,9 @@ void GameState::handleEvent()
         return;
     }
 
-    // direct = Room1;
 
-    if (pause)
-        return;
+    if (pause) return;
 
     player.handleEvent();
+
 }

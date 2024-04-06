@@ -18,7 +18,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.damage = 120;
         dmgArea.hitCooldown = 0.5;
         dmgArea.frames = 5;
-        dmgArea.size = {107,144};
+        dmgArea.size = {107, 144};
         break;
     }
     case SPIDER_COOKING:
@@ -84,7 +84,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.duration = 3;
         dmgArea.frames = 7;
         dmgArea.radius = 100;
-        dmgArea.size = {46,46};
+        dmgArea.size = {46, 46};
         break;
     }
     case IDOL_SONG:
@@ -107,6 +107,17 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 0.75;
         dmgArea.duration = 3;
         dmgArea.frames = 99;
+        break;
+    }
+    case FALLING_BLOCKS:
+    {
+        dmgArea.damage = 300;
+        timeBetweenAttacks = 0.25;
+        dmgArea.attackCount = 1;
+        dmgArea.hitLimit = 10;
+        dmgArea.hitCooldown = 2;
+        dmgArea.duration = 2;
+        dmgArea.frames = 0;
         break;
     }
     }
@@ -140,34 +151,34 @@ void Weapon::setAttackCount(int newCount)
 }
 void Weapon::updateStats()
 {
-    switch((int)ID)
+    switch ((int)ID)
     {
-        case PSYCHO_AXE:
+    case PSYCHO_AXE:
+    {
+        switch (level)
         {
-            switch(level)
-            {
-                case 2:
-                setArea(20);
-                setDamage(156);
-                return;
-                case 3:
-                setAttackInterval(3.2);
-                return;
-                case 4:
-                setArea(20);
-                setDamage(207);
-                case 5:
-                setHitLimit(-1);
-                setDuration(4);
-                return;
-                case 6:
-                setArea(50);
-                return;
-                case 7:
-                setDamage(311);
-                return;
-            }
+        case 2:
+            setArea(20);
+            setDamage(156);
+            return;
+        case 3:
+            setAttackInterval(3.2);
+            return;
+        case 4:
+            setArea(20);
+            setDamage(207);
+        case 5:
+            setHitLimit(-1);
+            setDuration(4);
+            return;
+        case 6:
+            setArea(50);
+            return;
+        case 7:
+            setDamage(311);
+            return;
         }
+    }
     }
 }
 
@@ -181,7 +192,7 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
 
-        SDL_Rect src{0,0,107,144};
+        SDL_Rect src{0, 0, 107, 144};
 
         SDL_Rect dst;
         dst.w = weapon.size.x * 1.5;
@@ -189,30 +200,46 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         dst.x = weapon.center.x - camX;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
+        SDL_Rect hitBox;
+        hitBox.w = weapon.size.x * 1.5;
+        hitBox.h = weapon.size.y * 1.5;
+        hitBox.x = weapon.center.x;
+        hitBox.y = weapon.center.y - hitBox.h / 2;
+
         switch (weapon.angle)
         {
         case 0:
+            hitBox.x -= hitBox.w / 8;
             dst.x -= dst.w / 8;
             break;
         case 180:
+            hitBox.x -= hitBox.w - hitBox.w / 8;
             dst.x += -dst.w + dst.w / 8;
             break;
         case -90:
+            std::swap(hitBox.w, hitBox.h);
+            hitBox.x -= hitBox.w / 2;
+            hitBox.y -= -hitBox.w / 2 + hitBox.h - hitBox.h / 8;
             dst.x += -dst.w / 2;
             dst.y += -dst.w / 2 + dst.h / 8;
             break;
         case 90:
+            std::swap(hitBox.w, hitBox.h);
+            hitBox.x -= hitBox.w / 2;
+            hitBox.y -= -hitBox.w / 2 + hitBox.h / 8;
             dst.x += -dst.w / 2;
             dst.y += dst.w / 2 - dst.h / 8;
             break;
         }
-
+        hitBox.x -= camX;
+        hitBox.y -= camY;
         sprite.Draw(dst.x, dst.y, dst.w, dst.h);
         sprite.PlayFrame(src.x, src.y, src.w, src.h, frame);
         sprite.Render(renderer, SDL_FLIP_NONE, weapon.angle);
+        SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+        SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
-
     case SPIDER_COOKING:
 
     {
@@ -224,7 +251,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
-
     case CEO_TEARS:
     {
         sprite.getResource(renderer, "res/gfx/spr_CEOTears.png");
@@ -234,7 +260,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
-
     case FAN_BEAM:
     {
 
@@ -245,14 +270,14 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         dst.x = weapon.center.x - camX + 50;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
-        if (weapon.angle == 180) dst.x += -dst.w - 100;
+        if (weapon.angle == 180)
+            dst.x += -dst.w - 100;
 
         sprite.Draw(dst.x, dst.y, dst.w, dst.h);
         sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, weapon.angle);
         return;
     }
-
     case BL_BOOK:
     {
         sprite.getResource(renderer, BLBook_Animation.c_str());
@@ -262,7 +287,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
-
     case PSYCHO_AXE:
     {
         sprite.getResource(renderer, PsychoAxe_Animation[weapon.currentFrame].c_str());
@@ -272,7 +296,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
-
     case IDOL_SONG:
     {
         sprite.getResource(renderer, IdolSong_Animation.c_str());
@@ -284,15 +307,16 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     }
     case FUBU_BEAM:
     {
-        if(weapon.currentFrame < 30)
+        if (weapon.currentFrame < 30)
         {
             SDL_Rect dst;
             dst.w = SCREEN_WIDTH;
             dst.h = 234;
             dst.x = weapon.center.x - camX + 120;
             dst.y = weapon.center.y - dst.h / 2 - camY;
-            if (weapon.angle == 180) dst.x += -dst.w - 230;
-            SDL_SetRenderDrawColor(renderer, 255,0,0, 50 * (weapon.currentFrame / 3 % 2 + 1));
+            if (weapon.angle == 180)
+                dst.x += -dst.w - 230;
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 50 * (weapon.currentFrame / 3 % 2 + 1));
             SDL_RenderFillRect(renderer, &dst);
             return;
         }
@@ -305,21 +329,21 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         dst.x = weapon.center.x - camX + 120;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
-        if (weapon.angle == 180) dst.x += -dst.w - 230;
+        if (weapon.angle == 180)
+            dst.x += -dst.w - 230;
 
         sprite.Draw(dst.x, dst.y, dst.w, dst.h);
         sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, weapon.angle);
         return;
     }
-
     case ELITE_LAVA:
     {
-        if(weapon.currentFrame < 9) 
+        if (weapon.currentFrame < 9)
         {
             sprite.getResource(renderer, LavaPoolStart_Animation[weapon.currentFrame].c_str());
         }
-        else if(weapon.currentFrame > weapon.frames - 6)
+        else if (weapon.currentFrame > weapon.frames - 6)
         {
             sprite.getResource(renderer, LavaPoolEnd_Animation[weapon.currentFrame - (weapon.frames - 5)].c_str());
         }
@@ -330,13 +354,22 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
 
         SDL_Rect dst;
         SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
-        dst.w *= 2; dst.h *= 2;
+        dst.w *= 2;
+        dst.h *= 2;
         dst.x = weapon.center.x - dst.w / 2 - camX;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
         sprite.Draw(dst.x, dst.y, dst.w, dst.h);
         sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, weapon.angle);
+        return;
+    }
+    case FALLING_BLOCKS:
+    {
+        sprite.getResource(renderer, SuiseiFallingBlocks[weapon.count].c_str());
+        sprite.Draw(weapon.center.x - 64 - camX, weapon.center.y - 64 - camY, 128, 128);
+        sprite.PlayFrame(0, 0, 22, 22, 0);
+        sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
     }
     }
@@ -358,7 +391,7 @@ int damageCal(DamagingArea weapon, Player player)
     return (int)attackDamage;
 }
 
-void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID)
+void inflictDamage(DamagingArea &weapon, Player player, int &enemyHealth, bool &isHit, int enemyID)
 {
     --weapon.hitLimit;
     isHit = true;
@@ -366,9 +399,10 @@ void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& 
     weapon.hitID[enemyID] = weapon.hitCooldown;
 }
 
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player)
+bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool &isHit, int enemyID, Player player)
 {
-    if (weapon.hitID.find(enemyID) != weapon.hitID.end()) return false;
+    if (weapon.hitID.find(enemyID) != weapon.hitID.end())
+        return false;
 
     switch ((int)weapon.weaponID)
     {
@@ -432,7 +466,8 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
         hitBox.x = weapon.center.x + 50;
         hitBox.y = weapon.center.y - hitBox.h / 2;
 
-        if (weapon.angle == 180) hitBox.x += -hitBox.w - 100;
+        if (weapon.angle == 180)
+            hitBox.x += -hitBox.w - 100;
 
         if (checkAABBCircleCollision(hitBox, enemyCollider))
         {
@@ -457,7 +492,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
             inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;
         }
-    return false;
+        return false;
     }
     case IDOL_SONG:
     {
@@ -477,14 +512,19 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
         }
         return false;
     }
+    case FALLING_BLOCKS:
+    {
+        return false;
+    }
     }
 
     return false;
 }
 
-bool hitPlayer(DamagingArea& weapon, Player& player)
+bool hitPlayer(DamagingArea &weapon, Player &player)
 {
-    if (weapon.hitID.find(1) != weapon.hitID.end()) return false;
+    if (weapon.hitID.find(1) != weapon.hitID.end())
+        return false;
 
     switch ((int)weapon.weaponID)
     {
