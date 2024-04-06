@@ -15,7 +15,7 @@ public:
     ~Tabs_Title();
     Tabs getDirect();
     void resetDirect();
-    void handleEvents();
+    void handleEvents(bool &isRunning);
     void setUpMenu(SDL_Renderer* renderer);
     void render(SDL_Renderer* renderer);
     LButton button[2];

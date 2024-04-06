@@ -40,9 +40,11 @@ struct HUD
     Uint32 second;
     SDL_Rect portraitRectSRC{0, 0, 43, 24};
     SDL_Rect portraitRectDST{0, 40, 86, 48};
-    SDL_Rect levelRect{940, 5, 75, 25};
-    SDL_Rect timeRect{SCREEN_WIDTH / 2 - 50, 50, 100, 25};
     SDL_Rect pauseRect{(int)(SCREEN_WIDTH / 2 - 128 * 1.5 / 2), (int)(SCREEN_HEIGHT / 2 - 245 * 1.5 / 2), (int)(128 * 1.5), (int)(245 * 1.5)};
     SDL_Rect overRect{SCREEN_WIDTH / 2 - 150, 100, 300, 50};
-    LTexture textureText; 
+    LTexture textureText;
+    int totalButtons{2};
+    LButton button[2];
+    int currentButton{0};
+    void handleEvents(bool &isRunning, Tabs& direct);
 };

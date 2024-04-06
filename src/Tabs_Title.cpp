@@ -35,11 +35,14 @@ void Tabs_Title::render(SDL_Renderer* renderer) {
     button[1].render(renderer, titleFont);
 }
 
-void Tabs_Title::handleEvents() {
+void Tabs_Title::handleEvents(bool &isRunning) {
+    direct = Title;    
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
-    if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER])
+    if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER] || currentKeyStates[SDL_SCANCODE_Z])
     {
-        direct = Room1;
+        if(button[0].getState()) direct = Room1;
+        else if(button[1].getState()) isRunning = false;
+
         return;
     }
     else if (currentKeyStates[SDL_SCANCODE_UP])
@@ -52,5 +55,4 @@ void Tabs_Title::handleEvents() {
     }
 
     SDL_ResetKeyboard();
-    direct = Title;    
 }

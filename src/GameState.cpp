@@ -478,14 +478,15 @@ void GameState::handleEvent()
 {
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
-    if (currentKeyStates[SDL_SCANCODE_ESCAPE] && !pause)
+    if (currentKeyStates[SDL_SCANCODE_ESCAPE] && !pause && !isOver)
     {
         pause = true;
     }
-    else if (currentKeyStates[SDL_SCANCODE_X] && pause)
-    {
-        pause = false;
-    }
+    // else if (currentKeyStates[SDL_SCANCODE_X] && pause)
+    // {
+    //     pause = false;
+    // }
+    playerHUD.handleEvents(pause, direct);
 
     if (currentKeyStates[SDL_SCANCODE_Z] && isOver)
     {
@@ -494,7 +495,7 @@ void GameState::handleEvent()
         return;
     }
 
-    direct = Room1;
+    // direct = Room1;
 
     if (pause)
         return;
