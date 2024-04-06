@@ -11,7 +11,7 @@ HUD::~HUD()
 
 void HUD::initHUD(SDL_Renderer* renderer, int health) 
 {
-    HUD_font = TTF_OpenFont(font_8bitPLus.c_str(),12);
+    HUD_font = TTF_OpenFont(font_8bitPLus.c_str(),28);
     expBar[0].loadFromFile(HUD_expBarBase, renderer);
     expBar[1].loadFromFile(HUD_expBarTop, renderer);
     portrait.loadFromFile(Portrait_Suisei, renderer);
@@ -32,12 +32,12 @@ void HUD::update(Player player, int reqNextLevel)
     expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
     expTopBar.w = player.currentExp / reqNextLevel * (SCREEN_WIDTH + 10);
     levelText.str("");
-    levelText << "LV: "<< player.LEVEL;
+    levelText << "LV:"<< player.LEVEL;
     timeText.str("");
     minute = HUD_Timer.getTicks(Minute);
     second = HUD_Timer.getTicks(Second) - minute * 60;
     if (minute < 10) timeText << 0;
-    timeText << minute << ":";
+    timeText << minute << " : ";
     if (second < 10) timeText << 0;
     timeText << second;
 }
@@ -65,9 +65,6 @@ void HUD::render(SDL_Renderer* renderer, bool pause, bool isOver)
     hp[0].render(renderer, &hpBaseBar);
     hp[1].render(renderer, &hpTopBar);
 
-    textureText.loadFromRenderedText(levelText.str().c_str(),{255,255,255},HUD_font, renderer);
-    textureText.render(renderer, &levelRect);
-
-    textureText.loadFromRenderedText(timeText.str().c_str(),{255,255,255},HUD_font, renderer);
-    textureText.render(renderer, &timeRect);  
+    textureText.renderText(levelText.str().c_str(), {255,255,255}, HUD_font, renderer, 940, 10, 28);
+    textureText.renderText(timeText.str().c_str(), {255,255,255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 70, 50, 36);
 }

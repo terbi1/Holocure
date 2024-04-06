@@ -385,7 +385,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool&
             hitBox.x -= hitBox.w / 8;
             break;
         case 180:
-            hitBox.x -= hitBox.w + hitBox.w / 8;
+            hitBox.x -= hitBox.w - hitBox.w / 8;
             break;
         case -90:
             std::swap(hitBox.w, hitBox.h);

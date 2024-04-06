@@ -23,23 +23,22 @@ class LTexture
 public:
 	LTexture();
 	~LTexture();
-
-	void importTexture(SDL_Texture* texture);
 	bool loadFromFile( std::string path, SDL_Renderer* gRenderer );
-	
+	void importTexture(SDL_Texture* texture);
+	void getResource(SDL_Renderer* renderer, const char* filepath);
 	bool loadFromRenderedText( std::string textureText, SDL_Color textColor, TTF_Font* gFont1, SDL_Renderer* gRenderer );
 	void free();
 	void setColor( Uint8 red, Uint8 green, Uint8 blue );
 	void setBlendMode( SDL_BlendMode blending );
 	void setAlpha( Uint8 alpha );
-	
 	void render(SDL_Renderer* gRenderer, SDL_Rect* renderQuad = NULL, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE );
+	void renderText(std::string textureText, SDL_Color textColor, TTF_Font* gFont, SDL_Renderer* gRenderer, int x, int y, int size);
 	void renderF(SDL_Renderer* gRenderer, SDL_FRect* renderQuad = NULL, SDL_Rect* clip = NULL, double angle = 0.0, SDL_FPoint* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE );
 	int getWidth();
 	int getHeight();
 	SDL_Texture* getTexture();
-private:
 	SDL_Texture* mTexture;
+private:
 	int mWidth;
 	int mHeight;
 };
@@ -127,10 +126,13 @@ class LButton
 {
 public:
 LButton();
-LButton(std::string m_text, SDL_Rect m_box)
-	:text(m_text), box(m_box)
+// LButton(std::string m_text, SDL_Rect m_box)
+// 	:text(m_text), box(m_box)
+// {}
+LButton(std::string m_text, Vector2f m_center, Vector2f m_size)
+	:text(m_text), center(m_center), size(m_size)
 {}
-void render(SDL_Renderer* renderer);
+void render(SDL_Renderer* renderer, TTF_Font* font);
 void setCurrentButton()
 {
 	isCurrentButton = true;
@@ -144,9 +146,13 @@ bool getState()
 	return isCurrentButton;
 }
 bool handleEvent();
-SDL_Rect box;
 
 private:
+SDL_Rect box;
+Vector2f center;
+Vector2f size;
+SDL_Color color;
+LTexture textureText;
 std::string texture;
 std::string text{};
 bool isCurrentButton{false};

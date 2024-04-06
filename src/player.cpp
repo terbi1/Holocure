@@ -96,31 +96,19 @@ void Player::move()
 
 void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 {
-
     SDL_Rect dst;
     dst.x = collider.center.x - camX - 48;
     dst.y = collider.center.y - camY - 54;
-
-    // SDL_Rect hitBoxDST = {collider.center.x - 75, collider.center.y - 75, 150, 150};
-    // hitBoxDST.x -= camX;
-    // hitBoxDST.y -= camY;
 
     switch((int)state)
     {
         case IDLE: animation.importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[frame].c_str(), renderer)); break;
         case RUN: animation.importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[frame].c_str(), renderer)); break;
     }
-    
     SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
     dst.w *= 1.5;
     dst.h *= 1.5;
     SDL_RenderCopyEx(renderer, ResourceManager::getInstance().getTexture(PlayerArrow, renderer), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
     dst.y -= 20;
     SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
-
-    // SDL_SetRenderDrawColor(renderer, 0xFF, 0, 0, 0xFF);
-    // SDL_RenderDrawPoint(renderer, pos.x + 32 - camX, pos.y + 32 - camY);
-    // SDL_RenderDrawPoint(renderer, collider.center.x - camX, collider.center.y - camY);
-
-    // SDL_RenderDrawRect(renderer, &hitBoxDST);
 }
