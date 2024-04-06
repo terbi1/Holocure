@@ -13,9 +13,12 @@ Tabs Tabs_Title::getDirect() {
 
 
 void Tabs_Title::setUpMenu(SDL_Renderer* renderer) {
+    titleFont = TTF_OpenFont(font_8bitPLus.c_str(),12);
     titleBackground.loadFromFile(BG_Title, renderer);
-    button[0] = LButton{"Play",SDL_Rect{700,200,250,52}};
-    button[1] = LButton{"Quit",SDL_Rect{700,260,250,52}};
+    // button[1] = LButton{"Quit",SDL_Rect{700,260,250,52}};
+    // button[0] = LButton{"Play",SDL_Rect{700,200,250,52}};
+    button[1] = LButton{"Quit",Vector2f{825, 286}, Vector2f{250,52}};
+    button[0] = LButton{"Play",Vector2f{825, 226}, Vector2f{250,52}};
     button[0].setCurrentButton();
 }
 
@@ -28,8 +31,8 @@ void Tabs_Title::render(SDL_Renderer* renderer) {
     }
     SDL_Rect renderQuad {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
     titleBackground.render(renderer, &renderQuad);
-    button[0].render(renderer);
-    button[1].render(renderer);
+    button[0].render(renderer, titleFont);
+    button[1].render(renderer, titleFont);
 }
 
 void Tabs_Title::handleEvents() {

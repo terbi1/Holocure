@@ -62,6 +62,8 @@ const std::string Fubuzilla_Animation[12]{"res/gfx/spr_fubuzilla/spr_fubuzilla_0
 #pragma endregion
 
 const std::string font_8bitPLus{"res/gfx/font/8bitOperatorPlus8-Regular.ttf"};
+const std::string font_munro{"res/gfx/font/munro.ttf"};
+const std::string font_ModernDOS8x8{"res/gfx/font/ModernDOS8x8.ttf"};
 
 const float spriteFrameTime{0.03};
 const float enemyFrameTime{0.2};

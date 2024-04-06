@@ -24,4 +24,5 @@ private:
     int totalButtons{2};
     Tabs direct{Title};
     int currentButton{0};
+    TTF_Font* titleFont;
 };

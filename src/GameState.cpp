@@ -7,7 +7,6 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-
 }
 
 void GameState::loadMedia(SDL_Renderer *renderer)

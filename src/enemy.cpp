@@ -25,7 +25,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 4;
         speed = 0.4;
         expValue = 7;
-        collider.radius = 15;
+        collider.radius = 21;
         frames = 2;
         break;
     }
@@ -106,7 +106,7 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     case DEADBEAT:
         currentTexture = Deadbeat_Animation[frame];
-        multiplier = 1.5;
+        multiplier = 2;
         break;
     case TAKODACHI:
         currentTexture = Takodachi_Animation[frame];

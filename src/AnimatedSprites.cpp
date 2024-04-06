@@ -13,6 +13,7 @@ void AnimatedSprite::getResource(SDL_Renderer* renderer, const char* filepath){
 // Destructor
 AnimatedSprite::~AnimatedSprite(){
     SDL_DestroyTexture(m_texture);
+    m_texture = NULL;
 }
 
 void AnimatedSprite::Draw(int x, int y, int w, int h){

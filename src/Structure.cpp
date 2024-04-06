@@ -126,6 +126,35 @@ void LTexture::render(SDL_Renderer* gRenderer, SDL_Rect* renderQuad, SDL_Rect* c
 	SDL_RenderCopyEx( gRenderer, mTexture, clip, renderQuad, angle, center, flip );
 }
 
+void LTexture::renderText(std::string textureText, SDL_Color textColor, TTF_Font* gFont, SDL_Renderer* gRenderer, int x, int y, int size)
+{
+	free();
+
+	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
+	if( textSurface == NULL ) {
+        std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << '\n';
+        return;
+    }
+
+    mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+
+	if( mTexture == NULL )
+	{
+		std::cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << '\n';
+        return;
+	}
+	
+	mWidth = textSurface->w;
+	mHeight = textSurface->h;
+	
+	SDL_FreeSurface( textSurface );
+
+	SDL_Rect textBox{x,y,0,0};
+	TTF_SetFontSize(gFont, size);
+	TTF_SizeText(gFont, textureText.c_str(), &textBox.w, &textBox.h);
+	SDL_RenderCopy(gRenderer, mTexture, NULL, &textBox);
+}
+
 void LTexture::renderF(SDL_Renderer* gRenderer, SDL_FRect* renderQuad, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip )
 {
     if(renderQuad == NULL) {
@@ -259,9 +288,7 @@ void DamageNumber::render(SDL_Renderer* renderer, TTF_Font* font, LTexture textu
 {
 	dmgBox.x -= camX;
 	dmgBox.y -= camY;
-	std::string dmgText = std::to_string(dmg);
-    textureText.loadFromRenderedText(dmgText,color,font, renderer);
-    textureText.render(renderer, &dmgBox);
+	textureText.renderText(std::to_string(dmg), color, font, renderer, dmgBox.x, dmgBox.y, 8);
 }
 
 void DamageNumber::update(float timeStep)
@@ -453,15 +480,37 @@ void DamageNumber::update(float timeStep)
 LButton::LButton()
 {}
 
-void LButton::render(SDL_Renderer* renderer)
+void LButton::render(SDL_Renderer* renderer, TTF_Font* font)
 {
 	// if(!isCurrentButton) texture[0].render(renderer, &box);
 	// else texture[0].render(renderer, &box);
 
-	if(!isCurrentButton) texture = Button[0];
-	else texture = Button[1]; 
+	SDL_Rect renderBox;
 
-	SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(texture, renderer), NULL, &box);
+	if(!isCurrentButton) 
+	{
+		texture = Button[0]; 
+		color = {255,255,255};
+		renderBox.x = center.x - size.x / 2;
+		renderBox.y = center.y - size.y / 2;
+		renderBox.w = size.x;
+		renderBox.h = size.y;
+	}
+	else 
+	{
+		texture = Button[1];  
+		color = {0,0,0};
+		renderBox.x = center.x - size.x * 1.1 / 2;
+		renderBox.y = center.y - size.y / 2;
+		renderBox.w = size.x * 1.1;
+		renderBox.h = size.y;
+	}
+
+	SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(texture, renderer), NULL, &renderBox);
+	int tempW, tempH;
+	TTF_SetFontSize(font,24);
+	TTF_SizeText(font, text.c_str(), &tempW, &tempH);
+	textureText.renderText(text, color, font, renderer, renderBox.x + renderBox.w / 2 - tempW / 2, renderBox.y + renderBox.h / 2 - tempH / 2, 24);
 }
 
 bool LButton::handleEvent()
