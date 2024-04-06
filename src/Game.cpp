@@ -78,7 +78,7 @@ void Game::handleEvents()
 	switch ((int)currentTab)
 	{
 	case Title:
-		tabs_title.handleEvents();
+		tabs_title.handleEvents(isRunning);
 		currentTab = tabs_title.getDirect();
 		break;
 	case Room1:
