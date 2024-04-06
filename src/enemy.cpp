@@ -15,7 +15,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 2;
         speed = 0.35;
         expValue = 6;
-        collider.radius = 18;
+        collider.radius = 21;
         frames = 2;
         break;
     }
@@ -55,7 +55,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 5;
         speed = 0.6;
         expValue = 12;
-        collider.radius = 15;
+        collider.radius = 21;
         frames = 2;
         break;
     }
