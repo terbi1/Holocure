@@ -281,9 +281,9 @@ void GameState::update(float timeStep)
                 --it;
                 continue;
             }
-            it->dmgArea.center = Vector2f{randomInt(-4, 4) * 128, - SCREEN_HEIGHT / 2} + player.collider.center;
-            it->dmgArea.fallTime = (rand() % 4 + 1) * 0.5;
-            it->dmgArea.count = rand() % 4;
+            it->dmgArea.center = Vector2f{randomInt(-5, 5) * 98, - SCREEN_HEIGHT / 2} + player.collider.center;
+            it->dmgArea.fallTime = (rand() % 7 + 1) * 0.24;
+            it->dmgArea.count = rand() % 12;
             std::cout << it->dmgArea.fallTime << '\n';
             break;
         }
@@ -362,7 +362,7 @@ void GameState::update(float timeStep)
         {
             if(it->fallTime > 0) 
             {
-                it->center.y += 5;
+                it->center.y += 4;
                 it->fallTime -= timeStep;
             }
             break;

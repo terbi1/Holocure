@@ -35,7 +35,7 @@ void AnimatedSprite::Update(){
 
 }
 
-void AnimatedSprite::Render(SDL_Renderer*& renderer, SDL_RendererFlip flip,float angle){
+void AnimatedSprite::Render(SDL_Renderer*& renderer, SDL_RendererFlip flip,float angle, SDL_Point* rotatingCenter){
     // SDL_RenderCopy(renderer,m_texture,&m_src,&m_dst);
-    SDL_RenderCopyEx(renderer, m_texture, &m_src, &m_dst, angle, NULL, flip);
+    SDL_RenderCopyEx(renderer, m_texture, &m_src, &m_dst, angle, rotatingCenter, flip);
 }

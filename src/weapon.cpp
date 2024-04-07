@@ -367,9 +367,12 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     case FALLING_BLOCKS:
     {
         sprite.getResource(renderer, SuiseiFallingBlocks[weapon.count].c_str());
-        sprite.Draw(weapon.center.x - 64 - camX, weapon.center.y - 64 - camY, 128, 128);
-        sprite.PlayFrame(0, 0, 22, 22, 0);
+        sprite.Draw(weapon.center.x - 96 - camX, weapon.center.y - 96 - camY, 192, 192);
+        SDL_Rect hitBox{weapon.center.x - 96 - camX, weapon.center.y - 96 - camY, 192, 192};
+        sprite.PlayFrame(0, 0, 43, 43, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
     }
@@ -514,6 +517,89 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool
     }
     case FALLING_BLOCKS:
     {
+        SDL_Rect hitBox;
+        if(weapon.count >= 0 && weapon.count <= 3)
+        {
+            switch(weapon.count)
+            {
+                case 0:
+                hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y, 96,96};
+                break;
+                case 1:
+                hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y - 96, 96,96};
+                break;
+                case 2:
+                hitBox = SDL_Rect{(int)weapon.center.x, (int)weapon.center.y - 96, 96,96};
+                break;
+                case 3:
+                hitBox = SDL_Rect{(int)weapon.center.x, (int)weapon.center.y, 96,96};
+                break;
+            }
+            if (checkAABBCircleCollision(hitBox, enemyCollider))
+            {
+                inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
+                return true;
+            }
+        }
+        else if(weapon.count >= 4 && weapon.count <= 7)
+        {
+            switch(weapon.count)
+            {
+                case 4:
+                hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y, 192,96};
+                break;
+                case 5:
+                hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y - 96, 96,192};
+                break;
+                case 6:
+                hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y - 96, 192,96};
+                break;
+                case 7:
+                hitBox = SDL_Rect{(int)weapon.center.x, (int)weapon.center.y-96, 96,192};
+                break;
+            }
+            if (checkAABBCircleCollision(hitBox, enemyCollider))
+            {
+                inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
+                return true;
+            }
+        }
+        else
+        {
+            hitBox = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y - 96, 192, 192};
+            if(!checkAABBCircleCollision(hitBox, enemyCollider)) return false;
+            SDL_Rect safeZone;
+            switch(weapon.count)
+            {
+                case 8:
+                safeZone = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y-96, 96,96};
+                if(enemyCollider.center.x + enemyCollider.radius <= safeZone.x + safeZone.w 
+                && enemyCollider.center.y + enemyCollider.radius <= safeZone.y + safeZone.h)
+                return false;
+                break;
+                case 9:
+                safeZone = SDL_Rect{(int)weapon.center.x, (int)weapon.center.y - 96, 96,96};
+                if(enemyCollider.center.x - enemyCollider.radius >= safeZone.x
+                && enemyCollider.center.y + enemyCollider.radius <= safeZone.y + safeZone.h)
+                return false;
+                break;
+                case 10:
+                safeZone = SDL_Rect{(int)weapon.center.x, (int)weapon.center.y, 96,96};
+                if(enemyCollider.center.x - enemyCollider.radius >= safeZone.x
+                && enemyCollider.center.y - enemyCollider.radius >= safeZone.y)
+                return false;
+                break;
+                case 11:
+                safeZone = SDL_Rect{(int)weapon.center.x - 96, (int)weapon.center.y, 96,96};
+                if(enemyCollider.center.x + enemyCollider.radius <= safeZone.x + safeZone.w 
+                && enemyCollider.center.y - enemyCollider.radius >= safeZone.y)
+                return false;
+                break;
+            }
+            inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
+            return true;
+        } 
+
         return false;
     }
     }

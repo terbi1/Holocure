@@ -44,3 +44,16 @@ bool checkAABBCircleCollision(SDL_Rect rect, Circle cir) {
 
     return true;
 }
+
+bool checkInside(SDL_Rect rect, Circle cir)
+{
+    if(
+        cir.center.x - cir.radius < rect.x 
+    ||  cir.center.y - cir.radius < rect.y
+    ||  cir.center.x + cir.radius > rect.x + rect.w
+    ||  cir.center.y + cir.radius > rect.y + rect.h)
+    {
+        return false;
+    }
+    return true;
+}
