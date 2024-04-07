@@ -91,8 +91,10 @@ void GameState::bossSpawn(int minuteTimer, int secondTimer)
     }
 }
 
-void GameState::update(float timeStep)
+void GameState::update(float timeStep, bool &shake)
 {
+    if(shakeTime == 0) shake = false;
+    if(shakeTime > 0) --shakeTime;
     if (player.health <= 0)
     {
         isOver = true;
@@ -282,9 +284,8 @@ void GameState::update(float timeStep)
                 continue;
             }
             it->dmgArea.center = Vector2f{randomInt(-5, 5) * 98, - SCREEN_HEIGHT / 2} + player.collider.center;
-            it->dmgArea.fallTime = (rand() % 7 + 1) * 0.24;
+            it->dmgArea.fallTime = (rand() % 6 + 1) * 0.12;
             it->dmgArea.count = rand() % 12;
-            std::cout << it->dmgArea.fallTime << '\n';
             break;
         }
         }
@@ -360,11 +361,17 @@ void GameState::update(float timeStep)
         }
         case FALLING_BLOCKS:
         {
+            // std::cout << it->fallTime << '\n';
             if(it->fallTime > 0) 
             {
-                it->center.y += 4;
+                it->center.y += 8;
                 it->fallTime -= timeStep;
+                if(it->fallTime <= 0) {shake = true; shakeTime = 30;}
             }
+            // else if(it->fallTime <= 0 && it->fallTime > -0.01)
+            // {
+            //     shake = true;
+            // }
             break;
         }
         }
@@ -453,14 +460,18 @@ void GameState::update(float timeStep)
     playerHUD.update(player, reqNextLevel);
 }
 
-void GameState::render(SDL_Renderer *renderer)
+void GameState::render(SDL_Renderer *renderer, bool shake)
 {
-
-    camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2;
-    camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2;
+    int shakeX{0}, shakeY{0};
+    if(shake)
+    {
+        shakeX = rand() % 10;
+        shakeY = rand() % 10;
+    }
+    camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2 + shakeX;
+    camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2 + shakeY;
     camera.w = SCREEN_WIDTH;
     camera.h = SCREEN_HEIGHT;
-
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {

@@ -18,11 +18,16 @@ void Tabs_Room1::roomInit(SDL_Renderer* renderer) {
     roomBackground.importTexture(ResourceManager::getInstance().getTexture(BG_Room1, renderer));
 }
 
-void Tabs_Room1::render(SDL_Renderer* renderer, Vector2f player_pos) {
+void Tabs_Room1::render(SDL_Renderer* renderer, Vector2f player_pos, bool shake) {
 
     int addX = ceil(player_pos.x / (BACKGROUND_WIDTH * 2));
     int addY = ceil(player_pos.y / (BACKGROUND_HEIGHT * 2));
-    
+    int shakeX{0}, shakeY{0};
+    if(shake)
+    {
+        shakeX = rand() % 10;
+        shakeY = rand() % 10;
+    }
 	for (int y = -1; y <= 1; y++)
 	{
 		for (int x = -1; x <= 1; x++)
@@ -31,7 +36,7 @@ void Tabs_Room1::render(SDL_Renderer* renderer, Vector2f player_pos) {
 			int posY = player_pos.y + y * (BACKGROUND_HEIGHT * 2) - addY * (BACKGROUND_HEIGHT * 2);
 
             SDL_Rect dst;
-            dst.x = -posX; dst.y = -posY;
+            dst.x = -posX + shakeX; dst.y = -posY + shakeY;
             dst.w = BACKGROUND_WIDTH * 2; dst.h = BACKGROUND_HEIGHT * 2;
 
             roomBackground.render(renderer, &dst);

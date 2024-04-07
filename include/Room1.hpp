@@ -19,7 +19,7 @@ public:
     void resetDirect();
     void handleEvents();
     void roomInit(SDL_Renderer* renderer);
-    void render(SDL_Renderer* renderer, Vector2f player_pos);
+    void render(SDL_Renderer* renderer, Vector2f player_pos, bool shake);
 private:
     LTexture roomBackground;
     Tabs direct{Room1};

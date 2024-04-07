@@ -131,7 +131,7 @@ void Game::update(float timeStep)
 	case Room1:
 		// playerHUD.HUD_Timer.unpause();
 		// playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
-		gameState.update(timeStep);
+		gameState.update(timeStep, shake);
 		break;
 	}
 }
@@ -149,8 +149,8 @@ void Game::render()
 		tabs_title.render(renderer);
 		break;
 	case Room1:
-		tabs_room1.render(renderer, gameState.getPlayer().collider.center);
-		gameState.render(renderer);
+		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
+		gameState.render(renderer, shake);
 		// playerHUD.render(renderer, gameState.getPause());
 		break;
 	}

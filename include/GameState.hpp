@@ -32,8 +32,8 @@ public:
     bool getPause();
     void updateSpawnPool(int minuteTimer, int secondTimer);
     void bossSpawn(int minuteTimer, int secondTimer);
-    void update(float timeStep);
-    void render(SDL_Renderer *renderer);
+    void update(float timeStep, bool &shake);
+    void render(SDL_Renderer *renderer, bool shake);
     void reset();
     void handleEvent();
     void startCD();
@@ -46,6 +46,8 @@ public:
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     int reqNextLevel{61};
 private:
+    int shakeStrength{1};
+    int shakeTime{0};
     TTF_Font *DMG_font = NULL;
     LTexture dmgText;
     bool playing;

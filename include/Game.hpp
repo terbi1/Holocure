@@ -28,6 +28,7 @@ public:
         return isRunning;
     }
 private:
+    bool shake{false};
     bool isRunning{true};
     SDL_Window *window;
     SDL_Renderer *renderer;
