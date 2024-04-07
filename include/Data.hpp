@@ -19,6 +19,7 @@ const std::string Black_Screen{"res/gfx/rm_PauseRoom.png"};
 const std::string Pause_Menu{"res/gfx/hud_pausemenu.png"};
 const std::string HealthBar[2]{"res/gfx/hud_HUD_HP_green_1.png", "res/gfx/hud_HUD_HP_green_0.png"};
 const std::string Button[2]{"res/gfx/hud_initButtons/hud_initButtons_0.png", "res/gfx/hud_initButtons/hud_initButtons_1.png"};
+const std::string Special_Bar[4]{"res/gfx/ui_SP_Bar_bg.png","res/gfx/ui_SP_Bar_fill.png","res/gfx/ui_SP_Bar_fill_rainbow.png","res/gfx/ui_SP_Bar_frame.png"};
 
 #pragma endregion
 
@@ -30,6 +31,7 @@ const std::string Portrait_Suisei{"res/gfx/character_sprites/spr_SuiseiPortrait.
 const std::string Title_Suisei{"res/gfx/character_sprites/spr_Title_Suisei.png"};
 const std::string IdleAnimation_Suisei[4] = {"res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_0.png", "res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_1.png", "res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_2.png", "res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_3.png"};
 const std::string RunAnimation_Suisei[6] = {"res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_0.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_1.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_2.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_3.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_4.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_5.png"};
+const std::string SuiseiSpecial{"res/gfx/spr_SuiseiSpecial.png"};
 
 #pragma endregion
 

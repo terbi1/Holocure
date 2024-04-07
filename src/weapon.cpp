@@ -368,7 +368,7 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, SuiseiFallingBlocks[weapon.count].c_str());
         sprite.Draw(weapon.center.x - 96 - camX, weapon.center.y - 96 - camY, 192, 192);
-        SDL_Rect hitBox{weapon.center.x - 96 - camX, weapon.center.y - 96 - camY, 192, 192};
+        SDL_Rect hitBox{(int)weapon.center.x - 96 - camX, (int)weapon.center.y - 96 - camY, 192, 192};
         sprite.PlayFrame(0, 0, 43, 43, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         SDL_SetRenderDrawColor(renderer,255,0,0,255);
@@ -636,4 +636,6 @@ bool hitPlayer(DamagingArea &weapon, Player &player)
         return false;
     }
     }
+
+    return false;
 }

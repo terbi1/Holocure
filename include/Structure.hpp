@@ -68,7 +68,7 @@ struct DamageNumber
     int dmg{};
     Vector2f pos;
     SDL_Color color;
-    SDL_Rect dmgBox{pos.x, pos.y, 18, 18};
+    SDL_Rect dmgBox{(int)pos.x, (int)pos.y, 18, 18};
     float duration{0.3};
     void render(SDL_Renderer* renderer, TTF_Font* font, LTexture textureText, int camX, int camY);
     void update(float timeStep);

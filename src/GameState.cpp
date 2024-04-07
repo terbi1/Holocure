@@ -457,7 +457,7 @@ void GameState::update(float timeStep, bool &shake)
     // expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
     // expTopBar.w = player.currentExp / reqNextLevel *(SCREEN_WIDTH +10);
 
-    playerHUD.update(player, reqNextLevel);
+    playerHUD.update(player, reqNextLevel, specialCD);
 }
 
 void GameState::render(SDL_Renderer *renderer, bool shake)
