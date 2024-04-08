@@ -101,7 +101,7 @@ void GameState::update(float timeStep, bool &shake)
         SDL_ResetKeyboard();
     }
 
-    if (pause)
+    if (pause || leveledUp)
     {
         playerHUD.HUD_Timer.pause();
         return;
@@ -113,6 +113,32 @@ void GameState::update(float timeStep, bool &shake)
     else
         playerHUD.HUD_Timer.unpause();
 
+    if(choice != -1)
+    {
+        for(auto it = weapons.begin(); it != weapons.end(); ++it)
+        {
+            if(it->ID == optionKey[choice])
+            {
+                it->updateStats();
+                choice = -1;
+                if(it->level < 7)
+                {
+                    optionPool.insert({it->ID, it->level});
+                }
+                else optionPool.erase(it->ID);
+                break;
+            }
+        }
+        if(choice != -1)
+        {
+            weapons.push_back(Weapon(optionKey[choice]));
+            optionPool.insert({optionKey[choice], 1});
+            choice = -1;
+        }
+        // ++optionPool[optionKey[choice]];
+        optionKey.clear();
+        optionLevel.clear();
+    }
     // spawn enemies
 
     if(!boss)
@@ -239,7 +265,8 @@ void GameState::update(float timeStep, bool &shake)
         case FAN_BEAM:
         {
             it->dmgArea.center = player.collider.center;
-            if(player.flip == SDL_FLIP_HORIZONTAL) it->dmgArea.angle = 180;
+            if(player.flip == SDL_FLIP_HORIZONTAL) it->dmgArea.angle = 180 + 180 * i;
+            else it->dmgArea.angle = 0 + 180 * i;
             break;
         }
         case BL_BOOK:
@@ -316,7 +343,7 @@ void GameState::update(float timeStep, bool &shake)
         switch ((int)it->weaponID)
         {
         case CEO_TEARS:
-            it->center += it->direction * 4;
+            it->center += it->direction * it->projectileSpeed;
             break;
         case AXE:
             it->center = player.collider.center;
@@ -330,7 +357,7 @@ void GameState::update(float timeStep, bool &shake)
         case BL_BOOK:
         {
             it->center += moved;
-            circularMotion(it->center, player.collider.center, - 0.03);
+            circularMotion(it->center, player.collider.center, - 0.01 * it -> projectileSpeed);
             break;
         }
         case PSYCHO_AXE:
@@ -446,13 +473,39 @@ void GameState::update(float timeStep, bool &shake)
         }
     }
 
-    while (player.currentExp >= reqNextLevel)
+    //level up
+    if (player.currentExp >= reqNextLevel)
     {
         player.currentExp -= reqNextLevel;
         reqNextLevel = pow(4 * (player.LEVEL + 1), 2.1) - pow(4 * player.LEVEL, 2.1);
         ++player.LEVEL;
-        ++weapons[0].level;
-        weapons[0].updateStats();
+        for(int i = 0; i < 4; ++i)
+        {
+            int temp = rand() % (int)optionPool.size();
+            if(trace.find(temp) != trace.end()) 
+            {
+                --i; 
+                continue;
+            }
+            trace.insert(temp);
+            std::unordered_map<WEAPON_ID, int>::iterator it;
+            it = optionPool.begin();
+            for (int j = 0; j < temp; ++j) ++it;
+            optionKey.push_back(it->first);
+            optionLevel.push_back(it->second);
+            switch(it->first)
+            {
+                case PSYCHO_AXE: playerHUD.tabs_levelup.iconTexture[i] = PsychoAxe_Icon; break;
+                case SPIDER_COOKING: playerHUD.tabs_levelup.iconTexture[i] = SpiderCooking_Icon; break;
+                case BL_BOOK: playerHUD.tabs_levelup.iconTexture[i] = BLBook_Icon; break;
+                case ELITE_LAVA: playerHUD.tabs_levelup.iconTexture[i] = LavaPool_Icon; break;
+                case FAN_BEAM: playerHUD.tabs_levelup.iconTexture[i] = FanBeam_Icon; break;
+                case CEO_TEARS: playerHUD.tabs_levelup.iconTexture[i] = CEOTears_Icon; break;
+            }
+        }
+        trace.clear();
+        leveledUp = true;
+        SDL_ResetKeyboard();
     }
     // expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
     // expTopBar.w = player.currentExp / reqNextLevel *(SCREEN_WIDTH +10);
@@ -498,7 +551,7 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
         dmgText.render(renderer, &temp);
     }
 
-    playerHUD.render(renderer, pause, isOver);
+    playerHUD.render(renderer, pause, leveledUp, isOver);
 
 }
 
@@ -530,7 +583,7 @@ void GameState::handleEvent()
     // {
     //     pause = false;
     // }
-    playerHUD.handleEvents(pause, direct);
+    playerHUD.handleEvents(pause, leveledUp, direct, choice);
 
     if (currentKeyStates[SDL_SCANCODE_Z] && isOver)
     {

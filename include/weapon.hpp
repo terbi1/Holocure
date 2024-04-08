@@ -15,6 +15,7 @@
 const int frames = 8;
 
 enum WEAPON_ID {
+    NONE,
     FUBU_BEAM,
     AXE,
     SPIDER_COOKING,
@@ -39,6 +40,7 @@ struct DamagingArea
     Vector2f rotatingCenter;
     Vector2f direction;
     Vector2f size;
+    int projectileSpeed;
     int hitLimit;
     std::unordered_map<int, float> hitID;
     int currentFrame{-1};
@@ -64,6 +66,7 @@ struct Weapon {
     float cooldown{0};
     float specialDuration[2] = {5,5};
     void setHitLimit(int hitLimit);
+    void setHitCooldown(float hitCooldown);
     void setDamage(float damage);
     void setAttackInterval(float interval);
     void setArea(float areaIncrease);

@@ -19,6 +19,8 @@ const std::string Black_Screen{"res/gfx/rm_PauseRoom.png"};
 const std::string Pause_Menu{"res/gfx/hud_pausemenu.png"};
 const std::string HealthBar[2]{"res/gfx/hud_HUD_HP_green_1.png", "res/gfx/hud_HUD_HP_green_0.png"};
 const std::string Button[2]{"res/gfx/hud_initButtons/hud_initButtons_0.png", "res/gfx/hud_initButtons/hud_initButtons_1.png"};
+const std::string Upgrade[2]{"res/gfx/ui_menu_upgrade_window/ui_menu_upgrade_window_0.png", "res/gfx/ui_menu_upgrade_window/ui_menu_upgrade_window_selected_0.png"};
+const std::string OptionCase{"res/gfx/hud_optionIconCase.png"};
 const std::string Special_Bar[4]{"res/gfx/ui_SP_Bar_bg.png","res/gfx/ui_SP_Bar_fill.png","res/gfx/ui_SP_Bar_fill_rainbow.png","res/gfx/ui_SP_Bar_frame.png"};
 
 #pragma endregion
@@ -38,15 +40,20 @@ const std::string SuiseiSpecial{"res/gfx/spr_SuiseiSpecial.png"};
 #pragma region Weapon
 
 const std::string FanBeam_Animation[10] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_0.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
+const std::string FanBeam_Icon{"res/gfx/spr_HoloBeamIcon.png"};
 const std::string BLBook_Animation = {"res/gfx/spr_BLBook.png"};
+const std::string BLBook_Icon{"res/gfx/spr_BLBookIcon.png"};
 const std::string PsychoAxe_Animation[8] = {"res/gfx/spr_PsychoAxe/spr_PsychoAxe_0.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_1.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_2.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_3.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_4.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_5.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_6.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_7.png"};
+const std::string PsychoAxe_Icon{"res/gfx/spr_PsychoAxeIcon.png"};
 const std::string IdolSong_Animation = {"res/gfx/spr_MusicalNote/spr_MusicalNote_0.png"};
 const std::string FubuBeam_Animation[9] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
 const std::string LavaPoolStart_Animation[9] = {"res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_0.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_1.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_2.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_3.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_4.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_5.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_6.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_7.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_8.png"};
 const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"};
 const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
+const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
 const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
-
+const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
+const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
 #pragma endregion
 
 #pragma region Enemy
@@ -80,5 +87,26 @@ enum Tabs
     Room1,
     InGame,
     Settings,
-    Pause
+    Pause,
+    Level_Up
 };
+
+// enum CHOICES
+// {
+//     FUBUBEAM,
+//     AXESWING,
+//     SPIDERCOOKING,
+//     XPOTATO,
+//     CEOTEARS,
+//     FANBEAM,
+//     BLBOOK,
+//     PSYCHOAXE,
+//     IDOLSONG,
+//     ELITELAVA,
+//     FALLINGBLOCKS,
+//     ATK_UP,
+//     HASTE_UP,
+//     HP_UP,
+//     HP_REGEN,
+//     SPD_UP
+// };

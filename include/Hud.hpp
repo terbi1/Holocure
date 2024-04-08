@@ -10,6 +10,7 @@
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "ResourceManager.hpp"
+#include "Tabs_LevelUp.hpp"
 
 struct HUD
 {
@@ -41,7 +42,7 @@ struct HUD
     std::string gameOverText {"GAME OVER"};
     void initHUD(SDL_Renderer *renderer, int health);
     void update(Player player, int expForNextLevel, float specialCD);
-    void render(SDL_Renderer *renderer, bool pause, bool isOver);
+    void render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver);
     LTimer HUD_Timer;
     TTF_Font *HUD_font = NULL;
     Uint32 minute;
@@ -55,5 +56,6 @@ struct HUD
     LButton button[2];
     int currentButton{0};
     int count{0};
-    void handleEvents(bool &isRunning, Tabs& direct);
+    void handleEvents(bool &isRunning, bool &leveledUp, Tabs& direct, int &choice);
+    Tabs_LevelUp tabs_levelup;
 };

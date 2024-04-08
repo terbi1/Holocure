@@ -9,6 +9,7 @@
 #include "Tabs_Title.hpp"
 #include "Room1.hpp"
 #include "Hud.hpp"
+#include "Tabs_LevelUp.hpp"
 
 class Game {
 
@@ -37,6 +38,6 @@ private:
     GameState gameState;
     Tabs_Title tabs_title;
     Tabs_Room1 tabs_room1;
-    // HUD playerHUD;
+    Tabs_LevelUp tabs_levelup;
     TTF_Font* font;
 };

@@ -124,15 +124,22 @@ struct DamageNumber
 
 class LButton
 {
+private:
+SDL_Rect box;
+Vector2f center;
+Vector2f size;
+SDL_Color color;
+LTexture textureText;
+std::string texture;
+std::string text{};
+bool isCurrentButton{false};
+int type;
 public:
 LButton();
-// LButton(std::string m_text, SDL_Rect m_box)
-// 	:text(m_text), box(m_box)
-// {}
-LButton(std::string m_text, Vector2f m_center, Vector2f m_size)
-	:text(m_text), center(m_center), size(m_size)
+LButton(std::string m_text, Vector2f m_center, Vector2f m_size, int m_type)
+	:text(m_text), center(m_center), size(m_size), type(m_type)
 {}
-void render(SDL_Renderer* renderer, TTF_Font* font);
+void render(SDL_Renderer* renderer, TTF_Font* font = NULL);
 void setCurrentButton()
 {
 	isCurrentButton = true;
@@ -147,15 +154,6 @@ bool getState()
 }
 bool handleEvent();
 
-private:
-SDL_Rect box;
-Vector2f center;
-Vector2f size;
-SDL_Color color;
-LTexture textureText;
-std::string texture;
-std::string text{};
-bool isCurrentButton{false};
 // bool isPressed{false};
 // LTexture texture[2];
 };

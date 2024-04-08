@@ -17,8 +17,6 @@
 #include "RenderWindow.hpp"
 #include "Hud.hpp"
 
-
-
 class GameState 
 {
 public: 
@@ -45,7 +43,12 @@ public:
     }
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     int reqNextLevel{61};
+    int choice{-1};
 private:
+    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}};
+    std::unordered_map<WEAPON_ID, int> option;
+    std::vector<WEAPON_ID> optionKey;
+    std::vector<int> optionLevel;
     int shakeStrength{1};
     int shakeTime{0};
     TTF_Font *DMG_font = NULL;
@@ -57,10 +60,12 @@ private:
     // GameOverAnnouncement* gameOverAnnouncement;
     bool isOver{false};
     bool recordScore;
+    bool leveledUp{false};
     Vector2f moved;
     Player player;
     HUD playerHUD;
     int enemyFrame{0};
+    std::unordered_set<int> trace;
     std::vector<Enemy> enemies;
     std::vector<Weapon> weapons;
     std::vector<ExpDrop> dropItems;

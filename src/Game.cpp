@@ -57,6 +57,7 @@ void Game::loadmedia()
 {
 	tabs_title.setUpMenu(renderer);
 	tabs_room1.roomInit(renderer);
+	tabs_levelup.setUp(renderer);
 	gameState.loadMedia(renderer);
 	// playerHUD.initHUD(renderer);
 	// playerHUD.HUD_Timer.start();
@@ -83,9 +84,13 @@ void Game::handleEvents()
 		break;
 	case Room1:
 		// tabs_room1.handleEvents();
-		currentTab = gameState.getDirect();
 		gameState.handleEvent();
+		currentTab = gameState.getDirect();
 		break;
+	// case Level_Up:
+	// 	tabs_levelup.handleEvents();
+	// 	currentTab = tabs_levelup.getDirect();
+	// 	break;
 	}
 }
 // void Game::playMusic()
@@ -153,6 +158,11 @@ void Game::render()
 		gameState.render(renderer, shake);
 		// playerHUD.render(renderer, gameState.getPause());
 		break;
+	// case Level_Up:
+	// 	tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
+	// 	gameState.render(renderer, shake);
+	// 	tabs_levelup.render(renderer);
+	// 	break;
 	}
 	SDL_RenderPresent(renderer);
 }

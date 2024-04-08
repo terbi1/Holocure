@@ -11,6 +11,7 @@ HUD::~HUD()
 
 void HUD::initHUD(SDL_Renderer *renderer, int health)
 {
+    tabs_levelup.setUp(renderer);
     HUD_font = TTF_OpenFont(font_8bitPLus.c_str(), 28);
     expBar[0].loadFromFile(HUD_expBarBase, renderer);
     expBar[1].loadFromFile(HUD_expBarTop, renderer);
@@ -29,8 +30,8 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     hp[0].loadFromFile(HealthBar[0], renderer);
     hpBaseBar.w = health * 4;
     hp[1].loadFromFile(HealthBar[1], renderer);
-    button[0] = {"Resume", Vector2f{SCREEN_WIDTH / 2, 200}, Vector2f{125, 35}};
-    button[1] = {"Quit", Vector2f{SCREEN_WIDTH / 2, 240}, Vector2f{125, 35}};
+    button[0] = {"Resume", Vector2f{SCREEN_WIDTH / 2, 200}, Vector2f{125, 35}, 0};
+    button[1] = {"Quit", Vector2f{SCREEN_WIDTH / 2, 240}, Vector2f{125, 35}, 0};
 }
 
 void HUD::update(Player player, int reqNextLevel, float specialCD)
@@ -54,14 +55,14 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
     timeText << second;
 }
 
-void HUD::render(SDL_Renderer *renderer, bool pause, bool isOver)
+void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver)
 {
     if (pause)
     {
         pauseScreen.render(renderer, &screen);
         title.render(renderer, &pausePortrait);
         pauseMenu.render(renderer, &pauseRect);
-        currentButton = abs(currentButton % totalButtons);
+        currentButton = (currentButton + totalButtons) % totalButtons;
         for (int i = 0; i < totalButtons; ++i)
         {
             if (i == currentButton)
@@ -73,6 +74,11 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool isOver)
         {
             button[i].render(renderer, HUD_font);
         }
+    }
+    else if(leveledUp)
+    {
+        pauseScreen.render(renderer, &screen);
+        tabs_levelup.render(renderer);
     }
     else if (isOver)
     {
@@ -114,11 +120,18 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool isOver)
     textureText.renderText(timeText.str().c_str(), {255, 255, 255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 70, 50, 36);
 }
 
-void HUD::handleEvents(bool &pause, Tabs &direct)
+void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
 {
-    direct = Room1;
-    if (!pause)
+    if(leveledUp)
+    {
+        tabs_levelup.handleEvents(leveledUp, choice);
+        // direct = Level_Up;
+        // leveledUp = false;
+        // SDL_ResetKeyboard();
         return;
+    }
+    direct = Room1;
+    if (!pause) return;
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER] || currentKeyStates[SDL_SCANCODE_Z])
