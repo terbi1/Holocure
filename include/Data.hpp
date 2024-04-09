@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
+#include <unordered_set>
 
 const int SCREEN_WIDTH = 1024, SCREEN_HEIGHT = 576;
 const int BACKGROUND_WIDTH = 1280, BACKGROUND_HEIGHT = 1280;
@@ -91,6 +92,8 @@ enum Tabs
     Level_Up
 };
 
+
+// 16 x 16
 // enum CHOICES
 // {
 //     FUBUBEAM,

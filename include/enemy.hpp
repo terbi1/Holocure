@@ -56,3 +56,5 @@ private:
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);
+
+bool compareByX(const Enemy &a, const Enemy &b);

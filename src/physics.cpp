@@ -29,6 +29,10 @@ void collisionEvent(Circle& ene1, Circle& ene2) {
     // ene1.hitBox.y = ene1.pos.y;
     ene1.center.x -= 2 * cos(pointDirection(ene1.center, ene2.center));
     ene1.center.y -= 2 * sin(pointDirection(ene1.center, ene2.center));
+    // ene1.center.x += pointDirection(ene1.center, ene2.center);
+    // ene1.center.y += pointDirection(ene1.center, ene2.center);
+    // ene1.center += vectorNormalize(ene2.center - ene1.center);
+    // ene2.center -= vectorNormalize(ene2.center - ene1.center);
 }
 
 bool checkAABBCircleCollision(SDL_Rect rect, Circle cir) {

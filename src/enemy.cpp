@@ -167,3 +167,8 @@ void spawn(std::vector<Enemy> &enemies, Vector2f playerPos, ENEMY_TYPE type, int
 
     enemies.push_back(Enemy{type, spawnPos, ID});
 }
+
+bool compareByX(const Enemy &a, const Enemy &b)
+{
+    return a.collider.center.x + a.collider.radius < b.collider.center.x + b.collider.radius;
+}

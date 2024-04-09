@@ -36,10 +36,10 @@ Weapon::Weapon(WEAPON_ID type)
     {
         dmgArea.duration = 1.5;
         dmgArea.frames = 0;
-        timeBetweenAttacks = 0.5;
+        timeBetweenAttacks = 0.17;
         dmgArea.hitLimit = 1;
         dmgArea.damage = 100;
-        dmgArea.attackCount = 1;
+        dmgArea.attackCount = 4;
         dmgArea.projectileSpeed = 4;
         dmgArea.size = {20,16};
         break;
@@ -389,7 +389,7 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, "res/gfx/spr_CEOTears.png");
 
-        sprite.Draw(weapon.center.x - weapon.size.x / 2 - camX, weapon.center.y - weapon.size.y / 2 - camY, weapon.size.x, weapon.size.y);
+        sprite.Draw((int)(weapon.center.x - weapon.size.x / 2 - camX), (int)(weapon.center.y - weapon.size.y / 2 - camY), (int)weapon.size.x, (int)weapon.size.y);
         sprite.PlayFrame(0, 0, 10, 8, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
@@ -402,7 +402,6 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         SDL_Rect dst;
         SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
         dst.h *= weapon.size.y / 13;
-        std::cout << dst.h << '\n';
         dst.x = weapon.center.x - camX + 50;
         dst.y = weapon.center.y - dst.h / 2 - camY;
 
@@ -539,9 +538,9 @@ void inflictDamage(DamagingArea &weapon, Player player, int &enemyHealth, bool &
 
 bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool &isHit, int enemyID, Player player)
 {
-    if (weapon.hitID.find(enemyID) != weapon.hitID.end())
+    if (weapon.hitID.find(enemyID) != weapon.hitID.end()) {
         return false;
-
+    }
     switch ((int)weapon.weaponID)
     {
     case AXE:
@@ -589,7 +588,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool
     }
     case CEO_TEARS:
     {
-        if (checkCircleCollision(Circle{weapon.center, weapon.size.y}, enemyCollider))
+        if (checkCircleCollision(Circle{weapon.center, weapon.size.y / 2}, enemyCollider))
         {
             inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;

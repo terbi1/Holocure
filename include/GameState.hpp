@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <sstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -16,6 +17,9 @@
 #include "Structure.hpp"
 #include "RenderWindow.hpp"
 #include "Hud.hpp"
+
+
+const int chunkSize = 16;
 
 class GameState 
 {
@@ -76,4 +80,5 @@ private:
     float spawnCooldown{0};
     float spawnRate;
     bool boss {false};
+    std::unordered_set<int> WORLD_CHUNKS[64][36];
 };
