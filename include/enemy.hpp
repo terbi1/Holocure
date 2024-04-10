@@ -47,7 +47,8 @@ public:
     int expValue;
     float frameTime{0.2};
     int frames;
-    float timePassed{0};
+    float timePassed{0.3};
+    Vector2f direction;
 private:
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;

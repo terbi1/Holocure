@@ -22,17 +22,13 @@ bool checkCircleCollision(Circle object1, Circle object2) {
     return true;
 }
 
-void collisionEvent(Circle& ene1, Circle& ene2) {
-    // ene1.pos.x -= cos(pointDirection(ene1.pos, ene2.pos));
-    // ene1.pos.y -= sin(pointDirection(ene1.pos, ene2.pos));
-    // ene1.hitBox.x = ene1.pos.x;
-    // ene1.hitBox.y = ene1.pos.y;
+void collisionEvent(Circle& ene1, Circle& ene2) 
+{
     ene1.center.x -= 2 * cos(pointDirection(ene1.center, ene2.center));
     ene1.center.y -= 2 * sin(pointDirection(ene1.center, ene2.center));
-    // ene1.center.x += pointDirection(ene1.center, ene2.center);
-    // ene1.center.y += pointDirection(ene1.center, ene2.center);
-    // ene1.center += vectorNormalize(ene2.center - ene1.center);
-    // ene2.center -= vectorNormalize(ene2.center - ene1.center);
+    float awayDirection = pointDirection(ene1.center, ene2.center);
+    float dis = distance(ene1.center, ene2.center);
+    float closeNess = 0.125 / dis;
 }
 
 bool checkAABBCircleCollision(SDL_Rect rect, Circle cir) {

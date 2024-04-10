@@ -18,8 +18,9 @@
 #include "RenderWindow.hpp"
 #include "Hud.hpp"
 
-
 const int chunkSize = 16;
+
+bool isOutsideOfView(Circle object, int camX, int camY);
 
 class GameState 
 {
@@ -46,10 +47,10 @@ public:
         return player;
     }
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    int reqNextLevel{61};
+    int reqNextLevel{79};
     int choice{-1};
 private:
-    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}};
+    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG, 1}};
     std::unordered_map<WEAPON_ID, int> option;
     std::vector<WEAPON_ID> optionKey;
     std::vector<int> optionLevel;

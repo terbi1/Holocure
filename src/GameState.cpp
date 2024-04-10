@@ -1,6 +1,14 @@
 
 #include "GameState.hpp"
 
+
+bool isOutsideOfView(Circle object, int camX, int camY)
+{
+    if((object.center.x + object.radius - camX < 0 || object.center.x - object.radius - camX > SCREEN_WIDTH) && (object.center.y + object.radius - camY < 0 || object.center.y - object.radius - camY > SCREEN_HEIGHT)) return true;
+
+    return false;
+}
+
 GameState::GameState()
 {
 }
@@ -13,7 +21,7 @@ void GameState::loadMedia(SDL_Renderer *renderer)
 {
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(), 24);
 
-    // weapons.push_back(Weapon(AXE));
+    weapons.push_back(Weapon(AXE));
     // weapons.push_back(Weapon(SPIDER_COOKING));
     // weapons.push_back(Weapon(CEO_TEARS));
     // weapons.push_back(Weapon(FAN_BEAM));
@@ -191,7 +199,7 @@ void GameState::update(float timeStep, bool &shake)
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
-        // it->timePassed += timeStep;
+        it->timePassed += timeStep;
         it->frameTime -= timeStep;
 
         if (it->frameTime <= 0)
@@ -255,7 +263,11 @@ void GameState::update(float timeStep, bool &shake)
                 if (it2 == it3) continue;
                 if (checkCircleCollision(enemies[*it2].collider, enemies[*it3].collider))
                 {
-                    collisionEvent(enemies[*it2].collider, enemies[*it3].collider);
+                    float dis = distance(enemies[*it2].collider.center, enemies[*it3].collider.center);
+                    // enemies[*it2].direction.x -= 1.0f / ( 1.0f + dis * dis * dis);
+                    // enemies[*it2].direction.y -= 1.0f / ( 1.0f + dis * dis * dis);
+                    enemies[*it2].direction += (enemies[*it2].collider.center - enemies[*it3].collider.center) * (1.0f / ( 1.0f + dis * dis));
+                    // collisionEvent(enemies[*it2].collider, enemies[*it3].collider);
                 }
             }
         }
@@ -573,7 +585,7 @@ void GameState::update(float timeStep, bool &shake)
     {
         player.currentExp -= reqNextLevel;
         ++player.LEVEL;
-        reqNextLevel = pow(4 * (player.LEVEL + 1), 2.1) - pow(4 * player.LEVEL, 2.1);
+        reqNextLevel = pow(4.0 * (player.LEVEL + 1.0), 2.1) - pow(4.0 * player.LEVEL, 2.1);
         for (int i = 0; i < 4; ++i)
         {
             int temp = rand() % (int)optionPool.size();
@@ -636,11 +648,13 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
+        if(isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y)) continue;
         it->render(renderer, camera.x, camera.y);
     }
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
+        if(isOutsideOfView(it->collider, camera.x, camera.y)) continue;
         it->render(renderer, it->currentFrame, camera.x, camera.y);
     }
 

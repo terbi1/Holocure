@@ -85,12 +85,18 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
 
 void Enemy::move(Vector2f player_center)
 {
-    if (collider.center.x >= player_center.x)
-        flip = SDL_FLIP_HORIZONTAL;
-    else
-        flip = SDL_FLIP_NONE;
-    Vector2f moveVector = vectorNormalize(player_center - collider.center);
-    collider.center += moveVector * speed;
+    if(timePassed >= 0.3)
+    {
+        if (collider.center.x >= player_center.x)
+            flip = SDL_FLIP_HORIZONTAL;
+        else
+            flip = SDL_FLIP_NONE;
+        // Vector2f moveVector = vectorNormalize(player_center - collider.center);
+        direction = vectorNormalize(player_center - collider.center);
+        timePassed = 0;
+    }
+    // collider.center += moveVector * speed;
+    collider.center += direction * speed;
 }
 
 void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
