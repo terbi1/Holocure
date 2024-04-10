@@ -124,6 +124,11 @@ struct DamageNumber
 
 class LButton
 {
+public:
+void setText(std::string m_text)
+{
+	text = m_text;
+}
 private:
 SDL_Rect box;
 Vector2f center;

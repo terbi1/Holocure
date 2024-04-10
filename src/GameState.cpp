@@ -1,10 +1,10 @@
 
 #include "GameState.hpp"
 
-
 bool isOutsideOfView(Circle object, int camX, int camY)
 {
-    if((object.center.x + object.radius - camX < 0 || object.center.x - object.radius - camX > SCREEN_WIDTH) && (object.center.y + object.radius - camY < 0 || object.center.y - object.radius - camY > SCREEN_HEIGHT)) return true;
+    if ((object.center.x + object.radius - camX < 0 || object.center.x - object.radius - camX > SCREEN_WIDTH) && (object.center.y + object.radius - camY < 0 || object.center.y - object.radius - camY > SCREEN_HEIGHT))
+        return true;
 
     return false;
 }
@@ -100,16 +100,6 @@ void GameState::bossSpawn(int minuteTimer, int secondTimer)
 
 void GameState::update(float timeStep, bool &shake)
 {
-    if (shakeTime == 0)
-        shake = false;
-    if (shakeTime > 0)
-        --shakeTime;
-    if (player.health <= 0)
-    {
-        isOver = true;
-        SDL_ResetKeyboard();
-    }
-
     if (pause || leveledUp)
     {
         playerHUD.HUD_Timer.pause();
@@ -122,6 +112,16 @@ void GameState::update(float timeStep, bool &shake)
     else
         playerHUD.HUD_Timer.unpause();
 
+    if (shakeTime == 0)
+        shake = false;
+    if (shakeTime > 0)
+        --shakeTime;
+    if (player.health <= 0)
+    {
+        isOver = true;
+        SDL_ResetKeyboard();
+    }
+
     if (choice != -1)
     {
         for (auto it = weapons.begin(); it != weapons.end(); ++it)
@@ -133,7 +133,7 @@ void GameState::update(float timeStep, bool &shake)
                 if (it->level < 7)
                 {
                     // optionPool.insert({it->ID, it->level});
-                    optionPool[it->ID] = it->level;
+                    optionPool[it->ID] = it->level + 1;
                 }
                 else
                     optionPool.erase(it->ID);
@@ -143,7 +143,7 @@ void GameState::update(float timeStep, bool &shake)
         if (choice != -1)
         {
             weapons.push_back(Weapon(optionKey[choice]));
-            optionPool.insert({optionKey[choice], 1});
+            optionPool[optionKey[choice]] = 2;
             choice = -1;
         }
         // ++optionPool[optionKey[choice]];
@@ -166,7 +166,8 @@ void GameState::update(float timeStep, bool &shake)
         int temp = rand() % (int)spawnPool.size();
         std::unordered_set<ENEMY_TYPE>::iterator it;
         it = spawnPool.begin();
-        for (int i = 0; i < temp; ++i) ++it;
+        for (int i = 0; i < temp; ++i)
+            ++it;
         for (int i = 0; i < spawnRate; ++i)
         {
             spawn(enemies, player.collider.center, *it, EnemyCount);
@@ -211,32 +212,12 @@ void GameState::update(float timeStep, bool &shake)
         }
 
         it->move(player.collider.center);
-        
-        // for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
-        // {
-        //     if (it == it2) continue;
-        //     if (checkCircleCollision(it->collider, it2->collider))
-        //     {
-        //         collisionEvent(it->collider, it2->collider);
-        //     }
-        // }
 
-        // if (it->cd > 0)
-        // {
-        //     it->cd -= timeStep;
-        // }
-        // else if (checkCircleCollision(player.collider, it->collider))
-        // {
-        //     it->cd = EnemyCD;
-        //     // player.health -= it->atk;
-        //     dmgNumbers.push_back(DamageNumber{it->atk, player.collider.center, {255, 0, 0}});
-        // }
-
-        // if (it->type == FUBUZILLA)
-        // {
-        //     temp = it->collider.center;
-        //     temp2 = it->flip;
-        // }
+        if (it->type == FUBUZILLA)
+        {
+            temp = it->collider.center;
+            temp2 = it->flip;
+        }
     }
 
     sort(enemies.begin(), enemies.end(), compareByX);
@@ -244,84 +225,52 @@ void GameState::update(float timeStep, bool &shake)
     std::vector<std::vector<int>> possibleCollision;
     std::vector<int> active;
     float right = -1e9;
-    for(int i = 0; i < (int)enemies.size(); ++i)
+    for (int i = 0; i < (int)enemies.size(); ++i)
     {
-        if(enemies[i].collider.center.x - enemies[i].collider.radius > right)
+        if (enemies[i].type == FUBUZILLA)
+            continue;
+        if (enemies[i].collider.center.x - enemies[i].collider.radius > right)
         {
-            if((int)active.size() >= 2) possibleCollision.push_back(active);
+            if ((int)active.size() >= 2)
+                possibleCollision.push_back(active);
             active.clear();
             right = enemies[i].collider.center.x + enemies[i].collider.radius;
         }
         active.push_back(i);
     }
-    for(auto it = possibleCollision.begin(); it != possibleCollision.end(); ++it)
+
+    for (auto it = possibleCollision.begin(); it != possibleCollision.end(); ++it)
     {
-        for(auto it2 = it->begin(); it2 != it->end(); ++it2)
+        for (auto it2 = it->begin(); it2 != it->end(); ++it2)
         {
             for (auto it3 = it->begin(); it3 != it->end(); ++it3)
             {
-                if (it2 == it3) continue;
+                if (it2 == it3)
+                    continue;
                 if (checkCircleCollision(enemies[*it2].collider, enemies[*it3].collider))
                 {
                     float dis = distance(enemies[*it2].collider.center, enemies[*it3].collider.center);
-                    // enemies[*it2].direction.x -= 1.0f / ( 1.0f + dis * dis * dis);
-                    // enemies[*it2].direction.y -= 1.0f / ( 1.0f + dis * dis * dis);
-                    enemies[*it2].direction += (enemies[*it2].collider.center - enemies[*it3].collider.center) * (1.0f / ( 1.0f + dis * dis));
+                    enemies[*it2].direction += (enemies[*it2].collider.center - enemies[*it3].collider.center) * (1.0f / (1.0f + dis * dis));
                     // collisionEvent(enemies[*it2].collider, enemies[*it3].collider);
                 }
             }
         }
     }
-    // for(int i = 0; i < (int)enemies.size(); ++i)
-    // {
-    //     // it->timePassed += timeStep;
-    //     enemies[i].frameTime -= timeStep;
 
-    //     if (enemies[i].frameTime <= 0)
-    //     {
-    //         ++enemies[i].currentFrame;
-    //         if (enemies[i].currentFrame > enemies[i].frames)
-    //             enemies[i].currentFrame = 0;
-    //         enemies[i].frameTime = enemyFrameTime;
-    //     }
+    for (auto it = enemies.begin(); it != enemies.end(); ++it)
+    {
+        if (it->cd > 0)
+        {
+            it->cd -= timeStep;
+        }
+        else if (checkCircleCollision(player.collider, it->collider))
+        {
+            it->cd = EnemyCD;
+            player.health -= it->atk;
+            dmgNumbers.push_back(DamageNumber{it->atk, player.collider.center, {255, 0, 0}});
+        }
+    }
 
-    //     enemies[i].move(player.collider.center);
-    // }
-
-    // sort(enemies.begin(), enemies.end(), compareByX);
-
-    // for(int i = 0; i < (int)enemies.size(); ++i)
-    // {
-    //     if(i == (int)enemies.size() - 1) break;
-    //     if(checkCircleCollision(enemies[i].collider, enemies[i+1].collider))
-    //     {
-    //         collisionEvent(enemies[i].collider, enemies[i+1].collider);
-    //     }
-    // }
-    // for(int i = 0; i < 64; ++i)
-    // {
-    //     for(int j = 0; j < 36; ++j)
-    //     {
-    //         for(auto it = WORLD_CHUNKS[i][j].begin(); it != WORLD_CHUNKS[i][j].end(); ++it)
-    //         {
-    //             for(auto it2 = it; it2 != WORLD_CHUNKS[i][j].end(); ++it2)
-    //             {
-    //                 if(checkCircleCollision(enemies[*it].collider, enemies[*it2].collider))
-    //             {
-    //                 collisionEvent(enemies[*it].collider, enemies[*it2].collider);
-    //             }
-    //             }
-    //         }
-    //     }
-    // }
-
-    // for(int i = 0; i < 64; ++i)
-    // {
-    //     for(int j = 0; j < 36; ++j)
-    //     {
-    //         WORLD_CHUNKS[i][j].clear();
-    //     }
-    // }
     // initiate attacks
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
@@ -472,8 +421,8 @@ void GameState::update(float timeStep, bool &shake)
             else
                 temp = -1;
 
-            it->center.y += temp;
-            it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 + it->direction.x;
+            it->center.y += temp * it->projectileSpeed;
+            it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 * it->projectileSpeed + it->direction.x;
 
             break;
         }
@@ -542,6 +491,7 @@ void GameState::update(float timeStep, bool &shake)
     }
 
     // create drops
+
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
         if (it->health <= 0)
@@ -601,25 +551,50 @@ void GameState::update(float timeStep, bool &shake)
                 ++it;
             optionKey.push_back(it->first);
             optionLevel.push_back(it->second);
-            switch (it->first)
+            switch ((int)it->first)
             {
             case PSYCHO_AXE:
+                playerHUD.tabs_levelup.optionName[i] = "Psycho Axe LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(PsychoAxeDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = PsychoAxe_Icon;
                 break;
             case SPIDER_COOKING:
+                playerHUD.tabs_levelup.optionName[i] = "Spider Cooking LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(SpiderCookingDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = SpiderCooking_Icon;
                 break;
             case BL_BOOK:
+                playerHUD.tabs_levelup.optionName[i] = "BL Book LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(BLBookDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = BLBook_Icon;
                 break;
             case ELITE_LAVA:
+                playerHUD.tabs_levelup.optionName[i] = "Elite Lava LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(EliteLavaDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = LavaPool_Icon;
                 break;
             case FAN_BEAM:
+                playerHUD.tabs_levelup.optionName[i] = "Fan Beam LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(FanBeamDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = FanBeam_Icon;
                 break;
             case CEO_TEARS:
+                playerHUD.tabs_levelup.optionName[i] = "CEO's Tears LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(CeoTearsDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = CEOTears_Icon;
+                break;
+            case IDOL_SONG:
+                playerHUD.tabs_levelup.optionName[i] = "Idol Song LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(IdolSongDescription[it->second - 1]);
+                playerHUD.tabs_levelup.iconTexture[i] = IdolSong_Icon;
+                break;
+            case AXE:
+                playerHUD.tabs_levelup.optionName[i] = "Axe Swing LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(SuiseiWeaponDescription[it->second - 1]);
+                if (it->second == 7)
+                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[1];
+                else
+                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[0];
                 break;
             }
         }
@@ -627,8 +602,6 @@ void GameState::update(float timeStep, bool &shake)
         leveledUp = true;
         SDL_ResetKeyboard();
     }
-    // expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
-    // expTopBar.w = player.currentExp / reqNextLevel *(SCREEN_WIDTH +10);
 
     playerHUD.update(player, reqNextLevel, specialCD);
 }
@@ -648,13 +621,15 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
-        if(isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y)) continue;
+        if (isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y))
+            continue;
         it->render(renderer, camera.x, camera.y);
     }
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
-        if(isOutsideOfView(it->collider, camera.x, camera.y)) continue;
+        if (isOutsideOfView(it->collider, camera.x, camera.y))
+            continue;
         it->render(renderer, it->currentFrame, camera.x, camera.y);
     }
 
@@ -672,7 +647,7 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
         dmgText.render(renderer, &temp);
     }
 
-    playerHUD.render(renderer, pause, leveledUp, isOver);
+    playerHUD.render(renderer, pause, leveledUp, isOver, weapons);
 }
 
 void GameState::reset()

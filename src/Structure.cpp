@@ -132,7 +132,9 @@ void LTexture::renderText(std::string textureText, SDL_Color textColor, TTF_Font
 {
 	free();
 
-	SDL_Surface *textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	TTF_SetFontSize(gFont, size);
+	SDL_Surface *textSurface = TTF_RenderText_Solid_Wrapped(gFont, textureText.c_str(), textColor,600);
+	// SDL_Surface *textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
 	if (textSurface == NULL)
 	{
 		std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << '\n';
@@ -150,11 +152,12 @@ void LTexture::renderText(std::string textureText, SDL_Color textColor, TTF_Font
 	mWidth = textSurface->w;
 	mHeight = textSurface->h;
 
+	SDL_Rect textBox{x, y, 0, 0};
+	textBox.w = textSurface->w;
+	textBox.h = textSurface->h;
 	SDL_FreeSurface(textSurface);
 
-	SDL_Rect textBox{x, y, 0, 0};
-	TTF_SetFontSize(gFont, size);
-	TTF_SizeText(gFont, textureText.c_str(), &textBox.w, &textBox.h);
+	// TTF_SizeText(gFont, textureText.c_str(), &textBox.w, &textBox.h);
 	SDL_RenderCopy(gRenderer, mTexture, NULL, &textBox);
 }
 
@@ -464,10 +467,11 @@ void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 	else
 	{
 		if (type == 0)
-			texture = Button[1];
+			{texture = Button[1];
+			color = {0, 0, 0};}
 		else
-			texture = Upgrade[1];
-		color = {0, 0, 0};
+			{texture = Upgrade[1];
+			color = {255,255,255};}
 	}
 
 	if (isCurrentButton && type == 0)
@@ -491,7 +495,8 @@ void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 	int tempW, tempH;
 	TTF_SetFontSize(font, 24);
 	TTF_SizeText(font, text.c_str(), &tempW, &tempH);
-	textureText.renderText(text, color, font, renderer, renderBox.x + renderBox.w / 2 - tempW / 2, renderBox.y + renderBox.h / 2 - tempH / 2, 24);
+	if(type == 0) textureText.renderText(text, color, font, renderer, renderBox.x + renderBox.w / 2 - tempW / 2, renderBox.y + renderBox.h / 2 - tempH / 2, 24);
+	else textureText.renderText(text, color, font, renderer, 350, renderBox.y + renderBox.h / 2 - tempH / 2 - 10, 22);
 }
 
 bool LButton::handleEvent()

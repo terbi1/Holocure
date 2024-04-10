@@ -17,10 +17,10 @@ Tabs Tabs_LevelUp::getDirect() {
 void Tabs_LevelUp::setUp(SDL_Renderer* renderer)
 {
     optionCase.loadFromFile(OptionCase, renderer);
-    upgrade[0] = LButton{"Quit",Vector2f{600, 150}, Vector2f{700,100}, 1};
-    upgrade[1] = LButton{"Play",Vector2f{600, 260}, Vector2f{700,100}, 1};
-    upgrade[2] = LButton{"Quit",Vector2f{600, 370}, Vector2f{700,100}, 1};
-    upgrade[3] = LButton{"Play",Vector2f{600, 480}, Vector2f{700,100}, 1};
+    upgrade[0] = LButton{"",Vector2f{600, 150}, Vector2f{700,100}, 1};
+    upgrade[1] = LButton{"",Vector2f{600, 260}, Vector2f{700,100}, 1};
+    upgrade[2] = LButton{"",Vector2f{600, 370}, Vector2f{700,100}, 1};
+    upgrade[3] = LButton{"",Vector2f{600, 480}, Vector2f{700,100}, 1};
     upgrade[0].setCurrentButton();
 }
 
@@ -54,7 +54,7 @@ void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
 
 }
 
-void Tabs_LevelUp::render(SDL_Renderer* renderer)
+void Tabs_LevelUp::render(SDL_Renderer* renderer, TTF_Font* font)
 {
     SDL_Rect caseRect{275, 20, 64, 64};
     SDL_Rect iconRect{282, 32, 50, 40};
@@ -63,11 +63,14 @@ void Tabs_LevelUp::render(SDL_Renderer* renderer)
     {
         if(i == currentButton) upgrade[i].setCurrentButton();
         else upgrade[i].notCurrentButton();
-        upgrade[i].render(renderer);
+        upgrade[i].render(renderer, font);
         caseRect.y += 110;
         iconRect.y += 110;
         optionCase.render(renderer, &caseRect);
         SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(iconTexture[i], renderer), NULL, &iconRect);
     }
-
+    for(int i = 0; i < 4; ++i)
+    {
+        textureText.renderText(optionName[i], {255,255,255}, font, renderer, 260, 105 + 110 * i,20);
+    }
 }

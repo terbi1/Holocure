@@ -36,10 +36,10 @@ Weapon::Weapon(WEAPON_ID type)
     {
         dmgArea.duration = 1.5;
         dmgArea.frames = 0;
-        timeBetweenAttacks = 0.17;
+        timeBetweenAttacks = 0.5;
         dmgArea.hitLimit = 1;
         dmgArea.damage = 100;
-        dmgArea.attackCount = 4;
+        dmgArea.attackCount = 1;
         dmgArea.projectileSpeed = 4;
         dmgArea.size = {20,16};
         break;
@@ -101,6 +101,8 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 0.33;
         dmgArea.duration = 2.5;
         dmgArea.frames = 4;
+        dmgArea.size = {58,54};
+        dmgArea.projectileSpeed = 1;
         break;
     }
     case ELITE_LAVA:
@@ -314,6 +316,30 @@ void Weapon::updateStats()
         return;
         }
     }
+    case IDOL_SONG:
+    {
+        switch(level)
+        {
+            case 2: setDamage(162.5); return;
+            case 3: dmgArea.projectileSpeed = 1.2; return;
+            case 4: setArea(25); return;
+            case 5: setAttackInterval(2.67); return;
+            case 6: setArea(25); return;
+            case 7: setDamage(243); return;
+        }
+    }
+    case AXE:
+    {
+        switch(level)
+        {
+            case 2: setDamage(156); return; 
+            case 3: setArea(20); return; 
+            case 4: setAttackInterval(1.33); return;
+            case 5: setDamage(200); return;
+            case 6: setArea(20); return;
+            case 7: setDamage(600); dmgArea.maxed = true; return;
+        }
+    }
     }
 }
 
@@ -325,7 +351,9 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
     case AXE:
     {
-        sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
+
+        if(weapon.maxed) sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png");
+        else sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
 
         SDL_Rect src{0, 0, 107, 144};
 
@@ -434,7 +462,7 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, IdolSong_Animation.c_str());
 
-        sprite.Draw(weapon.center.x - 29 - camX, weapon.center.y - 27 - camY, 58, 54);
+        sprite.Draw(weapon.center.x - weapon.size.x / 2 - camX, weapon.center.y - weapon.size.y / 2 - camY, weapon.size.x, weapon.size.y);
         sprite.PlayFrame(0, 0, 29, 27, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
         return;
@@ -633,7 +661,7 @@ bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool
     }
     case IDOL_SONG:
     {
-        if (checkCircleCollision(Circle{weapon.center, 28}, enemyCollider))
+        if (checkCircleCollision(Circle{weapon.center, (weapon.size.x + weapon.size.y) / 4}, enemyCollider))
         {
             inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
             return true;

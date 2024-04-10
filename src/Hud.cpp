@@ -20,12 +20,14 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     specialBar[2].loadFromFile(Special_Bar[2], renderer);
     specialBar[3].loadFromFile(Special_Bar[3], renderer);
     specialSymbol.loadFromFile(SuiseiSpecial, renderer);
+    weaponSlot.loadFromFile(EmptyWeaponSlot, renderer);
+    weaponSlot.setAlpha(100);
     portrait.loadFromFile(Portrait_Suisei, renderer);
     portrait.loadFromFile(Portrait_Suisei, renderer);
     pauseScreen.loadFromFile(Black_Screen, renderer);
     pauseScreen.setAlpha(100);
     title.loadFromFile(Title_Suisei, renderer);
-    title.setAlpha(200);
+    title.setAlpha(100);
     pauseMenu.loadFromFile(Pause_Menu, renderer);
     hp[0].loadFromFile(HealthBar[0], renderer);
     hpBaseBar.w = health * 4;
@@ -55,7 +57,7 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
     timeText << second;
 }
 
-void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver)
+void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
 {
     if (pause)
     {
@@ -78,7 +80,8 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     else if(leveledUp)
     {
         pauseScreen.render(renderer, &screen);
-        tabs_levelup.render(renderer);
+        title.render(renderer, &pausePortrait);
+        tabs_levelup.render(renderer, HUD_font);
     }
     else if (isOver)
     {
@@ -90,6 +93,37 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     expBar[1].renderF(renderer, &expTopBar, &expTopBarSRC);
 
     portrait.render(renderer, &portraitRectDST, &portraitRectSRC);
+
+    for(int i = 0; i < 6; ++i)
+    {
+        std::string icon;
+        if(i >= (int)weapons.size() || weapons[i].ID == FALLING_BLOCKS)
+        {
+            icon = EmptyWeaponSlot;
+            emptyWeaponRect = {100 + 50 * i, 60, 24 , 22};
+            weaponSlot.render(renderer, &emptyWeaponRect);
+        }
+        else
+        {
+            emptyWeaponRect.x = 90 + 40 * i;
+            emptyWeaponRect.y = 50;
+            emptyWeaponRect.w = 50;
+            emptyWeaponRect.h = 40;
+            emptyWeaponRect = {90 + 50 * i, 50, 50, 40};
+            switch ((int)weapons[i].ID)
+            {
+            case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
+            case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
+            case BL_BOOK: icon = BLBook_Icon; break;
+            case ELITE_LAVA: icon = LavaPool_Icon; break;
+            case FAN_BEAM: icon = FanBeam_Icon; break;
+            case CEO_TEARS: icon = CEOTears_Icon; break;
+            case IDOL_SONG: icon = IdolSong_Icon; break;
+            case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
+            }
+            SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &emptyWeaponRect);
+        }
+    }
 
     specialSymbol.render(renderer, &specialCase);
 

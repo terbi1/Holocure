@@ -55,6 +55,7 @@ struct DamagingArea
     // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
     bool ofPlayer{true};
+    bool maxed{false};
 };
 
 struct Weapon {

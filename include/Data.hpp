@@ -23,6 +23,7 @@ const std::string Button[2]{"res/gfx/hud_initButtons/hud_initButtons_0.png", "re
 const std::string Upgrade[2]{"res/gfx/ui_menu_upgrade_window/ui_menu_upgrade_window_0.png", "res/gfx/ui_menu_upgrade_window/ui_menu_upgrade_window_selected_0.png"};
 const std::string OptionCase{"res/gfx/hud_optionIconCase.png"};
 const std::string Special_Bar[4]{"res/gfx/ui_SP_Bar_bg.png","res/gfx/ui_SP_Bar_fill.png","res/gfx/ui_SP_Bar_fill_rainbow.png","res/gfx/ui_SP_Bar_frame.png"};
+const std::string EmptyWeaponSlot{"res/gfx/ui_empty_slot_weapon.png"};
 
 #pragma endregion
 
@@ -38,7 +39,7 @@ const std::string SuiseiSpecial{"res/gfx/spr_SuiseiSpecial.png"};
 
 #pragma endregion
 
-#pragma region Weapon
+#pragma region WeaponSprite
 
 const std::string FanBeam_Animation[10] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_0.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
 const std::string FanBeam_Icon{"res/gfx/spr_HoloBeamIcon.png"};
@@ -47,14 +48,29 @@ const std::string BLBook_Icon{"res/gfx/spr_BLBookIcon.png"};
 const std::string PsychoAxe_Animation[8] = {"res/gfx/spr_PsychoAxe/spr_PsychoAxe_0.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_1.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_2.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_3.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_4.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_5.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_6.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_7.png"};
 const std::string PsychoAxe_Icon{"res/gfx/spr_PsychoAxeIcon.png"};
 const std::string IdolSong_Animation = {"res/gfx/spr_MusicalNote/spr_MusicalNote_0.png"};
+const std::string IdolSong_Icon = {"res/gfx/spr_MusicNoteIcon.png"};
 const std::string FubuBeam_Animation[9] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
 const std::string LavaPoolStart_Animation[9] = {"res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_0.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_1.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_2.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_3.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_4.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_5.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_6.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_7.png","res/gfx/spr_LavaPoolStart/spr_LavaPoolStart_8.png"};
 const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"};
 const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
 const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
 const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
+const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
+#pragma endregion
+
+#pragma region WeaponDescription
+
+const std::string SuiseiWeaponDescription[7]{"Swing a bloody axe in an arc in front.","Increase damage by 30%.","Increase attack area by 20%.", "Reduce time between attacks by 10%.", "Increase damage by 30%.", "Increase attack area by 20%.", "Deal 3x damage"};
+const std::string SpiderCookingDescription[7]{"Create an area of miasma around, dealing slow damage to enemies inside.", "Increase area by 15%.", "Increase damage by 30%.", "Increase area by 25%.", "Increase frequency of hits by 20%.", "Increase damage by 60%.", "Add small knockback on hit"};
+const std::string EliteLavaDescription[7]{"Drop lava on the ground, burning targets slowly.", "Increase lava area by 20%.", "Throw 2 lava buckets.", "Increase damage by 30%% and increase duration of lava by 1 second.", "Increase damage by 30%.", "Throw 3 lava buckets.", "Throw 4 lava buckets and increase lava size by 20%."};
+const std::string PsychoAxeDescription[7]{"Throw an axe that spirals outward from the player.", "Increase size of axe by 20%. Increase damage by 20%.", "Reduce time between attacks by 20%.", "Increase damage by 33%, and size by 20%.", "Remove hit limit, and lasts 1 second longer.", "Increase attack size by 50%.", "Increase damage by 50%."};
+const std::string BLBookDescription[7]{"Repels targets with orbiting BL Books.", "Add 1 additional book.", "Increase damage by 30%% and increase duration by 1 second.", "Add 1 additional book.", "Increase radius and spinning speed by 25%.", "Add 1 additional book.", "Increase damage by 40%."};
+const std::string IdolSongDescription[7]{"Magical music notes that float vertically in both directions.", "Increase damage by 25%.", "Increase speed and travel width.", "Increase music note size by 25%.", "Reduce the time between attacks by 20%.", "Increase music note size by 25%.", "Increase damage by 50%."};
+const std::string FanBeamDescription[7]{"Shoot a powerful laser beam from the microphone. Horizontal only.", "Increase size by 30%.", "Reduce attack cooldown by 0.5 second.", "Increase damage by 50%.", "Reduce attack cooldown by 0.5 second.", "Increase beam size by 50%.", "Fire an additional beam behind."};
+const std::string CeoTearsDescription[7]{"Fires rapid tears at random targets.", "Increase damage by 20%.", "Shoot 2 tears.", "Reduce the time between attacks by 33%.", "Tears are 25%% faster and increase damage by 20%.", "Reduce the time between attacks by 50%.", "Shoot 4 tears."};
+
 #pragma endregion
 
 #pragma region Enemy
@@ -91,25 +107,3 @@ enum Tabs
     Pause,
     Level_Up
 };
-
-
-// 16 x 16
-// enum CHOICES
-// {
-//     FUBUBEAM,
-//     AXESWING,
-//     SPIDERCOOKING,
-//     XPOTATO,
-//     CEOTEARS,
-//     FANBEAM,
-//     BLBOOK,
-//     PSYCHOAXE,
-//     IDOLSONG,
-//     ELITELAVA,
-//     FALLINGBLOCKS,
-//     ATK_UP,
-//     HASTE_UP,
-//     HP_UP,
-//     HP_REGEN,
-//     SPD_UP
-// };

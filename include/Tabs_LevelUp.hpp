@@ -18,10 +18,11 @@ struct Tabs_LevelUp
     void setUp(SDL_Renderer* renderer);
     LButton upgrade[4];
     LTexture optionCase;
-    LTexture icon[4];
+    LTexture textureText;
+    std::string optionName[4];
     std::string iconTexture[4];
     void getIcon();
     int currentButton{0};
-    void render(SDL_Renderer* renderer);
+    void render(SDL_Renderer* renderer, TTF_Font* font);
     void handleEvents(bool &leveledUp,int &choice);
 };
