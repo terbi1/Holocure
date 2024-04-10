@@ -20,7 +20,7 @@ class AnimatedSprite{
         // Update every frame
         void Update();
         // Render
-        void Render(SDL_Renderer*& renderer, SDL_RendererFlip flip, float angle);
+        void Render(SDL_Renderer*& renderer, SDL_RendererFlip flip, float angle, SDL_Point* rotatingCenter = NULL);
 
         SDL_Texture* getTexture() {
             return m_texture;

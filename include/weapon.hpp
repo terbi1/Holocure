@@ -15,6 +15,7 @@
 const int frames = 8;
 
 enum WEAPON_ID {
+    NONE,
     FUBU_BEAM,
     AXE,
     SPIDER_COOKING,
@@ -39,20 +40,22 @@ struct DamagingArea
     Vector2f rotatingCenter;
     Vector2f direction;
     Vector2f size;
+    float projectileSpeed;
     int hitLimit;
     std::unordered_map<int, float> hitID;
     int currentFrame{-1};
     int frames;
     int attackCount{1};
-    float frameTime;
+    float frameTime{0};
     float lastFrameTime{-100};
     int angle{0};
     float radius;
     float fallTime;
-    float hitCooldown;
+    float hitCooldown{0};
     // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
     bool ofPlayer{true};
+    bool maxed{false};
 };
 
 struct Weapon {
@@ -64,6 +67,7 @@ struct Weapon {
     float cooldown{0};
     float specialDuration[2] = {5,5};
     void setHitLimit(int hitLimit);
+    void setHitCooldown(float hitCooldown);
     void setDamage(float damage);
     void setAttackInterval(float interval);
     void setArea(float areaIncrease);

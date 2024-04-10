@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <sstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -17,7 +18,9 @@
 #include "RenderWindow.hpp"
 #include "Hud.hpp"
 
+const int chunkSize = 16;
 
+bool isOutsideOfView(Circle object, int camX, int camY);
 
 class GameState 
 {
@@ -32,8 +35,8 @@ public:
     bool getPause();
     void updateSpawnPool(int minuteTimer, int secondTimer);
     void bossSpawn(int minuteTimer, int secondTimer);
-    void update(float timeStep);
-    void render(SDL_Renderer *renderer);
+    void update(float timeStep, bool &shake);
+    void render(SDL_Renderer *renderer, bool shake);
     void reset();
     void handleEvent();
     void startCD();
@@ -44,8 +47,16 @@ public:
         return player;
     }
     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    int reqNextLevel{61};
+    int reqNextLevel{79};
+    int choice{-1};
 private:
+    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}};
+    // std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {SPIDER_COOKING, 1}, {AXE, 2}, {ELITE_LAVA,1}};
+    std::unordered_map<WEAPON_ID, int> option;
+    std::vector<WEAPON_ID> optionKey;
+    std::vector<int> optionLevel;
+    int shakeStrength{1};
+    int shakeTime{0};
     TTF_Font *DMG_font = NULL;
     LTexture dmgText;
     bool playing;
@@ -55,10 +66,12 @@ private:
     // GameOverAnnouncement* gameOverAnnouncement;
     bool isOver{false};
     bool recordScore;
+    bool leveledUp{false};
     Vector2f moved;
     Player player;
     HUD playerHUD;
     int enemyFrame{0};
+    std::unordered_set<int> trace;
     std::vector<Enemy> enemies;
     std::vector<Weapon> weapons;
     std::vector<ExpDrop> dropItems;
@@ -69,4 +82,5 @@ private:
     float spawnCooldown{0};
     float spawnRate;
     bool boss {false};
+    std::unordered_set<int> WORLD_CHUNKS[64][36];
 };

@@ -47,7 +47,8 @@ public:
     int expValue;
     float frameTime{0.2};
     int frames;
-    float timePassed{0};
+    float timePassed{0.3};
+    Vector2f direction;
 private:
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;
@@ -56,3 +57,5 @@ private:
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);
+
+bool compareByX(const Enemy &a, const Enemy &b);

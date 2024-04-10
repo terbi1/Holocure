@@ -10,6 +10,8 @@
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "ResourceManager.hpp"
+#include "Tabs_LevelUp.hpp"
+#include "weapon.hpp"
 
 struct HUD
 {
@@ -21,19 +23,29 @@ struct HUD
     LTexture pauseScreen;
     LTexture pauseMenu;
     LTexture hp[2];
-    SDL_Rect expBaseBar{0, 0, SCREEN_WIDTH, 34};
+    LTexture specialSymbol;
+    LTexture specialBar[4];
+    LTexture weaponSlot;
     SDL_Rect screen{0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    SDL_Rect expBaseBar{0, 0, SCREEN_WIDTH, 34};
     SDL_Rect expTopBarSRC{0, 0, 0, 26};
     SDL_FRect expTopBar{0, -3, 0, 34};
     SDL_Rect hpBaseBar{86,40,0,6 * 2};
     SDL_Rect hpTopBar{86,40,0,6 * 2};
-    SDL_Rect pausePortrait{25, 100, 51 * 3, 115 * 3};
+    SDL_Rect specialCase{0, 90, 18 * 2, 18 * 2};
+    SDL_Rect specialBaseBar{40, 96, 70 * 2, 11 * 2};
+    SDL_Rect specialTopBarSRC{0, 0, 0, 11};
+    SDL_FRect specialTopBar{40, 96, 0, 11 * 2};
+    SDL_Rect specialTopBar1{40, 96, 0, 11 * 2};
+    SDL_Rect specialBarFrame{38,96,144,24};
+    SDL_Rect pausePortrait{25, 130, 51 * 3, 115 * 3};
+    SDL_Rect emptyWeaponRect{100, 60, 24, 22};
     std::stringstream levelText;
     std::stringstream timeText;
     std::string gameOverText {"GAME OVER"};
     void initHUD(SDL_Renderer *renderer, int health);
-    void update(Player player, int expForNextLevel);
-    void render(SDL_Renderer *renderer, bool pause, bool isOver);
+    void update(Player player, int expForNextLevel, float specialCD);
+    void render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons);
     LTimer HUD_Timer;
     TTF_Font *HUD_font = NULL;
     Uint32 minute;
@@ -46,5 +58,7 @@ struct HUD
     int totalButtons{2};
     LButton button[2];
     int currentButton{0};
-    void handleEvents(bool &isRunning, Tabs& direct);
+    int count{0};
+    void handleEvents(bool &isRunning, bool &leveledUp, Tabs& direct, int &choice);
+    Tabs_LevelUp tabs_levelup;
 };

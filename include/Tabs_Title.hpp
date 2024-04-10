@@ -7,9 +7,6 @@
 #include "ResourceManager.hpp"
 
 class Tabs_Title{
-    // public:
-    //     LButton button[allButtonsOfMenu];
-    //     LTexture keyUp[4], keyDown[4];
 public:
     Tabs_Title();
     ~Tabs_Title();

@@ -15,7 +15,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 2;
         speed = 0.35;
         expValue = 6;
-        collider.radius = 21;
+        collider.radius = 18;
         frames = 2;
         break;
     }
@@ -55,7 +55,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 5;
         speed = 0.6;
         expValue = 12;
-        collider.radius = 21;
+        collider.radius = 18;
         frames = 2;
         break;
     }
@@ -85,12 +85,18 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
 
 void Enemy::move(Vector2f player_center)
 {
-    if (collider.center.x >= player_center.x)
-        flip = SDL_FLIP_HORIZONTAL;
-    else
-        flip = SDL_FLIP_NONE;
-    Vector2f moveVector = vectorNormalize(player_center - collider.center);
-    collider.center += moveVector * speed;
+    if(timePassed >= 0.3)
+    {
+        if (collider.center.x >= player_center.x)
+            flip = SDL_FLIP_HORIZONTAL;
+        else
+            flip = SDL_FLIP_NONE;
+        // Vector2f moveVector = vectorNormalize(player_center - collider.center);
+        direction = vectorNormalize(player_center - collider.center);
+        timePassed = 0;
+    }
+    // collider.center += moveVector * speed;
+    collider.center += direction * speed;
 }
 
 void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
@@ -166,4 +172,9 @@ void spawn(std::vector<Enemy> &enemies, Vector2f playerPos, ENEMY_TYPE type, int
     Vector2f spawnPos = playerPos + spawnDirection * Vector2f{SCREEN_WIDTH, SCREEN_HEIGHT};
 
     enemies.push_back(Enemy{type, spawnPos, ID});
+}
+
+bool compareByX(const Enemy &a, const Enemy &b)
+{
+    return a.collider.center.x + a.collider.radius < b.collider.center.x + b.collider.radius;
 }
