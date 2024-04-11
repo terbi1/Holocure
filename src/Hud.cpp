@@ -30,7 +30,7 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     title.setAlpha(100);
     pauseMenu.loadFromFile(Pause_Menu, renderer);
     hp[0].loadFromFile(HealthBar[0], renderer);
-    hpBaseBar.w = health * 4;
+    hpBaseBar.w = 230;
     hp[1].loadFromFile(HealthBar[1], renderer);
     button[0] = {"Resume", Vector2f{SCREEN_WIDTH / 2, 200}, Vector2f{125, 35}, 0};
     button[1] = {"Quit", Vector2f{SCREEN_WIDTH / 2, 240}, Vector2f{125, 35}, 0};
@@ -39,7 +39,7 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
 void HUD::update(Player player, int reqNextLevel, float specialCD)
 {
     if(specialCD <= 0) ++count;
-    hpTopBar.w = player.health * 4;
+    hpTopBar.w = (float)player.health / (float)player.maxHP * 230;
     expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
     expTopBar.w = player.currentExp / reqNextLevel * (SCREEN_WIDTH + 10);
     specialTopBarSRC.w = (player.specialCD - specialCD) / player.specialCD * 70;
@@ -55,6 +55,7 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
     if (second < 10)
         timeText << 0;
     timeText << second;
+    hpText = std::to_string(player.health) + "/" + std::to_string(player.maxHP);
 }
 
 void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
@@ -100,16 +101,16 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         if(i >= (int)weapons.size() || weapons[i].ID == FALLING_BLOCKS)
         {
             icon = EmptyWeaponSlot;
-            emptyWeaponRect = {100 + 50 * i, 60, 24 , 22};
-            weaponSlot.render(renderer, &emptyWeaponRect);
+            weaponRect = {100.0f + 37.5f * i, 65, 12 * 1.5 , 11 * 1.5};
+            weaponSlot.renderF(renderer, &weaponRect);
         }
         else
         {
-            emptyWeaponRect.x = 90 + 40 * i;
-            emptyWeaponRect.y = 50;
-            emptyWeaponRect.w = 50;
-            emptyWeaponRect.h = 40;
-            emptyWeaponRect = {90 + 50 * i, 50, 50, 40};
+            // emptyWeaponRect.x = 90 + 40 * i;
+            // emptyWeaponRect.y = 50;
+            // emptyWeaponRect.w = 50;
+            // emptyWeaponRect.h = 40;
+            weaponRect = {90.0f + 37.5f * i, 55, 25 * 1.5, 20 * 1.5};
             switch ((int)weapons[i].ID)
             {
             case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
@@ -121,7 +122,13 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
             case IDOL_SONG: icon = IdolSong_Icon; break;
             case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
             }
-            SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &emptyWeaponRect);
+            SDL_RenderCopyF(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &weaponRect);
+            levelLabel.x = 93 + 37.5 * i;
+            SDL_SetRenderDrawColor(renderer,255,255,255,255);
+            SDL_RenderFillRectF(renderer, &levelLabel);
+            // SDL_SetRenderDrawColor(renderer,0,0,0,255);
+            // SDL_RenderDrawRectF(renderer, &levelLabel);
+            textureText.renderText("LV: " + std::to_string(weapons[i].level), {0,0,0}, HUD_font, renderer, 95.0f + 37.5f * i, 88, 12);
         }
     }
 
@@ -152,6 +159,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
 
     textureText.renderText(levelText.str().c_str(), {255, 255, 255}, HUD_font, renderer, 940, 10, 28);
     textureText.renderText(timeText.str().c_str(), {255, 255, 255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 70, 50, 36);
+    textureText.renderText(hpText, {255,255,255}, HUD_font, renderer, 320,40, 20);
 }
 
 void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
@@ -176,6 +184,7 @@ void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
         {
             direct = Title;
             pause = false;
+            Mix_HaltMusic();
         }
         currentButton = 0;
     }

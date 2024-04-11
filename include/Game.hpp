@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "GameState.hpp"
 #include "utils.hpp"
@@ -40,4 +41,6 @@ private:
     Tabs_Room1 tabs_room1;
     Tabs_LevelUp tabs_levelup;
     TTF_Font* font;
+    Mix_Music* titleMusic = NULL;
+    Mix_Music* roomMusic = NULL;
 };

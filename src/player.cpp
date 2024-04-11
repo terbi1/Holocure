@@ -112,3 +112,9 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     dst.y -= 20;
     SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
 }
+
+void Player::increaseSpeed(float increasePercent)
+{
+    SPEED *= (100 + increasePercent) / 100;
+}
+

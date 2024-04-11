@@ -124,29 +124,52 @@ void GameState::update(float timeStep, bool &shake)
 
     if (choice != -1)
     {
-        for (auto it = weapons.begin(); it != weapons.end(); ++it)
+        if(optionLevel[choice] == 0)
         {
-            if (it->ID == optionKey[choice])
+            switch((int)optionKey[choice])
             {
-                it->updateStats();
-                choice = -1;
-                if (it->level < 7)
-                {
-                    // optionPool.insert({it->ID, it->level});
-                    optionPool[it->ID] = it->level + 1;
-                }
-                else
-                    optionPool.erase(it->ID);
+                case ATK_UP: 
+                player.atk += 8;
                 break;
+                case SPD_UP: 
+                player.increaseSpeed(12);
+                break;
+                case HP_UP: break;
+                case HP_RECOVER: break;
             }
         }
-        if (choice != -1)
+        else if (optionLevel[choice] == 1)
         {
             weapons.push_back(Weapon(optionKey[choice]));
             optionPool[optionKey[choice]] = 2;
-            choice = -1;
         }
+        else
+        {
+            for (auto it = weapons.begin(); it != weapons.end(); ++it)
+            {
+                if (it->ID == optionKey[choice])
+                {
+                    it->updateStats();
+                    // choice = -1;
+                    if (it->level < 7)
+                    {
+                        // optionPool.insert({it->ID, it->level});
+                        optionPool[it->ID] = it->level + 1;
+                    }
+                    else
+                        optionPool.erase(it->ID);
+                    break;
+                }
+            }
+        }
+        // if (choice != -1)
+        // {
+        //     weapons.push_back(Weapon(optionKey[choice]));
+        //     optionPool[optionKey[choice]] = 2;
+        //     choice = -1;
+        // }
         // ++optionPool[optionKey[choice]];
+        choice = -1;
         optionKey.clear();
         optionLevel.clear();
     }
@@ -492,7 +515,7 @@ void GameState::update(float timeStep, bool &shake)
 
     // create drops
 
-    for (auto it = enemies.begin(); it != enemies.end(); ++it)
+    for (auto it = enemies.begin(); it != enemies.end();)
     {
         if (it->health <= 0)
         {
@@ -508,9 +531,10 @@ void GameState::update(float timeStep, bool &shake)
                     }
                 }
             }
-            enemies.erase(it);
-            --it;
+            it = enemies.erase(it);
+            // --it;
         }
+        else ++it;
     }
 
     // moving animation frame
@@ -520,13 +544,16 @@ void GameState::update(float timeStep, bool &shake)
         player.currentFrame = 0;
     }
 
-    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
+    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end();)
     {
         if (itDrop->pickedUp(player.collider.center))
         {
             player.currentExp += itDrop->expValue;
-            dropItems.erase(itDrop);
-            --itDrop;
+            itDrop = dropItems.erase(itDrop);
+        }
+        else
+        {
+            ++itDrop;
         }
     }
 
@@ -595,6 +622,26 @@ void GameState::update(float timeStep, bool &shake)
                     playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[1];
                 else
                     playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[0];
+                break;
+            case ATK_UP:
+                playerHUD.tabs_levelup.optionName[i] = "ATK Up";
+                playerHUD.tabs_levelup.upgrade[i].setText("Increase ATK by 8%.");
+                playerHUD.tabs_levelup.iconTexture[i] = AttackUp_Icon;
+                break;
+            case HP_UP:
+                playerHUD.tabs_levelup.optionName[i] = "Max HP Up";
+                playerHUD.tabs_levelup.upgrade[i].setText("Increase Max HP by 10%.");
+                playerHUD.tabs_levelup.iconTexture[i] = MaxHPUp_Icon;
+                break;
+            case SPD_UP:
+                playerHUD.tabs_levelup.optionName[i] = "SPD Up";
+                playerHUD.tabs_levelup.upgrade[i].setText("Increase SPD by 12%.");
+                playerHUD.tabs_levelup.iconTexture[i] = SpeedUp_Icon;
+                break;
+            case HP_RECOVER:
+                playerHUD.tabs_levelup.optionName[i] = "Food";
+                playerHUD.tabs_levelup.upgrade[i].setText("Recover 20% of Max HP.");
+                playerHUD.tabs_levelup.iconTexture[i] = HPRecover_Icon;
                 break;
             }
         }

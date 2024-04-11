@@ -44,6 +44,7 @@ public:
     float crit{10};
     float critMod{50};
     float specialCD{10};
+    void increaseSpeed(float increasePercent);
 private:
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     float SPEED {1.3};

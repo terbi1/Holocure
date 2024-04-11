@@ -58,6 +58,11 @@ const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_S
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
+const std::string AttackUp_Icon{"res/gfx/spr_attackUp.png"};
+const std::string MaxHPUp_Icon{"res/gfx/spr_maxhpUp.png"};
+const std::string SpeedUp_Icon{"res/gfx/spr_movementUp.png"};
+const std::string HPRecover_Icon{"res/gfx/spr_ach_hamburgers.png"};
+
 #pragma endregion
 
 #pragma region WeaponDescription

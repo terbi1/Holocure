@@ -32,6 +32,7 @@ int main(int argc, char *args[])
             game.update(timeStep);
         }
 
+        game.playMusic();
         //start drawing
         game.render();
     }
