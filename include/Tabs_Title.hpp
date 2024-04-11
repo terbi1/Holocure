@@ -22,4 +22,5 @@ private:
     Tabs direct{Title};
     int currentButton{0};
     TTF_Font* titleFont;
+    Mix_Music* gMusic;
 };

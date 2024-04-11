@@ -50,7 +50,7 @@ public:
     int reqNextLevel{79};
     int choice{-1};
 private:
-    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}};
+    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
     // std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {SPIDER_COOKING, 1}, {AXE, 2}, {ELITE_LAVA,1}};
     std::unordered_map<WEAPON_ID, int> option;
     std::vector<WEAPON_ID> optionKey;
@@ -79,8 +79,8 @@ private:
     std::unordered_set<ENEMY_TYPE> spawnPool;
     std::vector<ENEMY_TYPE> bosses; 
     std::vector<DamageNumber> dmgNumbers;
+    int MAX_WEAPON{6};
     float spawnCooldown{0};
     float spawnRate;
     bool boss {false};
-    std::unordered_set<int> WORLD_CHUNKS[64][36];
 };

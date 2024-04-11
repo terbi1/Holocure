@@ -26,7 +26,11 @@ enum WEAPON_ID {
     PSYCHO_AXE,
     IDOL_SONG,
     ELITE_LAVA,
-    FALLING_BLOCKS
+    FALLING_BLOCKS,
+    ATK_UP,
+    SPD_UP,
+    HP_UP,
+    HP_RECOVER,
 };
 
 struct DamagingArea

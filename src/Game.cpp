@@ -19,7 +19,7 @@ Game::~Game()
 
 void Game::init(const char *p_title, int p_w, int p_h)
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		std::cout << "SDL_Init failed. SDL ERROR: " << SDL_GetError();
 	}
@@ -49,6 +49,12 @@ void Game::init(const char *p_title, int p_w, int p_h)
 		std::cout << "Could not load font" << TTF_GetError() << std::endl;
 	}
 
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+    {
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
+
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
@@ -59,6 +65,8 @@ void Game::loadmedia()
 	tabs_room1.roomInit(renderer);
 	tabs_levelup.setUp(renderer);
 	gameState.loadMedia(renderer);
+    titleMusic = Mix_LoadMUS("res/gfx/bgm/bgm_SSS.ogg");
+    roomMusic = Mix_LoadMUS("res/gfx/bgm/bgm_suspect.ogg");
 	// playerHUD.initHUD(renderer);
 	// playerHUD.HUD_Timer.start();
 }
@@ -93,37 +101,48 @@ void Game::handleEvents()
 	// 	break;
 	}
 }
-// void Game::playMusic()
-// {
-// 	switch (tabs)
-// 	{
-// 	case InGame_SoloMode:
-// 		if( Mix_PlayingMusic() == 0 && !gameState->isInCountDown() && gameState->getPlaying())
-// 		{
-// 			Mix_PlayMusic( me_playing, -1 );
-// 		}
-// 		if (gameState->getPause() && gameState->getPlaying())
-// 		{
-// 			Mix_HaltMusic();
-// 		}
-// 		break;
-// 	case InGame_BattleMode:
-// 		if( Mix_PlayingMusic() == 0 && !battleProcessor->getGameState1()->isInCountDown() && battleProcessor->getGameState1()->getPlaying())
-// 		{
-// 			Mix_PlayMusic( me_playing, -1 );
-// 		}
-// 		if (battleProcessor->getGameState1()->getPause() && battleProcessor->getGameState1()->getPlaying())
-// 		{
-// 			Mix_HaltMusic();
-// 		}
-// 		break;
-// 	default:
-// 		if( Mix_PlayingMusic() == 0 ){
-// 			Mix_PlayMusic( me_theme, -1 );
-// 		}
-// 		break;
-// 	}
-// }
+void Game::playMusic()
+{
+	switch ((int)currentTab)
+	{
+		case Title:
+		if( Mix_PlayingMusic() == 0 )
+		{
+			Mix_PlayMusic(titleMusic, -1);
+		}
+		return;
+		case Room1:
+		if( Mix_PlayingMusic() == 0 )
+		{
+			Mix_PlayMusic(roomMusic, -1);
+		}
+	// case Title:
+	// 	if( Mix_PlayingMusic() == 0 && !gameState->isInCountDown() && gameState->getPlaying())
+	// 	{
+	// 		Mix_PlayMusic( me_playing, -1 );
+	// 	}
+	// 	if (gameState->getPause() && gameState->getPlaying())
+	// 	{
+	// 		Mix_HaltMusic();
+	// 	}
+	// 	break;
+	// case InGame_BattleMode:
+	// 	if( Mix_PlayingMusic() == 0 && !battleProcessor->getGameState1()->isInCountDown() && battleProcessor->getGameState1()->getPlaying())
+	// 	{
+	// 		Mix_PlayMusic( me_playing, -1 );
+	// 	}
+	// 	if (battleProcessor->getGameState1()->getPause() && battleProcessor->getGameState1()->getPlaying())
+	// 	{
+	// 		Mix_HaltMusic();
+	// 	}
+	// 	break;
+	// default:
+	// 	if( Mix_PlayingMusic() == 0 ){
+	// 		Mix_PlayMusic( me_theme, -1 );
+	// 	}
+	// 	break;
+	}
+}
 
 void Game::update(float timeStep)
 {
@@ -175,6 +194,8 @@ void Game::clean()
 	font = NULL;
 	window = NULL;
 	renderer = NULL;
+
+	Mix_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
