@@ -98,7 +98,7 @@ const std::string font_munro{"res/gfx/font/munro.ttf"};
 const std::string font_ModernDOS8x8{"res/gfx/font/ModernDOS8x8.ttf"};
 
 const float spriteFrameTime{0.03};
-const float enemyFrameTime{0.2};
+const float enemyFrameTime{0.1};
 const float SPAWN_CD{5};
 
 const int MAX_WEAPON = 6;

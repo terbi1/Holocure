@@ -53,6 +53,8 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.damage = 300;
         dmgArea.hitCooldown = 1;
         dmgArea.size = {460, 13};
+        dmgArea.knockbackSpeed = 15;
+        dmgArea.knockbackTime = 0.17;
         break;
     }
     case FUBU_BEAM:
@@ -71,12 +73,14 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frames = 0;
         timeBetweenAttacks = 6;
         dmgArea.hitLimit = 7;
-        dmgArea.damage = 140;
+        dmgArea.damage = 14;
         dmgArea.hitCooldown = 0.33;
         dmgArea.radius = 100;
         dmgArea.attackCount = 3;
         dmgArea.size = {36,46};
         dmgArea.projectileSpeed = 3;
+        dmgArea.knockbackSpeed = 2;
+        dmgArea.knockbackTime = 0.08;
         break;
     }
     case PSYCHO_AXE:
@@ -161,6 +165,13 @@ void Weapon::setAttackCount(int newCount)
 {
     dmgArea.attackCount = newCount;
 }
+
+void Weapon::setKnockback(float time, float speed)
+{
+    dmgArea.knockbackTime = time;
+    dmgArea.knockbackSpeed = speed;
+}
+
 void Weapon::updateStats()
 {
     ++level;
@@ -212,6 +223,7 @@ void Weapon::updateStats()
             setDamage(140.4);
             return;
         case 7:
+            setKnockback(0.13, 3.0);
             return;
         }
     }
@@ -399,8 +411,8 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
         sprite.Draw(dst.x, dst.y, dst.w, dst.h);
         sprite.PlayFrame(src.x, src.y, src.w, src.h, frame);
         sprite.Render(renderer, SDL_FLIP_NONE, weapon.angle);
-        SDL_SetRenderDrawColor(renderer, 255,0,0,255);
-        SDL_RenderDrawRect(renderer, &hitBox);
+        // SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+        // SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
     case SPIDER_COOKING:
@@ -530,11 +542,11 @@ void renderWeapon(SDL_Renderer *renderer, DamagingArea &weapon, Player player, i
     {
         sprite.getResource(renderer, SuiseiFallingBlocks[weapon.count].c_str());
         sprite.Draw(weapon.center.x - 96 - camX, weapon.center.y - 96 - camY, 192, 192);
-        SDL_Rect hitBox{(int)weapon.center.x - 96 - camX, (int)weapon.center.y - 96 - camY, 192, 192};
+        // SDL_Rect hitBox{(int)weapon.center.x - 96 - camX, (int)weapon.center.y - 96 - camY, 192, 192};
         sprite.PlayFrame(0, 0, 43, 43, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
-        SDL_SetRenderDrawColor(renderer,255,0,0,255);
-        SDL_RenderDrawRect(renderer, &hitBox);
+        // SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        // SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
     }
@@ -546,7 +558,7 @@ int damageCal(DamagingArea weapon, Player player)
 
     float totalWeaponDamage = weaponDamage;
 
-    float attackDamage = 10 * totalWeaponDamage * player.atk / 100;
+    float attackDamage = 10 * totalWeaponDamage * player.getATK() / 100;
 
     if (attackDamage > 2)
     {
@@ -564,7 +576,7 @@ void inflictDamage(DamagingArea &weapon, Player player, int &enemyHealth, bool &
     weapon.hitID[enemyID] = weapon.hitCooldown;
 }
 
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider, int &enemyHealth, bool &isHit, int enemyID, Player player)
+bool hitEnemy(DamagingArea &weapon, Circle &enemyCollider, int &enemyHealth, bool &isHit, int enemyID, Player player)
 {
     if (weapon.hitID.find(enemyID) != weapon.hitID.end()) {
         return false;

@@ -83,7 +83,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     }
 }
 
-void Enemy::move(Vector2f player_center)
+void Enemy::move(Vector2f player_center, float timeStep)
 {
     if(timePassed >= 0.3)
     {
@@ -97,6 +97,19 @@ void Enemy::move(Vector2f player_center)
     }
     // collider.center += moveVector * speed;
     collider.center += direction * speed;
+    if(knockbackTime > 0)
+    {
+        collider.center += knockbackDir * knockbackSpeed;
+        knockbackTime -= timeStep;
+    }
+}
+
+void Enemy::getKnockedBack(Vector2f direction, float time, float speed)
+{
+    if(type == FUBUZILLA) return;
+    knockbackDir = direction;
+    knockbackTime = time;
+    knockbackSpeed = speed;
 }
 
 void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)

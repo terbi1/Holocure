@@ -55,7 +55,7 @@ struct HUD
     SDL_Rect portraitRectDST{0, 40, 86, 48};
     SDL_Rect pauseRect{(int)(SCREEN_WIDTH / 2 - 128 * 1.5 / 2), (int)(SCREEN_HEIGHT / 2 - 245 * 1.5 / 2), (int)(128 * 1.5), (int)(245 * 1.5)};
     SDL_Rect overRect{SCREEN_WIDTH / 2 - 150, 100, 300, 50};
-    SDL_FRect levelLabel{0,88, 28, 11};
+    SDL_FRect levelLabel{0,88, 32, 11};
     LTexture textureText;
     int totalButtons{2};
     LButton button[2];

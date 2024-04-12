@@ -26,9 +26,9 @@ void collisionEvent(Circle& ene1, Circle& ene2)
 {
     ene1.center.x -= 2 * cos(pointDirection(ene1.center, ene2.center));
     ene1.center.y -= 2 * sin(pointDirection(ene1.center, ene2.center));
-    float awayDirection = pointDirection(ene1.center, ene2.center);
-    float dis = distance(ene1.center, ene2.center);
-    float closeNess = 0.125 / dis;
+    // float awayDirection = pointDirection(ene1.center, ene2.center);
+    // float dis = distance(ene1.center, ene2.center);
+    // float closeNess = 0.125 / dis;
 }
 
 bool checkAABBCircleCollision(SDL_Rect rect, Circle cir) {

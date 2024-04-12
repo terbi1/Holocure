@@ -17,22 +17,32 @@ GameState::~GameState()
 {
 }
 
+void GameState::start()
+{
+    playerHUD.HUD_Timer.start();
+    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
+    weapons.push_back(Weapon(AXE));
+    // player.health = player.maxHP;
+    // player.currentExp = 0;
+    // player.LEVEL = 1;
+    reqNextLevel = 79;
+    spawnCooldown = 0;
+    specialCD = 0;
+    EnemyCount = 0;
+    camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    choice = -1;
+    pause = false;
+    isOver = false;
+    leveledUp = false;
+    player.collider.center = {SCREEN_WIDTH / 2 + 16, SCREEN_HEIGHT / 2 + 26};
+    camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+}
+
 void GameState::loadMedia(SDL_Renderer *renderer)
 {
+    weapons.push_back(BL_BOOK);
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(), 24);
-
-    weapons.push_back(Weapon(AXE));
-    // weapons.push_back(Weapon(SPIDER_COOKING));
-    // weapons.push_back(Weapon(CEO_TEARS));
-    // weapons.push_back(Weapon(FAN_BEAM));
-    // weapons.push_back(Weapon(BL_BOOK));
-    // weapons.push_back(Weapon(PSYCHO_AXE));
-    // weapons.push_back(Weapon(IDOL_SONG));
-    // weapons.push_back(Weapon(ELITE_LAVA));
-
     playerHUD.initHUD(renderer, player.health);
-    playerHUD.HUD_Timer.start();
-    playerHUD.HUD_Timer.pause();
 }
 
 Tabs GameState::getDirect()
@@ -89,7 +99,7 @@ void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
 
 void GameState::bossSpawn(int minuteTimer, int secondTimer)
 {
-    if (minuteTimer == 10 && secondTimer == 0)
+    if (minuteTimer == 1 && secondTimer == 0)
     {
         spawn(enemies, player.collider.center, FUBUZILLA, EnemyCount);
         ++EnemyCount;
@@ -102,6 +112,7 @@ void GameState::update(float timeStep, bool &shake)
 {
     if (pause || leveledUp)
     {
+        Mix_VolumeMusic(20);
         playerHUD.HUD_Timer.pause();
         return;
     }
@@ -110,7 +121,11 @@ void GameState::update(float timeStep, bool &shake)
         return;
     }
     else
-        playerHUD.HUD_Timer.unpause();
+        {
+            playerHUD.HUD_Timer.unpause();
+            Mix_VolumeMusic(64);    
+        }
+
 
     if (shakeTime == 0)
         shake = false;
@@ -128,14 +143,10 @@ void GameState::update(float timeStep, bool &shake)
         {
             switch((int)optionKey[choice])
             {
-                case ATK_UP: 
-                player.atk += 8;
-                break;
-                case SPD_UP: 
-                player.increaseSpeed(12);
-                break;
-                case HP_UP: break;
-                case HP_RECOVER: break;
+                case ATK_UP: player.increaseATK(8); break;
+                case SPD_UP: player.increaseSpeed(12); break;
+                case HP_UP: player.increaseMaxHP(10); break;
+                case HP_RECOVER: player.heal(20); break;
             }
         }
         else if (optionLevel[choice] == 1)
@@ -234,7 +245,7 @@ void GameState::update(float timeStep, bool &shake)
             it->frameTime = enemyFrameTime;
         }
 
-        it->move(player.collider.center);
+        it->move(player.collider.center, timeStep);
 
         if (it->type == FUBUZILLA)
         {
@@ -379,7 +390,7 @@ void GameState::update(float timeStep, bool &shake)
                     --it;
                     continue;
                 }
-                it->dmgArea.center = Vector2f{randomInt(-5, 5) * 98, -SCREEN_HEIGHT / 2} + player.collider.center;
+                it->dmgArea.center = Vector2f{(float)(randomInt(-5, 5) * 98), -SCREEN_HEIGHT / 2} + player.collider.center;
                 it->dmgArea.fallTime = (rand() % 6 + 1) * 0.12;
                 it->dmgArea.count = rand() % 12;
                 break;
@@ -460,7 +471,6 @@ void GameState::update(float timeStep, bool &shake)
         }
         case FALLING_BLOCKS:
         {
-            // std::cout << it->fallTime << '\n';
             if (it->fallTime > 0)
             {
                 it->center.y += 8;
@@ -471,10 +481,6 @@ void GameState::update(float timeStep, bool &shake)
                     shakeTime = 30;
                 }
             }
-            // else if(it->fallTime <= 0 && it->fallTime > -0.01)
-            // {
-            //     shake = true;
-            // }
             break;
         }
         }
@@ -494,12 +500,12 @@ void GameState::update(float timeStep, bool &shake)
 
                 if (hitEnemy(*it, it2->collider, it2->health, it2->isHit, it2->ID, player))
                 {
+                    it2->getKnockedBack(vectorNormalize(it2->collider.center - player.collider.center), it->knockbackTime, it->knockbackSpeed);
                     dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
                 }
 
                 if (it->hitLimit == 0)
                 {
-                    // std::cout << 1;
                     activeAttack.erase(it);
                     --it;
                     break;
@@ -673,6 +679,12 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
         it->render(renderer, camera.x, camera.y);
     }
 
+    for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
+    {
+        if(it->weaponID != ELITE_LAVA) continue;
+        renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
+    }
+
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
         if (isOutsideOfView(it->collider, camera.x, camera.y))
@@ -682,6 +694,7 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
+        if(it->weaponID == ELITE_LAVA) continue;
         renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
     }
 
@@ -700,11 +713,18 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
 void GameState::reset()
 {
     playerHUD.HUD_Timer.stop();
-    player.health = 70;
-    player.currentExp = 0;
-    player.LEVEL = 1;
-    reqNextLevel = 61;
     isOver = false;
+    optionKey.clear();
+    optionLevel.clear();
+    optionPool.clear();
+    trace.clear();
+    weapons.clear();
+    dropItems.clear();
+    activeAttack.clear();
+    spawnPool.clear();
+    dmgNumbers.clear();
+    enemies.clear();
+    player.resetStats();
 }
 
 void GameState::handleEvent()
@@ -727,10 +747,11 @@ void GameState::handleEvent()
     // }
     playerHUD.handleEvents(pause, leveledUp, direct, choice);
 
-    if (currentKeyStates[SDL_SCANCODE_Z] && isOver)
+    if (currentKeyStates[SDL_SCANCODE_ESCAPE] && isOver)
     {
         reset();
         direct = Title;
+        SDL_ResetKeyboard();
         return;
     }
 

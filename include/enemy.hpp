@@ -38,7 +38,8 @@ public:
     int atk;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     Circle collider;
-    void move(Vector2f player_pos);
+    void move(Vector2f player_pos, float timeStep);
+    void getKnockedBack(Vector2f direction, float time, float speed);
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};
     int currentFrame{0};
@@ -49,11 +50,14 @@ public:
     int frames;
     float timePassed{0.3};
     Vector2f direction;
+    Vector2f knockbackDir;
 private:
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;
     float speed;
     Vector2f velocity;
+    float knockbackSpeed{0};
+    float knockbackTime{0};
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);

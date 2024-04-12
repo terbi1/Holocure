@@ -126,21 +126,6 @@ struct DamageNumber
 class LButton
 {
 public:
-void setText(std::string m_text)
-{
-	text = m_text;
-}
-private:
-SDL_Rect box;
-Vector2f center;
-Vector2f size;
-SDL_Color color;
-LTexture textureText;
-std::string texture;
-std::string text{};
-bool isCurrentButton{false};
-int type;
-public:
 LButton();
 LButton(std::string m_text, Vector2f m_center, Vector2f m_size, int m_type)
 	:text(m_text), center(m_center), size(m_size), type(m_type)
@@ -159,7 +144,18 @@ bool getState()
 	return isCurrentButton;
 }
 bool handleEvent();
-
-// bool isPressed{false};
-// LTexture texture[2];
+void setText(std::string m_text)
+{
+	text = m_text;
+}
+private:
+std::string text{};
+Vector2f center;
+Vector2f size;
+int type;
+SDL_Rect box;
+SDL_Color color;
+LTexture textureText;
+std::string texture;
+bool isCurrentButton{false};
 };

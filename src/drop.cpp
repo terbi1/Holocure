@@ -37,6 +37,6 @@ void ExpDrop::render(SDL_Renderer* renderer, int camX, int camY)
     else if(expValue >= 100 && expValue <= 199) expTexture = EXP_Drop[4];
     else expTexture = EXP_Drop[5];
 
-    SDL_Rect dst{pos.x - camX, pos.y - camY, int(12 * 1.5), int(13 * 1.5)};
+    SDL_Rect dst{(int)pos.x - camX, (int)pos.y - camY, int(12 * 1.5), int(13 * 1.5)};
     SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(expTexture, renderer), NULL, &dst);
 }

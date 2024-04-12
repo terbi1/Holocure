@@ -46,6 +46,8 @@ struct DamagingArea
     Vector2f size;
     float projectileSpeed;
     int hitLimit;
+    float knockbackSpeed{0};
+    float knockbackTime{0};
     std::unordered_map<int, float> hitID;
     int currentFrame{-1};
     int frames;
@@ -56,7 +58,6 @@ struct DamagingArea
     float radius;
     float fallTime;
     float hitCooldown{0};
-    // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
@@ -77,6 +78,7 @@ struct Weapon {
     void setArea(float areaIncrease);
     void setDuration(float durationReduction);
     void setAttackCount(int count);
+    void setKnockback(float time, float speed);
     void updateStats();
 };
 
@@ -86,6 +88,6 @@ int damageCal(DamagingArea weapon, Player player);
 
 void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID);
 
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player);
+bool hitEnemy(DamagingArea &weapon, Circle &enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player);
 
 bool hitPlayer(DamagingArea& weapon, Player& player);

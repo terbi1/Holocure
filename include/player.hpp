@@ -20,6 +20,11 @@ enum State {
 
 class Player
 {
+private:
+    float atk{130};
+    Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    float SPEED {1.3};
+    Vector2f velocity{0,0};
 public:
     Player();
     void handleEvent();
@@ -31,7 +36,6 @@ public:
     LTexture arrow;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     State state{IDLE};
-    SDL_Rect hitBox{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 24, 26};
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     int maxHP{70};
     int health{maxHP};
@@ -40,14 +44,17 @@ public:
     float currentExp{0};
     int LEVEL{1};
     int currentFrame{0};
-    float atk{130};
     float crit{10};
     float critMod{50};
-    float specialCD{10};
+    float specialCD{65};
+    float getATK()
+    {
+        return atk;
+    }
+    void increaseATK(float increase);
     void increaseSpeed(float increasePercent);
-private:
-    Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-    float SPEED {1.3};
-    Vector2f velocity{0,0};
+    void heal(float healPercent);
+    void increaseMaxHP(float increasePercent);
+    void resetStats();
 };
 
