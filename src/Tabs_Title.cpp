@@ -26,7 +26,7 @@ void Tabs_Title::render(SDL_Renderer* renderer) {
     SDL_Rect renderQuad {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
     titleBackground.render(renderer, &renderQuad);
 
-    currentButton = abs(currentButton % totalButtons);
+    currentButton = (currentButton + totalButtons) % totalButtons;
     for(int i = 0; i < totalButtons; ++i)
     {
         if(i == currentButton) button[i].setCurrentButton();

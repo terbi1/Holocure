@@ -30,7 +30,8 @@ void ExpDrop::render(SDL_Renderer* renderer, int camX, int camY)
 {
     std::string expTexture;
 
-    if(expValue <= 10) expTexture = EXP_Drop[0];
+    if(expValue <= 10) expTexture = 
+    EXP_Drop[0];
     else if(expValue >= 11 && expValue <= 19) expTexture = EXP_Drop[1];
     else if(expValue >= 20 && expValue <= 49) expTexture = EXP_Drop[2];
     else if(expValue >= 50 && expValue <= 99) expTexture = EXP_Drop[3];

@@ -55,9 +55,11 @@ const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"}
 const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
 const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
 const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
+const std::string CuttingBoard_Animation{"res/gfx/spr_CuttingBoard.png"};
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
+const std::string CuttingBoard_Icon{"res/gfx/spr_CuttingBoardIcon.png"};
 const std::string AttackUp_Icon{"res/gfx/spr_attackUp.png"};
 const std::string MaxHPUp_Icon{"res/gfx/spr_maxhpUp.png"};
 const std::string SpeedUp_Icon{"res/gfx/spr_movementUp.png"};
@@ -71,10 +73,11 @@ const std::string SuiseiWeaponDescription[7]{"Swing a bloody axe in an arc in fr
 const std::string SpiderCookingDescription[7]{"Create an area of miasma around, dealing slow damage to enemies inside.", "Increase area by 15%.", "Increase damage by 30%.", "Increase area by 25%.", "Increase frequency of hits by 20%.", "Increase damage by 60%.", "Add small knockback on hit"};
 const std::string EliteLavaDescription[7]{"Drop lava on the ground, burning targets slowly.", "Increase lava area by 20%.", "Throw 2 lava buckets.", "Increase damage by 30%% and increase duration of lava by 1 second.", "Increase damage by 30%.", "Throw 3 lava buckets.", "Throw 4 lava buckets and increase lava size by 20%."};
 const std::string PsychoAxeDescription[7]{"Throw an axe that spirals outward from the player.", "Increase size of axe by 20%. Increase damage by 20%.", "Reduce time between attacks by 20%.", "Increase damage by 33%, and size by 20%.", "Remove hit limit, and lasts 1 second longer.", "Increase attack size by 50%.", "Increase damage by 50%."};
-const std::string BLBookDescription[7]{"Repels targets with orbiting BL Books.", "Add 1 additional book.", "Increase damage by 30%% and increase duration by 1 second.", "Add 1 additional book.", "Increase radius and spinning speed by 25%.", "Add 1 additional book.", "Increase damage by 40%."};
+const std::string BLBookDescription[7]{"Repels targets with orbiting BL Books.", "Add 1 additional book.", "Increase damage by 30% and increase duration by 1 second.", "Add 1 additional book.", "Increase radius and spinning speed by 25%.", "Add 1 additional book.", "Increase damage by 40%."};
 const std::string IdolSongDescription[7]{"Magical music notes that float vertically in both directions.", "Increase damage by 25%.", "Increase speed and travel width.", "Increase music note size by 25%.", "Reduce the time between attacks by 20%.", "Increase music note size by 25%.", "Increase damage by 50%."};
 const std::string FanBeamDescription[7]{"Shoot a powerful laser beam from the microphone. Horizontal only.", "Increase size by 30%.", "Reduce attack cooldown by 0.5 second.", "Increase damage by 50%.", "Reduce attack cooldown by 0.5 second.", "Increase beam size by 50%.", "Fire an additional beam behind."};
-const std::string CeoTearsDescription[7]{"Fires rapid tears at random targets.", "Increase damage by 20%.", "Shoot 2 tears.", "Reduce the time between attacks by 33%.", "Tears are 25%% faster and increase damage by 20%.", "Reduce the time between attacks by 50%.", "Shoot 4 tears."};
+const std::string CeoTearsDescription[7]{"Fires rapid tears at random targets.", "Increase damage by 20%.", "Shoot 2 tears.", "Reduce the time between attacks by 33%.", "Tears are 25% faster and increase damage by 20%.", "Reduce the time between attacks by 50%.", "Shoot 4 tears."};
+const std::string CuttingBoardDescription[7]{"Create a defensive wall that damages targets behind you.", "Increase size of wall by 30%.", "Increase damage by 30%.", "Walls travel farther.", "Increase damage by 50%.", "Reduce the time between attacks by 0.5 seconds.", "Shoot additional walls from sides."};
 
 #pragma endregion
 

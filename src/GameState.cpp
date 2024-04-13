@@ -20,7 +20,7 @@ GameState::~GameState()
 void GameState::start()
 {
     playerHUD.HUD_Timer.start();
-    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
+    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
     weapons.push_back(Weapon(AXE));
     // player.health = player.maxHP;
     // player.currentExp = 0;
@@ -40,7 +40,6 @@ void GameState::start()
 
 void GameState::loadMedia(SDL_Renderer *renderer)
 {
-    weapons.push_back(BL_BOOK);
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(), 24);
     playerHUD.initHUD(renderer, player.health);
 }
@@ -395,6 +394,17 @@ void GameState::update(float timeStep, bool &shake)
                 it->dmgArea.count = rand() % 12;
                 break;
             }
+            case CUTTING_BOARD:
+            {
+                it->dmgArea.center = player.collider.center;
+                switch(i)
+                {
+                    case 0: it->dmgArea.angle = player.arrowAngle; break;
+                    case 1: it->dmgArea.angle = player.arrowAngle + 90; break;
+                    case 2: it->dmgArea.angle = player.arrowAngle - 90; break;
+                }
+                break;
+            }
             }
             activeAttack.push_back(it->dmgArea);
         }
@@ -480,6 +490,16 @@ void GameState::update(float timeStep, bool &shake)
                     shake = true;
                     shakeTime = 30;
                 }
+            }
+            break;
+        }
+        case CUTTING_BOARD:
+        {
+            if(it->fallTime > 0)
+            {
+                it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+                it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+                it->fallTime -= timeStep;
             }
             break;
         }
@@ -621,6 +641,11 @@ void GameState::update(float timeStep, bool &shake)
                 playerHUD.tabs_levelup.upgrade[i].setText(IdolSongDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = IdolSong_Icon;
                 break;
+            case CUTTING_BOARD:
+                playerHUD.tabs_levelup.optionName[i] = "Cutting Board LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(CuttingBoardDescription[it->second - 1]);
+                playerHUD.tabs_levelup.iconTexture[i] = CuttingBoard_Icon;
+                break;
             case AXE:
                 playerHUD.tabs_levelup.optionName[i] = "Axe Swing LV " + std::to_string(it->second);
                 playerHUD.tabs_levelup.upgrade[i].setText(SuiseiWeaponDescription[it->second - 1]);
@@ -682,7 +707,8 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
         if(it->weaponID != ELITE_LAVA) continue;
-        renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
+        it->render(renderer, player, camera.x, camera.y);
+        // renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
     }
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
@@ -695,7 +721,7 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
         if(it->weaponID == ELITE_LAVA) continue;
-        renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
+        it->render(renderer, player, camera.x, camera.y);
     }
 
     player.render(renderer, player.currentFrame / 2 / player.state, camera.x, camera.y);

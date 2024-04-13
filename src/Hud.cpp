@@ -40,10 +40,10 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
 {
     if(specialCD <= 0) ++count;
     hpTopBar.w = (float)player.health / (float)player.maxHP * 230;
-    expTopBarSRC.w = player.currentExp / reqNextLevel * 648;
-    expTopBar.w = player.currentExp / reqNextLevel * (SCREEN_WIDTH + 10);
-    specialTopBarSRC.w = (player.specialCD - specialCD) / player.specialCD * 70;
-    specialTopBar.w = specialTopBar1.w = (player.specialCD - specialCD) / player.specialCD * 140;
+    expTopBar[0].w = player.currentExp / reqNextLevel * 648;
+    expTopBar[1].w = player.currentExp / reqNextLevel * (SCREEN_WIDTH + 10);
+    specialTopBar[0].w = (player.specialCD - specialCD) / player.specialCD * 70;
+    specialTopBar[1].w = (player.specialCD - specialCD) / player.specialCD * 140;
     levelText.str("");
     levelText << "LV:" << player.LEVEL;
     timeText.str("");
@@ -91,58 +91,51 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     }
 
     expBar[0].render(renderer, &expBaseBar);
-    expBar[1].renderF(renderer, &expTopBar, &expTopBarSRC);
+    expBar[1].render(renderer, &expTopBar[1], &expTopBar[0]);
 
     portrait.render(renderer, &portraitRectDST, &portraitRectSRC);
-
-    for(int i = 0; i < 6; ++i)
+    int temp{0};
+    weaponRect = {52.5f, 55, 25 * 1.5, 20 * 1.5};
+    levelLabel.x = 55.5f;
+    for(int i = 0; i < (int)weapons.size(); ++i)
     {
+        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == FUBU_BEAM) continue;
         std::string icon;
-        if(i >= (int)weapons.size() || weapons[i].ID == FALLING_BLOCKS)
+        weaponRect.x += 37.5f;
+        switch ((int)weapons[i].ID)
         {
-            icon = EmptyWeaponSlot;
-            weaponRect = {100.0f + 37.5f * i, 65, 12 * 1.5 , 11 * 1.5};
-            weaponSlot.renderF(renderer, &weaponRect);
+        case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
+        case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
+        case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
+        case BL_BOOK: icon = BLBook_Icon; break;
+        case ELITE_LAVA: icon = LavaPool_Icon; break;
+        case FAN_BEAM: icon = FanBeam_Icon; break;
+        case CEO_TEARS: icon = CEOTears_Icon; break;
+        case IDOL_SONG: icon = IdolSong_Icon; break;
+        case CUTTING_BOARD: icon = CuttingBoard_Icon; break;
         }
-        else
-        {
-            // emptyWeaponRect.x = 90 + 40 * i;
-            // emptyWeaponRect.y = 50;
-            // emptyWeaponRect.w = 50;
-            // emptyWeaponRect.h = 40;
-            weaponRect = {90.0f + 37.5f * i, 55, 25 * 1.5, 20 * 1.5};
-            switch ((int)weapons[i].ID)
-            {
-            case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
-            case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
-            case BL_BOOK: icon = BLBook_Icon; break;
-            case ELITE_LAVA: icon = LavaPool_Icon; break;
-            case FAN_BEAM: icon = FanBeam_Icon; break;
-            case CEO_TEARS: icon = CEOTears_Icon; break;
-            case IDOL_SONG: icon = IdolSong_Icon; break;
-            case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
-            }
-            SDL_RenderCopyF(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &weaponRect);
-            levelLabel.x = 93 + 37.5 * i;
-            SDL_SetRenderDrawColor(renderer,255,255,255,255);
-            SDL_RenderFillRectF(renderer, &levelLabel);
-            // SDL_SetRenderDrawColor(renderer,0,0,0,255);
-            // SDL_RenderDrawRectF(renderer, &levelLabel);
-            textureText.renderText("LV: " + std::to_string(weapons[i].level), {0,0,0}, HUD_font, renderer, 95.0f + 37.5f * i, 88, 12);
-        }
+        SDL_RenderCopyF(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &weaponRect);
+        levelLabel.x += 37.5;
+        SDL_SetRenderDrawColor(renderer,255,255,255,255);
+        SDL_RenderFillRectF(renderer, &levelLabel);
+        textureText.renderText("LV: " + std::to_string(weapons[i].level), {0,0,0}, HUD_font, renderer, 95.0f + 37.5f * temp, 88, 12);
+        ++temp;
+    }
+    for(; temp < 6; ++temp)
+    {
+        weaponRect = {100.0f + 37.5f * temp, 65, 12 * 1.5 , 11 * 1.5};
+        weaponSlot.renderF(renderer, &weaponRect);
     }
 
     specialSymbol.render(renderer, &specialCase);
 
-    if (specialTopBar.w < 138)
+    if (specialTopBar[1].w < 138)
     {
         specialBar[0].render(renderer, &specialBaseBar);
-        specialBar[1].render(renderer, &specialTopBar1, &specialTopBarSRC);
-        // specialBar[1].renderF(renderer, &specialTopBar, &specialTopBarSRC);
+        specialBar[1].render(renderer, &specialTopBar[1], &specialTopBar[0]);
     }
     else
     {
-        // int temp = rand() % 3;
         if(count / 10 > 2) count = 0;
         switch (count / 10)
         {

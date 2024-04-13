@@ -26,6 +26,7 @@ enum WEAPON_ID {
     PSYCHO_AXE,
     IDOL_SONG,
     ELITE_LAVA,
+    CUTTING_BOARD,
     FALLING_BLOCKS,
     ATK_UP,
     SPD_UP,
@@ -61,6 +62,7 @@ struct DamagingArea
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
+    void render(SDL_Renderer* renderer, Player player, int camX, int camY);
 };
 
 struct Weapon {
