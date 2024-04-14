@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
-#include "GameState.hpp"
+#include "GameStates.hpp"
 #include "utils.hpp"
 #include "Data.hpp"
 #include "Tabs_Title.hpp"
@@ -36,7 +36,7 @@ private:
     SDL_Renderer *renderer;
     int tabs;
     Tabs currentTab{Title};
-    GameState gameState;
+    GameStates gameState;
     Tabs_Title tabs_title;
     Tabs_Room1 tabs_room1;
     Tabs_LevelUp tabs_levelup;

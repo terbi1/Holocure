@@ -113,6 +113,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         case CEO_TEARS: icon = CEOTears_Icon; break;
         case IDOL_SONG: icon = IdolSong_Icon; break;
         case CUTTING_BOARD: icon = CuttingBoard_Icon; break;
+        case X_POTATO: icon = XPotato_Icon; break;
         }
         SDL_RenderCopyF(renderer, ResourceManager::getInstance().getTexture(icon, renderer), NULL, &weaponRect);
         levelLabel.x += 37.5;

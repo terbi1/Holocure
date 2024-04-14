@@ -56,11 +56,14 @@ const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaP
 const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
 const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
 const std::string CuttingBoard_Animation{"res/gfx/spr_CuttingBoard.png"};
+const std::string XPotato_Animation{"res/gfx/spr_XPotato.png"};
+const std::string PotatoExplosion_Animation[5]{"res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_0.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_1.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_2.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_3.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_4.png"};
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
 const std::string CuttingBoard_Icon{"res/gfx/spr_CuttingBoardIcon.png"};
 const std::string AttackUp_Icon{"res/gfx/spr_attackUp.png"};
+const std::string XPotato_Icon{"res/gfx/spr_XPotatoIcon.png"};
 const std::string MaxHPUp_Icon{"res/gfx/spr_maxhpUp.png"};
 const std::string SpeedUp_Icon{"res/gfx/spr_movementUp.png"};
 const std::string HPRecover_Icon{"res/gfx/spr_ach_hamburgers.png"};
@@ -78,6 +81,7 @@ const std::string IdolSongDescription[7]{"Magical music notes that float vertica
 const std::string FanBeamDescription[7]{"Shoot a powerful laser beam from the microphone. Horizontal only.", "Increase size by 30%.", "Reduce attack cooldown by 0.5 second.", "Increase damage by 50%.", "Reduce attack cooldown by 0.5 second.", "Increase beam size by 50%.", "Fire an additional beam behind."};
 const std::string CeoTearsDescription[7]{"Fires rapid tears at random targets.", "Increase damage by 20%.", "Shoot 2 tears.", "Reduce the time between attacks by 33%.", "Tears are 25% faster and increase damage by 20%.", "Reduce the time between attacks by 50%.", "Shoot 4 tears."};
 const std::string CuttingBoardDescription[7]{"Create a defensive wall that damages targets behind you.", "Increase size of wall by 30%.", "Increase damage by 30%.", "Walls travel farther.", "Increase damage by 50%.", "Reduce the time between attacks by 0.5 seconds.", "Shoot additional walls from sides."};
+const std::string XPotatoDescription[7]{"Throw a potato that bounces around the screen before exploding into an X.", "Increase the X explosion size by 20%.", "Throw 2 potatoes.", "Increase damage and speed by 30%.", "Reduce the time between attacks by 15% and remove hit limit.", "Increase the size of potatoes and the X explosion size by 30%.", "Throw 4 potatoes."};
 
 #pragma endregion
 

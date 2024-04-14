@@ -1,5 +1,5 @@
 
-#include "GameState.hpp"
+#include "GameStates.hpp"
 
 bool isOutsideOfView(Circle object, int camX, int camY)
 {
@@ -9,19 +9,20 @@ bool isOutsideOfView(Circle object, int camX, int camY)
     return false;
 }
 
-GameState::GameState()
+GameStates::GameStates()
 {
 }
 
-GameState::~GameState()
+GameStates::~GameStates()
 {
 }
 
-void GameState::start()
+void GameStates::start()
 {
     playerHUD.HUD_Timer.start();
     optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
-    weapons.push_back(Weapon(AXE));
+    // weapons.push_back(Weapon(AXE));
+    weapons.push_back(Weapon(X_POTATO));
     // player.health = player.maxHP;
     // player.currentExp = 0;
     // player.LEVEL = 1;
@@ -38,23 +39,23 @@ void GameState::start()
     camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 }
 
-void GameState::loadMedia(SDL_Renderer *renderer)
+void GameStates::loadMedia(SDL_Renderer *renderer)
 {
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(), 24);
     playerHUD.initHUD(renderer, player.health);
 }
 
-Tabs GameState::getDirect()
+Tabs GameStates::getDirect()
 {
     return direct;
 }
 
-bool GameState::getPause()
+bool GameStates::getPause()
 {
     return pause;
 }
 
-void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
+void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
 {
 
     if (minuteTimer == 0 && secondTimer == 0)
@@ -96,7 +97,7 @@ void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
     spawnRate = (minuteTimer * 60 + secondTimer) / 20 + 10;
 }
 
-void GameState::bossSpawn(int minuteTimer, int secondTimer)
+void GameStates::bossSpawn(int minuteTimer, int secondTimer)
 {
     if (minuteTimer == 1 && secondTimer == 0)
     {
@@ -107,7 +108,7 @@ void GameState::bossSpawn(int minuteTimer, int secondTimer)
     }
 }
 
-void GameState::update(float timeStep, bool &shake)
+void GameStates::update(float timeStep, bool &shake)
 {
     if (pause || leveledUp)
     {
@@ -172,13 +173,6 @@ void GameState::update(float timeStep, bool &shake)
                 }
             }
         }
-        // if (choice != -1)
-        // {
-        //     weapons.push_back(Weapon(optionKey[choice]));
-        //     optionPool[optionKey[choice]] = 2;
-        //     choice = -1;
-        // }
-        // ++optionPool[optionKey[choice]];
         choice = -1;
         optionKey.clear();
         optionLevel.clear();
@@ -405,6 +399,17 @@ void GameState::update(float timeStep, bool &shake)
                 }
                 break;
             }
+            case X_POTATO:
+            {
+                it->dmgArea.center = player.collider.center;
+                Vector2f temp = {randomFloat(-1,1), randomFloat(-1,1)};
+                while(temp.x == 0 && temp.y == 0)
+                {
+                    temp = {randomFloat(-1,1), randomFloat(-1,1)};
+                }
+                it->dmgArea.direction = vectorNormalize(temp);
+                break;
+            }
             }
             activeAttack.push_back(it->dmgArea);
         }
@@ -500,6 +505,21 @@ void GameState::update(float timeStep, bool &shake)
                 it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
                 it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
                 it->fallTime -= timeStep;
+            }
+            break;
+        }
+        case X_POTATO:
+        {
+            if(it->fallTime > 0)
+            {
+                it->center += it->direction * it->projectileSpeed;
+                it->angle += 20;
+                circleBounce(Circle{it->center, it->radius}, it->direction, camera);
+                it->fallTime -= timeStep;
+                if(it->fallTime <= 0)
+                {
+                    it->explode();
+                }
             }
             break;
         }
@@ -646,6 +666,11 @@ void GameState::update(float timeStep, bool &shake)
                 playerHUD.tabs_levelup.upgrade[i].setText(CuttingBoardDescription[it->second - 1]);
                 playerHUD.tabs_levelup.iconTexture[i] = CuttingBoard_Icon;
                 break;
+            case X_POTATO:
+                playerHUD.tabs_levelup.optionName[i] = "X Potato LV " + std::to_string(it->second);
+                playerHUD.tabs_levelup.upgrade[i].setText(XPotatoDescription[it->second - 1]);
+                playerHUD.tabs_levelup.iconTexture[i] = XPotato_Icon;
+                break;
             case AXE:
                 playerHUD.tabs_levelup.optionName[i] = "Axe Swing LV " + std::to_string(it->second);
                 playerHUD.tabs_levelup.upgrade[i].setText(SuiseiWeaponDescription[it->second - 1]);
@@ -684,7 +709,7 @@ void GameState::update(float timeStep, bool &shake)
     playerHUD.update(player, reqNextLevel, specialCD);
 }
 
-void GameState::render(SDL_Renderer *renderer, bool shake)
+void GameStates::render(SDL_Renderer *renderer, bool shake)
 {
     int shakeX{0}, shakeY{0};
     if (shake)
@@ -736,7 +761,7 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
     playerHUD.render(renderer, pause, leveledUp, isOver, weapons);
 }
 
-void GameState::reset()
+void GameStates::reset()
 {
     playerHUD.HUD_Timer.stop();
     isOver = false;
@@ -753,7 +778,7 @@ void GameState::reset()
     player.resetStats();
 }
 
-void GameState::handleEvent()
+void GameStates::handleEvent()
 {
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);

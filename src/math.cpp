@@ -3,6 +3,7 @@
 Vector2f vectorNormalize(Vector2f vector) 
 {
     float length = sqrt(vector.x * vector.x + vector.y * vector.y);
+    if(length == 0) return Vector2f{0,0};
     return Vector2f{vector.x / length, vector.y / length};
 }
 

@@ -28,6 +28,6 @@ class AnimatedSprite{
 
     private:
         SDL_Texture* m_texture;
-        SDL_Rect m_src;         // Where we're selecting from
-        SDL_Rect m_dst;   // Where we are rendering
+        SDL_Rect m_src{0, 0, 0, 0};         // Where we're selecting from
+        SDL_Rect m_dst{0, 0, 0, 0};   // Where we are rendering
 };

@@ -14,7 +14,7 @@ Tabs Tabs_Title::getDirect() {
 
 void Tabs_Title::setUpMenu(SDL_Renderer* renderer) {
     titleFont = TTF_OpenFont(font_8bitPLus.c_str(),12);
-    titleBackground.loadFromFile(BG_Title, renderer);
+    titleBackground.loadFromFile(Black_Screen, renderer);
     // button[1] = LButton{"Quit",SDL_Rect{700,260,250,52}};
     // button[0] = LButton{"Play",SDL_Rect{700,200,250,52}};
     button[0] = LButton{"Play",Vector2f{825, 226}, Vector2f{250,52}, 0};

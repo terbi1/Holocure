@@ -20,6 +20,7 @@ enum WEAPON_ID {
     AXE,
     SPIDER_COOKING,
     X_POTATO,
+    POTATO_EXPLOSION,
     CEO_TEARS,
     FAN_BEAM,
     BL_BOOK,
@@ -62,6 +63,8 @@ struct DamagingArea
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
+    float areaMultiplier[2];
+    void explode();
     void render(SDL_Renderer* renderer, Player player, int camX, int camY);
 };
 
@@ -83,8 +86,6 @@ struct Weapon {
     void setKnockback(float time, float speed);
     void updateStats();
 };
-
-void renderWeapon(SDL_Renderer* renderer, DamagingArea& weapon, Player player, int frame, int camX, int camY);
 
 int damageCal(DamagingArea weapon, Player player);
 
