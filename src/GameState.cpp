@@ -21,8 +21,7 @@ void GameStates::start()
 {
     playerHUD.HUD_Timer.start();
     optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
-    // weapons.push_back(Weapon(AXE));
-    weapons.push_back(Weapon(X_POTATO));
+    weapons.push_back(Weapon(AXE));
     // player.health = player.maxHP;
     // player.currentExp = 0;
     // player.LEVEL = 1;
@@ -108,6 +107,23 @@ void GameStates::bossSpawn(int minuteTimer, int secondTimer)
     }
 }
 
+void GameStates::checkWeaponLimit()
+{
+    int weaponCount = (int)weapons.size();
+    for(auto it = weapons.begin(); it != weapons.end(); ++it)
+    {
+        if(it->ID == FUBU_BEAM || it->ID == FALLING_BLOCKS) --weaponCount;
+    }
+    if(weaponCount < MAX_WEAPON) return;
+    for(auto it = optionPool.begin(); it != optionPool.end();)
+    {
+        if(it->second == 1) 
+            it = optionPool.erase(it);
+        else
+            ++it;
+    }
+}
+
 void GameStates::update(float timeStep, bool &shake)
 {
     if (pause || leveledUp)
@@ -176,6 +192,8 @@ void GameStates::update(float timeStep, bool &shake)
         choice = -1;
         optionKey.clear();
         optionLevel.clear();
+        checkWeaponLimit();
+
     }
     // spawn enemies
 
@@ -541,6 +559,7 @@ void GameStates::update(float timeStep, bool &shake)
                 if (hitEnemy(*it, it2->collider, it2->health, it2->isHit, it2->ID, player))
                 {
                     it2->getKnockedBack(vectorNormalize(it2->collider.center - player.collider.center), it->knockbackTime, it->knockbackSpeed);
+                    it2->takeDamage(damageCal(*it, player));
                     dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
                 }
 
@@ -561,26 +580,23 @@ void GameStates::update(float timeStep, bool &shake)
 
     // create drops
 
-    for (auto it = enemies.begin(); it != enemies.end();)
+    for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
-        if (it->health <= 0)
+        if (it->health > 0) continue;
+        dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
+        if (it->type == FUBUZILLA)
         {
-            dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
-            if (it->type == FUBUZILLA)
+            for (auto it2 = weapons.begin(); it2 != weapons.end(); ++it2)
             {
-                for (auto it2 = weapons.begin(); it2 != weapons.end(); ++it2)
+                if (it2->ID == FUBU_BEAM)
                 {
-                    if (it2->ID == FUBU_BEAM)
-                    {
-                        weapons.erase(it2);
-                        break;
-                    }
+                    weapons.erase(it2);
+                    break;
                 }
             }
-            it = enemies.erase(it);
-            // --it;
         }
-        else ++it;
+        it = enemies.erase(it);
+        --it;
     }
 
     // moving animation frame
@@ -590,16 +606,13 @@ void GameStates::update(float timeStep, bool &shake)
         player.currentFrame = 0;
     }
 
-    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end();)
+    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
     {
         if (itDrop->pickedUp(player.collider.center))
         {
             player.currentExp += itDrop->expValue;
             itDrop = dropItems.erase(itDrop);
-        }
-        else
-        {
-            ++itDrop;
+            --itDrop;
         }
     }
 
@@ -620,86 +633,10 @@ void GameStates::update(float timeStep, bool &shake)
             trace.insert(temp);
             std::unordered_map<WEAPON_ID, int>::iterator it;
             it = optionPool.begin();
-            for (int j = 0; j < temp; ++j)
-                ++it;
+            for (int j = 0; j < temp; ++j) ++it;
             optionKey.push_back(it->first);
             optionLevel.push_back(it->second);
-            switch ((int)it->first)
-            {
-            case PSYCHO_AXE:
-                playerHUD.tabs_levelup.optionName[i] = "Psycho Axe LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(PsychoAxeDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = PsychoAxe_Icon;
-                break;
-            case SPIDER_COOKING:
-                playerHUD.tabs_levelup.optionName[i] = "Spider Cooking LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(SpiderCookingDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = SpiderCooking_Icon;
-                break;
-            case BL_BOOK:
-                playerHUD.tabs_levelup.optionName[i] = "BL Book LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(BLBookDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = BLBook_Icon;
-                break;
-            case ELITE_LAVA:
-                playerHUD.tabs_levelup.optionName[i] = "Elite Lava LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(EliteLavaDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = LavaPool_Icon;
-                break;
-            case FAN_BEAM:
-                playerHUD.tabs_levelup.optionName[i] = "Fan Beam LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(FanBeamDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = FanBeam_Icon;
-                break;
-            case CEO_TEARS:
-                playerHUD.tabs_levelup.optionName[i] = "CEO's Tears LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(CeoTearsDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = CEOTears_Icon;
-                break;
-            case IDOL_SONG:
-                playerHUD.tabs_levelup.optionName[i] = "Idol Song LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(IdolSongDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = IdolSong_Icon;
-                break;
-            case CUTTING_BOARD:
-                playerHUD.tabs_levelup.optionName[i] = "Cutting Board LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(CuttingBoardDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = CuttingBoard_Icon;
-                break;
-            case X_POTATO:
-                playerHUD.tabs_levelup.optionName[i] = "X Potato LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(XPotatoDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = XPotato_Icon;
-                break;
-            case AXE:
-                playerHUD.tabs_levelup.optionName[i] = "Axe Swing LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(SuiseiWeaponDescription[it->second - 1]);
-                if (it->second == 7)
-                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[1];
-                else
-                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[0];
-                break;
-            case ATK_UP:
-                playerHUD.tabs_levelup.optionName[i] = "ATK Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase ATK by 8%.");
-                playerHUD.tabs_levelup.iconTexture[i] = AttackUp_Icon;
-                break;
-            case HP_UP:
-                playerHUD.tabs_levelup.optionName[i] = "Max HP Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase Max HP by 10%.");
-                playerHUD.tabs_levelup.iconTexture[i] = MaxHPUp_Icon;
-                break;
-            case SPD_UP:
-                playerHUD.tabs_levelup.optionName[i] = "SPD Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase SPD by 12%.");
-                playerHUD.tabs_levelup.iconTexture[i] = SpeedUp_Icon;
-                break;
-            case HP_RECOVER:
-                playerHUD.tabs_levelup.optionName[i] = "Food";
-                playerHUD.tabs_levelup.upgrade[i].setText("Recover 20% of Max HP.");
-                playerHUD.tabs_levelup.iconTexture[i] = HPRecover_Icon;
-                break;
-            }
+            playerHUD.tabs_levelup.getResource(it->first,it->second,i);
         }
         trace.clear();
         leveledUp = true;

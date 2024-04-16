@@ -27,8 +27,6 @@ class GameStates
 {
 private:
     std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
-    // std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {SPIDER_COOKING, 1}, {AXE, 2}, {ELITE_LAVA,1}};
-    // std::unordered_map<WEAPON_ID, int> option;
     std::vector<WEAPON_ID> optionKey;
     std::vector<int> optionLevel;
     int shakeStrength{1};
@@ -69,6 +67,7 @@ public:
     bool getPause();
     void updateSpawnPool(int minuteTimer, int secondTimer);
     void bossSpawn(int minuteTimer, int secondTimer);
+    void checkWeaponLimit();
     void update(float timeStep, bool &shake);
     void render(SDL_Renderer *renderer, bool shake);
     void reset();

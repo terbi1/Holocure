@@ -699,6 +699,7 @@ bool hitEnemy(DamagingArea &weapon, Circle &enemyCollider, int &enemyHealth, boo
     if (weapon.hitID.find(enemyID) != weapon.hitID.end()) {
         return false;
     }
+    
     switch ((int)weapon.weaponID)
     {
     case AXE:
@@ -909,7 +910,10 @@ bool hitEnemy(DamagingArea &weapon, Circle &enemyCollider, int &enemyHealth, boo
         break;
     }
     }
-    inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
+    --weapon.hitLimit;
+    isHit = true;
+    // enemyHealth -= damageCal(weapon, player);
+    weapon.hitID[enemyID] = weapon.hitCooldown;
     return true;
 }
 

@@ -40,6 +40,9 @@ public:
     Circle collider;
     void move(Vector2f player_pos, float timeStep);
     void getKnockedBack(Vector2f direction, float time, float speed);
+    void takeDamage(int damage){
+        health -= damage;
+    }
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};
     int currentFrame{0};
