@@ -28,6 +28,7 @@ enum WEAPON_ID {
     IDOL_SONG,
     ELITE_LAVA,
     CUTTING_BOARD,
+    GLOW_STICK,
     FALLING_BLOCKS,
     ATK_UP,
     SPD_UP,
@@ -39,6 +40,7 @@ struct DamagingArea
 {
     WEAPON_ID weaponID;
     DamagingArea();
+    bool isActive{true};
     float timePassed{0};
     float duration;
     float damage;
@@ -63,7 +65,9 @@ struct DamagingArea
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
-    float areaMultiplier[2];
+    float areaMultiplier[2]{0,0};
+    void update(float timeStep);
+    bool hitEnemy(Circle &enemyCollider, int enemyID);
     void explode();
     void render(SDL_Renderer* renderer, Player player, int camX, int camY);
 };
@@ -85,12 +89,9 @@ struct Weapon {
     void setAttackCount(int count);
     void setKnockback(float time, float speed);
     void updateStats();
+    void initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_RendererFlip playerFlip, int count, Vector2f direction = {0,0});
 };
 
 int damageCal(DamagingArea weapon, Player player);
-
-void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID);
-
-bool hitEnemy(DamagingArea &weapon, Circle &enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player);
 
 bool hitPlayer(DamagingArea& weapon, Player& player);

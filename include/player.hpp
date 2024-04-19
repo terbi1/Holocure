@@ -25,10 +25,11 @@ private:
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     float SPEED {1.3};
     Vector2f velocity{0,0};
+    float timePassed{0};
 public:
     Player();
     void handleEvent();
-    void move();
+    void update(float timeStep);
     Vector2f getPos() {
         return pos;
     }

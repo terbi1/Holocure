@@ -38,10 +38,11 @@ public:
     int atk;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     Circle collider;
-    void move(Vector2f player_pos, float timeStep);
+    void update(Vector2f player_pos, float timeStep);
     void getKnockedBack(Vector2f direction, float time, float speed);
     void takeDamage(int damage){
         health -= damage;
+        isHit = true;
     }
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};

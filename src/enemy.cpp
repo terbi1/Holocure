@@ -83,15 +83,23 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     }
 }
 
-void Enemy::move(Vector2f player_center, float timeStep)
+void Enemy::update(Vector2f player_center, float timeStep)
 {
+    timePassed += timeStep;
+    frameTime -= timeStep;
+    cd -= timeStep;
+    if (frameTime <= 0)
+    {
+        currentFrame = (currentFrame + 1) % (frames + 1);
+        frameTime = enemyFrameTime;
+    }
     if(timePassed >= 0.3)
     {
-        if (collider.center.x >= player_center.x)
-            flip = SDL_FLIP_HORIZONTAL;
-        else
-            flip = SDL_FLIP_NONE;
-        // Vector2f moveVector = vectorNormalize(player_center - collider.center);
+        flip = collider.center.x >= player_center.x ? SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE;
+        // if (collider.center.x >= player_center.x)
+        //     flip = SDL_FLIP_HORIZONTAL;
+        // else
+        //     flip = SDL_FLIP_NONE;
         direction = vectorNormalize(player_center - collider.center);
         timePassed = 0;
     }

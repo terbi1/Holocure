@@ -58,6 +58,8 @@ const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_S
 const std::string CuttingBoard_Animation{"res/gfx/spr_CuttingBoard.png"};
 const std::string XPotato_Animation{"res/gfx/spr_XPotato.png"};
 const std::string PotatoExplosion_Animation[5]{"res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_0.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_1.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_2.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_3.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_4.png"};
+const std::string GlowStick_Animation[8]{"res/gfx/spr_GlowStick/spr_GlowStick_0.png","res/gfx/spr_GlowStick/spr_GlowStick_1.png","res/gfx/spr_GlowStick/spr_GlowStick_2.png","res/gfx/spr_GlowStick/spr_GlowStick_3.png","res/gfx/spr_GlowStick/spr_GlowStick_4.png","res/gfx/spr_GlowStick/spr_GlowStick_5.png","res/gfx/spr_GlowStick/spr_GlowStick_6.png","res/gfx/spr_GlowStick/spr_GlowStick_7.png"};
+const std::string GlowStickExplode_Animation[9]{"res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_0.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_1.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_2.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_3.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_4.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_5.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_6.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_7.png","res/gfx/spr_GlowStickExplode/spr_GlowStickExplode_8.png"};
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};

@@ -55,7 +55,7 @@ void Player::handleEvent()
     }
 }
 
-void Player::move()
+void Player::update(float timeStep)
 {
     collider.center += velocity;
     // update sprite states
@@ -63,6 +63,13 @@ void Player::move()
         state = IDLE;
     else
         state = RUN;
+
+    timePassed -= timeStep;
+    if(timePassed <=0)
+    {
+        currentFrame = (currentFrame + 1) % (int)state;
+        timePassed = 0.1;
+    }
 }
 
 void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)

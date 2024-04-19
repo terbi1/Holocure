@@ -26,7 +26,7 @@ bool isOutsideOfView(Circle object, int camX, int camY);
 class GameStates 
 {
 private:
-    std::unordered_map<WEAPON_ID, int> optionPool{{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG,1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
+    std::unordered_map<WEAPON_ID, int> optionPool;
     std::vector<WEAPON_ID> optionKey;
     std::vector<int> optionLevel;
     int shakeStrength{1};
@@ -48,6 +48,7 @@ private:
     std::vector<Weapon> weapons;
     std::vector<ExpDrop> dropItems;
     std::vector<DamagingArea> activeAttack;
+    std::vector<DamagingArea> bossAttack;
     std::unordered_set<ENEMY_TYPE> spawnPool;
     // std::vector<ENEMY_TYPE> bosses; 
     std::vector<DamageNumber> dmgNumbers;
