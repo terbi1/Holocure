@@ -25,7 +25,8 @@ enum ENEMY_TYPE {
     DARK_SHRIMP,
     BLOOM,
     GLOOM,
-    FUBUZILLA
+    FUBUZILLA,
+    A_CHAN
 };
 
 class Enemy
@@ -49,6 +50,7 @@ public:
     int currentFrame{0};
     LTexture animation;
     float cd{0};
+    float specialCD[4]{2,2,9,6};
     int expValue;
     float frameTime{0.2};
     int frames;
@@ -56,6 +58,7 @@ public:
     Vector2f direction;
     Vector2f knockbackDir;
 private:
+    bool notMoving{false};
     SDL_Texture* runAnimation[ANIMATION_FRAMES];
     std::string currentTexture;
     float speed;

@@ -99,6 +99,7 @@ const std::string DarkShrimp_Animation[3]{"res/gfx/spr_Shrimp2/spr_Shrimp2_0.png
 const std::string Bloom_Animation[3]{"res/gfx/spr_AngelFairy/spr_AngelFairy_0.png","res/gfx/spr_AngelFairy/spr_AngelFairy_1.png","res/gfx/spr_AngelFairy/spr_AngelFairy_2.png"};
 const std::string Gloom_Animation[3]{"res/gfx/spr_DevilFairy/spr_DevilFairy_0.png","res/gfx/spr_DevilFairy/spr_DevilFairy_1.png","res/gfx/spr_DevilFairy/spr_DevilFairy_2.png"};
 const std::string Fubuzilla_Animation[12]{"res/gfx/spr_fubuzilla/spr_fubuzilla_0.png","res/gfx/spr_fubuzilla/spr_fubuzilla_1.png","res/gfx/spr_fubuzilla/spr_fubuzilla_2.png","res/gfx/spr_fubuzilla/spr_fubuzilla_3.png","res/gfx/spr_fubuzilla/spr_fubuzilla_4.png","res/gfx/spr_fubuzilla/spr_fubuzilla_5.png","res/gfx/spr_fubuzilla/spr_fubuzilla_6.png","res/gfx/spr_fubuzilla/spr_fubuzilla_7.png","res/gfx/spr_fubuzilla/spr_fubuzilla_8.png","res/gfx/spr_fubuzilla/spr_fubuzilla_9.png","res/gfx/spr_fubuzilla/spr_fubuzilla_10.png","res/gfx/spr_fubuzilla/spr_fubuzilla_11.png"};
+const std::string AChan_Animation[4]{"res/gfx/spr_AchanBoss/spr_AchanBoss_0.png","res/gfx/spr_AchanBoss/spr_AchanBoss_1.png","res/gfx/spr_AchanBoss/spr_AchanBoss_2.png","res/gfx/spr_AchanBoss/spr_AchanBoss_3.png"};
 
 #pragma endregion
 

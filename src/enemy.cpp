@@ -80,6 +80,16 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         frames = 11;
         break;
     }
+    case A_CHAN:
+    {
+        health = 45000;
+        atk = 20;
+        speed = 1.0;
+        expValue = 6000;
+        collider.radius = 32;
+        frames = 3;
+        break;
+    }
     }
 }
 
@@ -93,18 +103,35 @@ void Enemy::update(Vector2f player_center, float timeStep)
         currentFrame = (currentFrame + 1) % (frames + 1);
         frameTime = enemyFrameTime;
     }
+    if(notMoving)
+    {
+        if(specialCD[3] <= 0)
+        {
+            specialCD[3] = 6;
+            notMoving = false;
+        }
+        specialCD[3] -= timeStep;
+        return;
+    }
     if(timePassed >= 0.3)
     {
         flip = collider.center.x >= player_center.x ? SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE;
-        // if (collider.center.x >= player_center.x)
-        //     flip = SDL_FLIP_HORIZONTAL;
-        // else
-        //     flip = SDL_FLIP_NONE;
+        
         direction = vectorNormalize(player_center - collider.center);
+        
         timePassed = 0;
     }
-    // collider.center += moveVector * speed;
+    if(type == A_CHAN)
+    {
+        circularMotion(collider.center, player_center, 0.01 * speed);
+        specialCD[0] -= timeStep;
+        specialCD[1] -= timeStep;
+        specialCD[2] -= timeStep;
+        if(specialCD[2] <= 0) notMoving = true;
+    }
+
     collider.center += direction * speed;
+
     if(knockbackTime > 0)
     {
         collider.center += knockbackDir * knockbackSpeed;
@@ -157,6 +184,10 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     case GLOOM:
         currentTexture = Gloom_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case A_CHAN:
+        currentTexture = AChan_Animation[frame];
         multiplier = 1.5;
         break;
     }

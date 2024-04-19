@@ -40,7 +40,7 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         hitBox.h = size.y * 1.5;
         hitBox.x = center.x;
         hitBox.y = center.y - hitBox.h / 2;
-        switch (angle)
+        switch ((int)angle)
         {
         case 0:
             hitBox.x -= hitBox.w / 8;
@@ -222,7 +222,7 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         SDL_Rect hitBox;
         hitBox.w = size.x * areaMultiplier[0];
         hitBox.h = size.y * areaMultiplier[0];
-        if(angle % 180 != 0) std::swap(hitBox.w, hitBox.h);
+        if((int)angle % 180 != 0) std::swap(hitBox.w, hitBox.h);
         hitBox.x = center.x - hitBox.w / 2;
         hitBox.y = center.y - hitBox.h / 2;
         if(!checkAABBCircleCollision(hitBox, enemyCollider))
@@ -264,14 +264,13 @@ void DamagingArea::explode()
 
 void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int camY)
 {
-    AnimatedSprite sprite;
-
     switch ((int)weaponID)
     {
     case AXE:
     {
+        if(sprite.getTexture() == NULL){
         if(maxed) sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png");
-        else sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");
+        else sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");}
 
         SDL_Rect src{0, 0, 107, 144};
 
@@ -287,7 +286,7 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         // hitBox.x = center.x;
         // hitBox.y = center.y - hitBox.h / 2;
 
-        switch (angle)
+        switch ((int)angle)
         {
         case 0:
             // hitBox.x -= hitBox.w / 8;
@@ -329,6 +328,51 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         SDL_SetTextureAlphaMod(sprite.getTexture(), 50);
         sprite.PlayFrame(0, 0, 107, 107, 0);
         sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case BULLET1:
+    {
+        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png");
+        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png", renderer));
+
+        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        // sprite.PlayFrame(0, 0, 0, 0, 0);
+        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png",renderer, SDL_FLIP_NONE, 0);
+        // sprite.clean();
+        return;
+    }
+    case BULLET2:
+    {
+        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png");
+        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png", renderer));
+
+        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        // sprite.PlayFrame(0, 0, 0, 0, 0);
+        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png",renderer, SDL_FLIP_NONE, 0);
+        // sprite.clean();
+        return;
+    }
+    case BULLET3:
+    {
+        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png");
+        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png", renderer));
+
+        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        // sprite.PlayFrame(0, 0, 0, 0, 0);
+        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        if(count < 10)
+        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png",renderer, SDL_FLIP_NONE, 0);
+        else 
+        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png",renderer, SDL_FLIP_NONE, 0);
+        // sprite.clean();
         return;
     }
     case CEO_TEARS:
@@ -507,6 +551,11 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     }
 }
 
+
+void DamagingArea::destroy()
+{
+    sprite.clean();
+}
 Weapon::Weapon(WEAPON_ID type)
     : ID(type)
 {
@@ -559,16 +608,6 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.areaMultiplier[0] = 1;
         dmgArea.knockbackSpeed = 15;
         dmgArea.knockbackTime = 0.1;
-        break;
-    }
-    case FUBU_BEAM:
-    {
-        dmgArea.duration = 1.17;
-        dmgArea.frames = 38;
-        timeBetweenAttacks = 3;
-        dmgArea.hitLimit = -1;
-        dmgArea.hitCooldown = 1;
-        dmgArea.ofPlayer = false;
         break;
     }
     case BL_BOOK:
@@ -685,6 +724,31 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.areaMultiplier[0] = 1;
         break;
     }
+    case FUBU_BEAM:
+    {
+        dmgArea.duration = 1.17;
+        dmgArea.frames = 38;
+        timeBetweenAttacks = 3;
+        dmgArea.hitLimit = -1;
+        dmgArea.hitCooldown = 1;
+        dmgArea.ofPlayer = false;
+        break;
+    }
+    case BULLET1:
+    case BULLET2:
+    case BULLET3:
+    {
+        if(ID != BULLET1) dmgArea.attackCount = 20;
+        else dmgArea.attackCount = 1;
+        dmgArea.duration = 7;
+        dmgArea.frames = 0;
+        timeBetweenAttacks = 1;
+        dmgArea.hitLimit = 1;
+        dmgArea.hitCooldown = 1;
+        dmgArea.projectileSpeed = 1.2;
+        dmgArea.ofPlayer = false;
+        break;
+    }
     }
 }
 
@@ -780,12 +844,10 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
                 break;
             }
             case FUBU_BEAM:
+            case BULLET1:
+            case BULLET2:
+            case BULLET3:
             {
-                // dmgArea.center = temp;
-                // if (temp2 == SDL_FLIP_HORIZONTAL)
-                //     dmgArea.angle = 180;
-                // else
-                //     dmgArea.angle = 0;
                 break;
             }
             case ELITE_LAVA:

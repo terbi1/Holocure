@@ -16,6 +16,12 @@ AnimatedSprite::~AnimatedSprite(){
     m_texture = NULL;
 }
 
+void AnimatedSprite::clean()
+{
+    SDL_DestroyTexture(m_texture);
+    m_texture = NULL;
+}
+
 void AnimatedSprite::Draw(int x, int y, int w, int h){
     // Create a rectangle
     m_dst.x = x;

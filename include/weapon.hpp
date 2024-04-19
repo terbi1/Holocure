@@ -16,7 +16,6 @@ const int frames = 8;
 
 enum WEAPON_ID {
     NONE,
-    FUBU_BEAM,
     AXE,
     SPIDER_COOKING,
     X_POTATO,
@@ -34,12 +33,17 @@ enum WEAPON_ID {
     SPD_UP,
     HP_UP,
     HP_RECOVER,
+    FUBU_BEAM,
+    BULLET1,
+    BULLET2,
+    BULLET3,
 };
 
 struct DamagingArea
 {
     WEAPON_ID weaponID;
     DamagingArea();
+    AnimatedSprite sprite;
     bool isActive{true};
     float timePassed{0};
     float duration;
@@ -58,7 +62,7 @@ struct DamagingArea
     int attackCount{1};
     float frameTime{0};
     float lastFrameTime{-100};
-    int angle{0};
+    float angle{0};
     float radius;
     float fallTime;
     float hitCooldown{0};
@@ -70,6 +74,7 @@ struct DamagingArea
     bool hitEnemy(Circle &enemyCollider, int enemyID);
     void explode();
     void render(SDL_Renderer* renderer, Player player, int camX, int camY);
+    void destroy();
 };
 
 struct Weapon {

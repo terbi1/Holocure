@@ -56,6 +56,7 @@ private:
     float spawnCooldown{0};
     float spawnRate;
     bool boss {false};
+    bool finalBoss{true};
 public: 
     GameStates();
     ~GameStates();
@@ -68,6 +69,7 @@ public:
     bool getPause();
     void updateSpawnPool(int minuteTimer, int secondTimer);
     void bossSpawn(int minuteTimer, int secondTimer);
+    void weaponUpdate();
     void checkWeaponLimit();
     void update(float timeStep, bool &shake);
     void render(SDL_Renderer *renderer, bool shake);
