@@ -127,6 +127,7 @@ void Enemy::update(Vector2f player_center, float timeStep)
         specialCD[0] -= timeStep;
         specialCD[1] -= timeStep;
         specialCD[2] -= timeStep;
+        specialDuration[0] -= timeStep;
         if(specialCD[2] <= 0) notMoving = true;
     }
 
@@ -192,11 +193,11 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     }
 
-    animation.importTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer));
+    // animation.importTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer));
 
     SDL_Rect dst;
 
-    SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
+    SDL_QueryTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer), NULL, NULL, &dst.w, &dst.h);
     dst.w *= multiplier;
     dst.h *= multiplier;
 
@@ -205,13 +206,21 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 
     if (isHit)
     {
-        SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
+        // SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
+        SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,0,0);
+        // isHit = false;
+    }
+    // SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
+    ResourceManager::getInstance().Draw(dst.x,dst.y,dst.w,dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(currentTexture, renderer, flip, 0);
+
+    if (isHit)
+    {
+        // SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
+        SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,255,255);
         isHit = false;
     }
-    else
-        SDL_SetTextureColorMod(animation.getTexture(), 255, 255, 255);
-
-    SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
 }
 
 void spawn(std::vector<Enemy> &enemies, Vector2f playerPos, ENEMY_TYPE type, int ID)

@@ -268,9 +268,8 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     {
     case AXE:
     {
-        if(sprite.getTexture() == NULL){
-        if(maxed) sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png");
-        else sprite.getResource(renderer, "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png");}
+        if(maxed) textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png";
+        else textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png";
 
         SDL_Rect src{0, 0, 107, 144};
 
@@ -313,35 +312,42 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         }
         // hitBox.x -= camX;
         // hitBox.y -= camY;
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        // sprite.Draw(dst.x, dst.y, dst.w, dst.h);
+        // sprite.PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
+        // sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         // SDL_SetRenderDrawColor(renderer, 255,0,0,255);
         // SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
     case SPIDER_COOKING:
     {
-        sprite.getResource(renderer, "res/gfx/spr_spidercooking.png");
+        // sprite.getResource(renderer, "res/gfx/spr_spidercooking.png");
 
-        sprite.Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
-        SDL_SetTextureAlphaMod(sprite.getTexture(), 50);
-        sprite.PlayFrame(0, 0, 107, 107, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        // sprite.Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
+        // SDL_SetTextureAlphaMod(sprite.getTexture(), 50);
+        // sprite.PlayFrame(0, 0, 107, 107, 0);
+        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
+        SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture("res/gfx/spr_spidercooking.png", renderer), 50);
+        ResourceManager::getInstance().PlayFrame(0, 0, 107, 107, 0);
+        ResourceManager::getInstance().Render("res/gfx/spr_spidercooking.png", renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case BULLET1:
     {
-        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png");
-        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png", renderer));
-
-        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        // sprite.PlayFrame(0, 0, 0, 0, 0);
-        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
         ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet1/spr_AChan_bullet1_1.png",renderer, SDL_FLIP_NONE, 0);
-        // sprite.clean();
+        ResourceManager::getInstance().Render(BulletBlue_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case BULLET4:
+    {
+        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(BulletBlue_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case BULLET2:
@@ -354,25 +360,18 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         // sprite.Render(renderer, SDL_FLIP_NONE, 0);
         ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png",renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         // sprite.clean();
         return;
     }
     case BULLET3:
     {
-        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png");
-        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png", renderer));
-
-        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        // sprite.PlayFrame(0, 0, 0, 0, 0);
-        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
         ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
         if(count < 10)
-        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png",renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(BulletYellow_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         else 
-        ResourceManager::getInstance().Render("res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png",renderer, SDL_FLIP_NONE, 0);
-        // sprite.clean();
+        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case CEO_TEARS:
@@ -737,15 +736,27 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET1:
     case BULLET2:
     case BULLET3:
+    case BULLET4:
     {
-        if(ID != BULLET1) dmgArea.attackCount = 20;
-        else dmgArea.attackCount = 1;
+        if(ID != BULLET1 && ID != BULLET4) 
+        {
+            dmgArea.attackCount = 20;
+            timeBetweenAttacks = 0.5;
+            }
+        else if(ID == BULLET1){
+            dmgArea.attackCount = 1;
+            timeBetweenAttacks = 0.25;
+        }
+        else if(ID == BULLET4){
+            dmgArea.attackCount = 1;
+            timeBetweenAttacks = 0.05;
+        }
         dmgArea.duration = 7;
-        dmgArea.frames = 0;
-        timeBetweenAttacks = 1;
+        dmgArea.frames = 1;
+        
         dmgArea.hitLimit = 1;
         dmgArea.hitCooldown = 1;
-        dmgArea.projectileSpeed = 1.2;
+        dmgArea.projectileSpeed = 1.6;
         dmgArea.ofPlayer = false;
         break;
     }

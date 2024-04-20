@@ -37,11 +37,13 @@ enum WEAPON_ID {
     BULLET1,
     BULLET2,
     BULLET3,
+    BULLET4
 };
 
 struct DamagingArea
 {
     WEAPON_ID weaponID;
+    std::string textureID;
     DamagingArea();
     AnimatedSprite sprite;
     bool isActive{true};

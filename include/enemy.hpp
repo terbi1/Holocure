@@ -51,6 +51,7 @@ public:
     LTexture animation;
     float cd{0};
     float specialCD[4]{2,2,9,6};
+    float specialDuration[3]{2.1,0,6};
     int expValue;
     float frameTime{0.2};
     int frames;

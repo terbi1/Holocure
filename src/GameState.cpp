@@ -342,6 +342,7 @@ void GameStates::update(float timeStep, bool &shake)
         {
             weapons.push_back(Weapon(BULLET1));
             enemies[0].specialCD[0] = 2;
+            enemies[0].specialDuration[0] = 0.8;
         }
         else if(enemies[0].specialCD[1] <= 0)
         {
@@ -350,7 +351,8 @@ void GameStates::update(float timeStep, bool &shake)
         }
         else if(enemies[0].specialCD[2] <= 0)
         {
-            weapons.push_back(Weapon(BULLET3));
+            int random = rand() % 2;
+            weapons.push_back((random == 0 ? Weapon(BULLET4):Weapon(BULLET3)));
             enemies[0].specialCD[2] = 9;
         }
     }
@@ -384,7 +386,7 @@ void GameStates::update(float timeStep, bool &shake)
 
             it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, i, temp1);
 
-            if(it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3) 
+            if(it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3 && it->ID != BULLET4) 
             {
                 activeAttack.push_back(it->dmgArea);
             }
@@ -403,6 +405,14 @@ void GameStates::update(float timeStep, bool &shake)
                 it->dmgArea.direction = vectorNormalize(player.collider.center - it->dmgArea.center);    
                 bossAttack.push_back(it->dmgArea);
             }
+            else if(it->ID == BULLET4)
+            {
+                it->dmgArea.center = temp;
+                it->dmgArea.angle = it->dmgArea.attackCount * 4;
+                ++it->dmgArea.attackCount;   
+                bossAttack.push_back(it->dmgArea);
+                break;
+            }
             else if(it->ID == BULLET2)
             {
                 // it->dmgArea.center = player.collider.center;
@@ -414,22 +424,22 @@ void GameStates::update(float timeStep, bool &shake)
             {
                 it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
                 it->dmgArea.angle = i * 36;
-                it->dmgArea.center.x += i / 10 * cosf(it->dmgArea.angle / 180.0f * M_PI) * 60;
-                it->dmgArea.center.y += i / 10 * sinf(it->dmgArea.angle / 180.0f * M_PI) * 60;
-                // it->dmgArea.rotatingCenter.x += i / 10 * cosf(it->dmgArea.angle / 180.0f * M_PI) * 80;
-                // it->dmgArea.rotatingCenter.y += i / 10 * sinf(it->dmgArea.angle / 180.0f * M_PI) * 80;
+                // it->dmgArea.center.x += i / 10 * cosf(it->dmgArea.angle / 180.0f * M_PI) * 70;
+                // it->dmgArea.center.y += i / 10 * sinf(it->dmgArea.angle / 180.0f * M_PI) * 70;
                 it->dmgArea.count = i;
                 bossAttack.push_back(it->dmgArea);
             }
         }
     }
 
-    if(weapons.back().ID == BULLET1 || weapons.back().ID == BULLET2 || (weapons.back().ID == BULLET3 && enemies[0].specialCD[3] <= 0))
+    for(auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        
-        weapons.pop_back();
+        if((it->ID == BULLET1 && enemies[0].specialDuration[0] <= 0) || it->ID == BULLET2 || ((it->ID == BULLET4 || it->ID == BULLET3) && enemies[0].specialCD[3] <= 0))
+        {
+            weapons.erase(it);
+            --it;
+        }
     }
-
     // active attacks
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
@@ -585,10 +595,11 @@ void GameStates::update(float timeStep, bool &shake)
             }
             case BULLET1:
             {
-            it->center += it->direction;
+            it->center += it->direction * it->projectileSpeed;
             break;
             }
             case BULLET2:
+            case BULLET4:
             {
             it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
             it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
