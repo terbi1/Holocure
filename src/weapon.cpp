@@ -4,7 +4,7 @@ DamagingArea::DamagingArea()
 {
 }
 
-void DamagingArea::update(float timeStep)
+void DamagingArea::update(float timeStep, Vector2f player_center, SDL_Rect camera, bool &shake, int &shakeTime)
 {
     frameTime -= timeStep;
     duration -= timeStep;
@@ -19,10 +19,94 @@ void DamagingArea::update(float timeStep)
     {
         frameTime = spriteFrameTime;
         currentFrame = (currentFrame + 1) % (frames + 1);
-        // ++currentFrame;
-        // if (currentFrame > frames)
-        //     currentFrame = 0;
     }
+
+    switch ((int)weaponID)
+        {
+        case FUBU_BEAM:
+        case BULLET1:
+        case BULLET2:
+        case BULLET3:
+        case BULLET4:
+        {
+            return;
+        }
+        case AXE:
+            center = player_center;
+            break;
+        case CEO_TEARS:
+            center += direction * projectileSpeed;
+            break;
+        case SPIDER_COOKING:
+            center = player_center;
+            break;
+        case FAN_BEAM:
+            center = player_center;
+            break;
+        case BL_BOOK:
+        {
+            center += player_center - rotatingCenter;
+            rotatingCenter = player_center;
+            circularMotion(center, player_center, -0.01 * projectileSpeed);
+            break;
+        }
+        case PSYCHO_AXE:
+        {
+            timePassed += timeStep;
+            spiralMotion(center, rotatingCenter, 0.01, timePassed);
+            break;
+        }
+        case IDOL_SONG:
+        {
+            int temp = (count == 0 ? 1 : -1);
+            center.y += temp * projectileSpeed;
+            center.x = temp * sin((2.5 - duration) * 10) * 100 * projectileSpeed + direction.x;
+            break;
+        }
+        case ELITE_LAVA:
+        {
+            break;
+        }
+        case FALLING_BLOCKS:
+        {
+            if (fallTime > 0)
+            {
+                center.y += 8;
+                fallTime -= timeStep;
+                if (fallTime <= 0)
+                {
+                    shake = true;
+                    shakeTime = 30;
+                }
+            }
+            break;
+        }
+        case CUTTING_BOARD:
+        {
+            if (fallTime > 0)
+            {
+                center.x += cosf((angle + 180.0f) / 180.0f * M_PI) * projectileSpeed;
+                center.y += sinf((angle + 180.0f) / 180.0f * M_PI) * projectileSpeed;
+                fallTime -= timeStep;
+            }
+            break;
+        }
+        case X_POTATO:
+        {
+            if (fallTime > 0)
+            {
+                center += direction * projectileSpeed;
+                angle += 20;
+                circleBounce(Circle{center, radius}, direction, camera);
+                fallTime -= timeStep;
+                if (fallTime <= 0)
+                {
+                    explode();
+                }
+            }
+            break;
+        }
+        }
 }
 
 bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
@@ -239,11 +323,6 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         }
         break;
     }
-    case GLOW_STICK:
-    {
-        return false;
-        break;
-    }
     }
     --hitLimit;
     hitID[enemyID] = hitCooldown;
@@ -279,153 +358,75 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         dst.x = center.x - camX;
         dst.y = center.y - dst.h / 2 - camY;
 
-        // SDL_Rect hitBox;
-        // hitBox.w = size.x * 1.5;
-        // hitBox.h = size.y * 1.5;
-        // hitBox.x = center.x;
-        // hitBox.y = center.y - hitBox.h / 2;
-
         switch ((int)angle)
         {
         case 0:
-            // hitBox.x -= hitBox.w / 8;
             dst.x -= dst.w / 8;
             break;
         case 180:
-            // hitBox.x -= hitBox.w - hitBox.w / 8;
             dst.x += -dst.w + dst.w / 8;
             break;
         case -90:
-            // std::swap(hitBox.w, hitBox.h);
-            // hitBox.x -= hitBox.w / 2;
-            // hitBox.y -= -hitBox.w / 2 + hitBox.h - hitBox.h / 8;
             dst.x += -dst.w / 2;
             dst.y += -dst.w / 2 + dst.h / 8;
             break;
         case 90:
-            // std::swap(hitBox.w, hitBox.h);
-            // hitBox.x -= hitBox.w / 2;
-            // hitBox.y -= -hitBox.w / 2 + hitBox.h / 8;
             dst.x += -dst.w / 2;
             dst.y += dst.w / 2 - dst.h / 8;
             break;
         }
-        // hitBox.x -= camX;
-        // hitBox.y -= camY;
-        // sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        // sprite.PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
-        // sprite.Render(renderer, SDL_FLIP_NONE, angle);
         ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
         ResourceManager::getInstance().PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
-        // SDL_SetRenderDrawColor(renderer, 255,0,0,255);
-        // SDL_RenderDrawRect(renderer, &hitBox);
         return;
     }
     case SPIDER_COOKING:
     {
-        // sprite.getResource(renderer, "res/gfx/spr_spidercooking.png");
-
-        // sprite.Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
-        // SDL_SetTextureAlphaMod(sprite.getTexture(), 50);
-        // sprite.PlayFrame(0, 0, 107, 107, 0);
-        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
         ResourceManager::getInstance().Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
         SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture("res/gfx/spr_spidercooking.png", renderer), 50);
         ResourceManager::getInstance().PlayFrame(0, 0, 107, 107, 0);
         ResourceManager::getInstance().Render("res/gfx/spr_spidercooking.png", renderer, SDL_FLIP_NONE, 0);
         return;
     }
-    case BULLET1:
-    {
-        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(BulletBlue_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
-        return;
-    }
-    case BULLET4:
-    {
-        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(BulletBlue_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
-        return;
-    }
-    case BULLET2:
-    {
-        // sprite.getResource(renderer, "res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png");
-        // if(sprite.getTexture() == NULL) sprite.setTexture(ResourceManager::getInstance().getTexture( "res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png", renderer));
-
-        // sprite.Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        // sprite.PlayFrame(0, 0, 0, 0, 0);
-        // sprite.Render(renderer, SDL_FLIP_NONE, 0);
-        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
-        // sprite.clean();
-        return;
-    }
-    case BULLET3:
-    {
-        ResourceManager::getInstance().Draw(center.x - 17 - camX, center.y - 17 - camY, 34, 34);
-        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        if(count < 10)
-        ResourceManager::getInstance().Render(BulletYellow_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
-        else 
-        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
-        return;
-    }
     case CEO_TEARS:
     {
-        sprite.getResource(renderer, "res/gfx/spr_CEOTears.png");
-
-        sprite.Draw((int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 - camY), (int)size.x, (int)size.y);
-        sprite.PlayFrame(0, 0, 10, 8, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw((int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 - camY), (int)size.x, (int)size.y);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render("res/gfx/spr_CEOTears.png",renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case FAN_BEAM:
     {
-
-        sprite.getResource(renderer, FanBeam_Animation[currentFrame].c_str());
-
         SDL_Rect dst;
-        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(ResourceManager::getInstance().getTexture(FanBeam_Animation[currentFrame], renderer), NULL, NULL, &dst.w, &dst.h);
         dst.h *= areaMultiplier[0];
         dst.x = center.x - camX + 50;
         dst.y = center.y - dst.h / 2 - camY;
-
         if (angle == 180) dst.x += -dst.w - 100;
-
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(FanBeam_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case BL_BOOK:
     {
-        sprite.getResource(renderer, BLBook_Animation.c_str());
-
-        sprite.Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
-        sprite.PlayFrame(0, 0, 18, 23, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(BLBook_Animation,renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case PSYCHO_AXE:
     {
-        sprite.getResource(renderer, PsychoAxe_Animation[currentFrame].c_str());
-
-        sprite.Draw(center.x - size.x - camX, center.y - size.y - camY, size.x * 2, size.y * 2);
-        sprite.PlayFrame(0, 0, 46, 46, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - size.x - camX, center.y - size.y - camY, size.x * 2, size.y * 2);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(PsychoAxe_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case IDOL_SONG:
     {
-        sprite.getResource(renderer, IdolSong_Animation.c_str());
-
-        sprite.Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
-        sprite.PlayFrame(0, 0, 29, 27, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(IdolSong_Animation,renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case FUBU_BEAM:
@@ -443,10 +444,9 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
             SDL_RenderFillRect(renderer, &dst);
             return;
         }
-        sprite.getResource(renderer, FubuBeam_Animation[currentFrame - 30].c_str());
 
         SDL_Rect dst;
-        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, NULL, &dst.h);
+        SDL_QueryTexture(ResourceManager::getInstance().getInstance().getTexture(FubuBeam_Animation[currentFrame - 30], renderer), NULL, NULL, NULL, &dst.h);
         dst.w = SCREEN_WIDTH;
         dst.h *= 18;
         dst.x = center.x - camX + 120;
@@ -455,60 +455,55 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         if (angle == 180)
             dst.x += -dst.w - 230;
 
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0, 0, dst.w, dst.h, 0);
+        ResourceManager::getInstance().Render(FubuBeam_Animation[currentFrame - 30], renderer, SDL_FLIP_NONE, angle);
         return;
     }
     case ELITE_LAVA:
     {
         if (currentFrame < 9)
         {
-            sprite.getResource(renderer, LavaPoolStart_Animation[currentFrame].c_str());
+            textureID = LavaPoolStart_Animation[currentFrame];
         }
         else if (currentFrame > frames - 6)
         {
-            sprite.getResource(renderer, LavaPoolEnd_Animation[currentFrame - (frames - 5)].c_str());
+            textureID = LavaPoolEnd_Animation[currentFrame - (frames - 5)];
         }
         else
         {
-            sprite.getResource(renderer, LavaPool.c_str());
+            textureID = LavaPool;
         }
 
         SDL_Rect dst;
-        SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(ResourceManager::getInstance().getTexture(textureID, renderer), NULL, NULL, &dst.w, &dst.h);
         dst.w *= 2;
         dst.h *= 2;
         dst.x = center.x - dst.w / 2 - camX;
         dst.y = center.y - dst.h / 2 - camY;
 
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0, 0, dst.w, dst.h, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0, 0, dst.w, dst.h, 0);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
     case FALLING_BLOCKS:
     {
-        sprite.getResource(renderer, SuiseiFallingBlocks[count].c_str());
-        sprite.Draw(center.x - 96 - camX, center.y - 96 - camY, 192, 192);
-        // SDL_Rect hitBox{(int)weapon.center.x - 96 - camX, (int)weapon.center.y - 96 - camY, 192, 192};
-        sprite.PlayFrame(0, 0, 43, 43, 0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
-        // SDL_SetRenderDrawColor(renderer,255,0,0,255);
-        // SDL_RenderDrawRect(renderer, &hitBox);
+        ResourceManager::getInstance().Draw(center.x - 96 - camX, center.y - 96 - camY, 192, 192);
+        ResourceManager::getInstance().PlayFrame(0, 0, 43, 43, 0);
+        ResourceManager::getInstance().Render(SuiseiFallingBlocks[count], renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case CUTTING_BOARD:
     {
-        sprite.getResource(renderer, CuttingBoard_Animation.c_str());
         SDL_Rect dst;
         dst.w = size.x * areaMultiplier[0];
         dst.h = size.y * areaMultiplier[0];
         dst.x = center.x - dst.w / 2 - camX;
         dst.y = center.y - dst.h / 2 - camY;
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0,0,10,63,0);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0,0,10,63,0);
+        ResourceManager::getInstance().Render(CuttingBoard_Animation, renderer, SDL_FLIP_NONE, angle);
         return;
     }
     case X_POTATO:
@@ -516,45 +511,55 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         SDL_Rect dst;
         if(fallTime > 0)
         {
-            sprite.getResource(renderer, XPotato_Animation.c_str());
-            SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+            // sprite.getResource(renderer, XPotato_Animation.c_str());
+            textureID = XPotato_Animation;
+            SDL_QueryTexture(ResourceManager::getInstance().getTexture(XPotato_Animation, renderer), NULL, NULL, &dst.w, &dst.h);
             dst.x *= areaMultiplier[0];
             dst.y *= areaMultiplier[0];
         }
         else
         {
-            sprite.getResource(renderer, PotatoExplosion_Animation[currentFrame].c_str());
-            SDL_QueryTexture(sprite.getTexture(), NULL, NULL, &dst.w, &dst.h);
+            textureID = PotatoExplosion_Animation[currentFrame];
+            // sprite.getResource(renderer, PotatoExplosion_Animation[currentFrame].c_str());
+            SDL_QueryTexture(ResourceManager::getInstance().getTexture(PotatoExplosion_Animation[currentFrame], renderer), NULL, NULL, &dst.w, &dst.h);
             dst.x *= areaMultiplier[1];
             dst.y *= areaMultiplier[1];
         }
         dst.x = center.x - dst.w / 2 - camX;
         dst.y = center.y - dst.h / 2 - camY;
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0,0,0,0,0);
-        sprite.Render(renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
-    case GLOW_STICK:
+    case BULLET1:
+    case BULLET4:
     {
-        sprite.getResource(renderer, GlowStick_Animation[currentFrame].c_str());
-        SDL_Rect dst{0,0,96,96};
-        dst.w *= areaMultiplier[0];
-        dst.h *= areaMultiplier[0];
-        dst.x = center.x - dst.w / 2 - camX;
-        dst.y = center.y - dst.h / 2 - camY;
-        sprite.Draw(dst.x, dst.y, dst.w, dst.h);
-        sprite.PlayFrame(0,0,0,0,0);
-        sprite.Render(renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Draw(center.x - 26/2 - camX, center.y - 26/2 - camY, 26, 26);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(BulletBlue_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case BULLET2:
+    {
+        ResourceManager::getInstance().Draw(center.x - 26/2 - camX, center.y - 26/2 - camY, 26, 26);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case BULLET3:
+    {
+        ResourceManager::getInstance().Draw(center.x - 26/2 - camX, center.y - 26/2 - camY, 26, 26);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        if(count < 5)
+        ResourceManager::getInstance().Render(BulletYellow_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        else 
+        ResourceManager::getInstance().Render(BulletRed_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        return;
     }
     }
 }
 
-
-void DamagingArea::destroy()
-{
-    sprite.clean();
-}
 Weapon::Weapon(WEAPON_ID type)
     : ID(type)
 {
@@ -707,24 +712,9 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.areaMultiplier[1] = 0;
         break;
     }
-    case GLOW_STICK:
-    {
-        dmgArea.damage = 120;
-        timeBetweenAttacks = 4;
-        dmgArea.attackCount = 1;
-        dmgArea.hitLimit = 3;
-        dmgArea.hitCooldown = 0.5;
-        dmgArea.duration = 3;
-        dmgArea.frames = 7;
-        dmgArea.radius = 20;
-        dmgArea.fallTime = 1.0;
-        dmgArea.projectileSpeed = 8;
-        dmgArea.size = {30,42};
-        dmgArea.areaMultiplier[0] = 1;
-        break;
-    }
     case FUBU_BEAM:
     {
+        dmgArea.damage = 15;
         dmgArea.duration = 1.17;
         dmgArea.frames = 38;
         timeBetweenAttacks = 3;
@@ -738,9 +728,10 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET3:
     case BULLET4:
     {
+        dmgArea.damage = 1;
         if(ID != BULLET1 && ID != BULLET4) 
         {
-            dmgArea.attackCount = 20;
+            dmgArea.attackCount = 10;
             timeBetweenAttacks = 0.5;
             }
         else if(ID == BULLET1){
@@ -783,7 +774,7 @@ void Weapon::setAttackInterval(float newInterval)
 }
 void Weapon::setArea(float areaIncrease)
 {
-    // dmgArea.size *= (100.0 + areaIncrease) / 100.0;
+    dmgArea.size *= (100.0 + areaIncrease) / 100.0;
     dmgArea.areaMultiplier[0] *= (100.0 + areaIncrease) / 100;
     dmgArea.areaMultiplier[1] *= (100.0 + areaIncrease) / 100;
 }
@@ -894,12 +885,6 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
                     temp = {randomFloat(-1,1), randomFloat(-1,1)};
                 }
                 dmgArea.direction = vectorNormalize(temp);
-                break;
-            }
-            case GLOW_STICK:
-            {
-                dmgArea.center = playerCenter;
-                dmgArea.direction = direction;
                 break;
             }
             }
@@ -1143,6 +1128,19 @@ bool hitPlayer(DamagingArea &weapon, Player &player)
             return true;
         }
         return false;
+    }
+    case BULLET1:
+    case BULLET2:
+    case BULLET3:
+    case BULLET4:
+    {
+        if (checkCircleCollision(Circle{weapon.center, 10}, player.collider))
+        {
+            player.health -= 1;
+            weapon.hitID[1] = weapon.hitCooldown;
+            --weapon.hitLimit;
+            return true;
+        }   
     }
     }
 

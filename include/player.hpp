@@ -21,6 +21,7 @@ enum State {
 class Player
 {
 private:
+    std::string textureID;
     float atk{130};
     Vector2f pos{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
     float SPEED {1.3};
@@ -33,8 +34,6 @@ public:
     Vector2f getPos() {
         return pos;
     }
-    LTexture animation;
-    LTexture arrow;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     State state{IDLE};
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);

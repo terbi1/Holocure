@@ -33,6 +33,7 @@ class Enemy
 {
 public:
     int ID;
+    std::string currentTexture;
     ENEMY_TYPE type;
     Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID);
     int health;
@@ -48,7 +49,6 @@ public:
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};
     int currentFrame{0};
-    LTexture animation;
     float cd{0};
     float specialCD[4]{2,2,9,6};
     float specialDuration[3]{2.1,0,6};
@@ -60,8 +60,6 @@ public:
     Vector2f knockbackDir;
 private:
     bool notMoving{false};
-    SDL_Texture* runAnimation[ANIMATION_FRAMES];
-    std::string currentTexture;
     float speed;
     Vector2f velocity;
     float knockbackSpeed{0};

@@ -193,8 +193,6 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     }
 
-    // animation.importTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer));
-
     SDL_Rect dst;
 
     SDL_QueryTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer), NULL, NULL, &dst.w, &dst.h);
@@ -206,18 +204,14 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 
     if (isHit)
     {
-        // SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
         SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,0,0);
-        // isHit = false;
     }
-    // SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
     ResourceManager::getInstance().Draw(dst.x,dst.y,dst.w,dst.h);
     ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     ResourceManager::getInstance().Render(currentTexture, renderer, flip, 0);
 
     if (isHit)
     {
-        // SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
         SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,255,255);
         isHit = false;
     }

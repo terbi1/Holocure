@@ -27,7 +27,6 @@ enum WEAPON_ID {
     IDOL_SONG,
     ELITE_LAVA,
     CUTTING_BOARD,
-    GLOW_STICK,
     FALLING_BLOCKS,
     ATK_UP,
     SPD_UP,
@@ -45,7 +44,6 @@ struct DamagingArea
     WEAPON_ID weaponID;
     std::string textureID;
     DamagingArea();
-    AnimatedSprite sprite;
     bool isActive{true};
     float timePassed{0};
     float duration;
@@ -72,11 +70,10 @@ struct DamagingArea
     bool ofPlayer{true};
     bool maxed{false};
     float areaMultiplier[2]{0,0};
-    void update(float timeStep);
+    void update(float timeStep, Vector2f player_center, SDL_Rect camera, bool &shake, int &shakeTime);
     bool hitEnemy(Circle &enemyCollider, int enemyID);
     void explode();
     void render(SDL_Renderer* renderer, Player player, int camX, int camY);
-    void destroy();
 };
 
 struct Weapon {

@@ -28,5 +28,5 @@ public:
         // Update every frame
         void Update();
         // Render
-        void Render(std::string ID, SDL_Renderer*& renderer, SDL_RendererFlip flip, float angle, SDL_Point* rotatingCenter = NULL);
+        void Render(std::string ID, SDL_Renderer*& renderer, SDL_RendererFlip flip = SDL_FLIP_NONE, float angle = 0.0, SDL_Point* rotatingCenter = NULL);
 };

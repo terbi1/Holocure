@@ -26,6 +26,7 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     portrait.loadFromFile(Portrait_Suisei, renderer);
     pauseScreen.loadFromFile(Black_Screen, renderer);
     pauseScreen.setAlpha(100);
+    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Black_Screen, renderer),100);
     title.loadFromFile(Title_Suisei, renderer);
     title.setAlpha(100);
     pauseMenu.loadFromFile(Pause_Menu, renderer);
@@ -62,7 +63,10 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
 {
     if (pause)
     {
-        pauseScreen.render(renderer, &screen);
+        // pauseScreen.render(renderer, &screen);
+        ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
+        ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().Render(Black_Screen, renderer);
         title.render(renderer, &pausePortrait);
         pauseMenu.render(renderer, &pauseRect);
         currentButton = (currentButton + totalButtons) % totalButtons;
@@ -99,7 +103,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     levelLabel.x = 55.5f;
     for(int i = 0; i < (int)weapons.size(); ++i)
     {
-        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == FUBU_BEAM) continue;
+        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
         std::string icon;
         weaponRect.x += 37.5f;
         switch ((int)weapons[i].ID)

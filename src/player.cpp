@@ -58,6 +58,7 @@ void Player::handleEvent()
 void Player::update(float timeStep)
 {
     collider.center += velocity;
+
     // update sprite states
     if (velocity.x == 0 && velocity.y == 0)
         state = IDLE;
@@ -65,7 +66,7 @@ void Player::update(float timeStep)
         state = RUN;
 
     timePassed -= timeStep;
-    if(timePassed <=0)
+    if (timePassed <= 0)
     {
         currentFrame = (currentFrame + 1) % (int)state;
         timePassed = 0.1;
@@ -78,17 +79,25 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     dst.x = collider.center.x - camX - 48;
     dst.y = collider.center.y - camY - 54;
 
-    switch((int)state)
+    switch ((int)state)
     {
-        case IDLE: animation.importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[frame].c_str(), renderer)); break;
-        case RUN: animation.importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[frame].c_str(), renderer)); break;
+    case IDLE:
+        textureID = IdleAnimation_Suisei[frame];
+        break;
+    case RUN:
+        textureID = RunAnimation_Suisei[frame];
+        break;
     }
-    SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
+    SDL_QueryTexture(ResourceManager::getInstance().getTexture(textureID, renderer), NULL, NULL, &dst.w, &dst.h);
     dst.w *= 1.5;
     dst.h *= 1.5;
-    SDL_RenderCopyEx(renderer, ResourceManager::getInstance().getTexture(PlayerArrow, renderer), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
+    ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(PlayerArrow, renderer, SDL_FLIP_NONE, (float)arrowAngle);
     dst.y -= 20;
-    SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
+    ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(textureID, renderer, flip, 0);
 }
 
 void Player::increaseATK(float increase)
@@ -103,8 +112,9 @@ void Player::increaseSpeed(float increasePercent)
 
 void Player::heal(float healPercent)
 {
-    health += (float)maxHP * healPercent / 100.0f; 
-    if(health > maxHP) health = maxHP;
+    health += (float)maxHP * healPercent / 100.0f;
+    if (health > maxHP)
+        health = maxHP;
 }
 
 void Player::increaseMaxHP(float increasePercent)

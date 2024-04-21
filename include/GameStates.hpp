@@ -45,6 +45,7 @@ private:
     HUD playerHUD;
     std::unordered_set<int> trace;
     std::vector<Enemy> enemies;
+    std::vector<Enemy> bosses;
     std::vector<Weapon> weapons;
     std::vector<ExpDrop> dropItems;
     std::vector<DamagingArea> activeAttack;
@@ -53,10 +54,11 @@ private:
     // std::vector<ENEMY_TYPE> bosses; 
     std::vector<DamageNumber> dmgNumbers;
     int MAX_WEAPON{6};
-    float spawnCooldown{0};
+    float spawnCooldown{200};
     float spawnRate;
     bool boss {false};
-    bool finalBoss{true};
+    bool finalBoss{false};
+    int bossIndex{0};
 public: 
     GameStates();
     ~GameStates();
