@@ -337,6 +337,7 @@ void DamagingArea::explode()
         hitLimit = -1;
         frames = 4;
         radius *= 15;
+        textureID = "res/gfx/spr_PotatoExplosion/spr_PotatoExplosion.png";
         return;
     }
 }
@@ -347,11 +348,6 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     {
     case AXE:
     {
-        if(maxed) textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png";
-        else textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png";
-
-        SDL_Rect src{0, 0, 107, 144};
-
         SDL_Rect dst;
         dst.w = size.x * 1.5;
         dst.h = size.y * 1.5;
@@ -376,50 +372,51 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
             break;
         }
         ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
-        ResourceManager::getInstance().PlayFrame(src.x, src.y, src.w, src.h, currentFrame);
+        ResourceManager::getInstance().PlayFrame(0, 0, 107, 144, currentFrame);
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
     case SPIDER_COOKING:
     {
         ResourceManager::getInstance().Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
-        SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture("res/gfx/spr_spidercooking.png", renderer), 50);
+        SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(textureID, renderer), 50);
         ResourceManager::getInstance().PlayFrame(0, 0, 107, 107, 0);
-        ResourceManager::getInstance().Render("res/gfx/spr_spidercooking.png", renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case CEO_TEARS:
     {
         ResourceManager::getInstance().Draw((int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 - camY), (int)size.x, (int)size.y);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render("res/gfx/spr_CEOTears.png",renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case FAN_BEAM:
     {
+        textureID = FanBeam_Animation[currentFrame];
         SDL_Rect dst;
-        SDL_QueryTexture(ResourceManager::getInstance().getTexture(FanBeam_Animation[currentFrame], renderer), NULL, NULL, &dst.w, &dst.h);
+        SDL_QueryTexture(ResourceManager::getInstance().getTexture(textureID, renderer), NULL, NULL, &dst.w, &dst.h);
         dst.h *= areaMultiplier[0];
         dst.x = center.x - camX + 50;
         dst.y = center.y - dst.h / 2 - camY;
         if (angle == 180) dst.x += -dst.w - 100;
         ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(FanBeam_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(textureID,renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case BL_BOOK:
     {
         ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(BLBook_Animation,renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().Render(textureID,renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case PSYCHO_AXE:
     {
         ResourceManager::getInstance().Draw(center.x - size.x - camX, center.y - size.y - camY, size.x * 2, size.y * 2);
-        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
-        ResourceManager::getInstance().Render(PsychoAxe_Animation[currentFrame],renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().PlayFrame(0, 0, 46, 46, currentFrame);
+        ResourceManager::getInstance().Render(textureID,renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case IDOL_SONG:
@@ -490,8 +487,8 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     case FALLING_BLOCKS:
     {
         ResourceManager::getInstance().Draw(center.x - 96 - camX, center.y - 96 - camY, 192, 192);
-        ResourceManager::getInstance().PlayFrame(0, 0, 43, 43, 0);
-        ResourceManager::getInstance().Render(SuiseiFallingBlocks[count], renderer, SDL_FLIP_NONE, 0);
+        ResourceManager::getInstance().PlayFrame(0, 0, 43, 43, count);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case CUTTING_BOARD:
@@ -503,7 +500,7 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         dst.y = center.y - dst.h / 2 - camY;
         ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
         ResourceManager::getInstance().PlayFrame(0,0,10,63,0);
-        ResourceManager::getInstance().Render(CuttingBoard_Animation, renderer, SDL_FLIP_NONE, angle);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
     case X_POTATO:
@@ -511,24 +508,18 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         SDL_Rect dst;
         if(fallTime > 0)
         {
-            // sprite.getResource(renderer, XPotato_Animation.c_str());
-            textureID = XPotato_Animation;
-            SDL_QueryTexture(ResourceManager::getInstance().getTexture(XPotato_Animation, renderer), NULL, NULL, &dst.w, &dst.h);
-            dst.x *= areaMultiplier[0];
-            dst.y *= areaMultiplier[0];
+            dst.w = 15 * areaMultiplier[0];
+            dst.h = 21 * areaMultiplier[0];
         }
         else
         {
-            textureID = PotatoExplosion_Animation[currentFrame];
-            // sprite.getResource(renderer, PotatoExplosion_Animation[currentFrame].c_str());
-            SDL_QueryTexture(ResourceManager::getInstance().getTexture(PotatoExplosion_Animation[currentFrame], renderer), NULL, NULL, &dst.w, &dst.h);
-            dst.x *= areaMultiplier[1];
-            dst.y *= areaMultiplier[1];
+            dst.w = 256 * areaMultiplier[1];
+            dst.h = 256 * areaMultiplier[1];
         }
         dst.x = center.x - dst.w / 2 - camX;
         dst.y = center.y - dst.h / 2 - camY;
         ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
-        ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().PlayFrame(0,0,256,256,currentFrame);
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
@@ -575,6 +566,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 0.5;
         dmgArea.frames = 5;
         dmgArea.size = {107, 144};
+        dmgArea.textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png";
         break;
     }
     case SPIDER_COOKING:
@@ -586,6 +578,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.damage = 90;
         dmgArea.hitCooldown = 0.75;
         dmgArea.size = {107, 107};
+        dmgArea.textureID = "res/gfx/spr_spidercooking.png";
         break;
     }
     case CEO_TEARS:
@@ -598,6 +591,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.attackCount = 1;
         dmgArea.projectileSpeed = 4;
         dmgArea.size = {20,16};
+        dmgArea.textureID = "res/gfx/spr_CEOTears.png";
         break;
     }
     case FAN_BEAM:
@@ -628,6 +622,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.projectileSpeed = 3;
         dmgArea.knockbackSpeed = 2;
         dmgArea.knockbackTime = 0.08;
+        dmgArea.textureID = BLBook_Animation;
         break;
     }
     case PSYCHO_AXE:
@@ -641,6 +636,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frames = 7;
         dmgArea.radius = 100;
         dmgArea.size = {46, 46};
+        dmgArea.textureID = "res/gfx/spr_PsychoAxe/spr_PsychoAxe.png";
         break;
     }
     case IDOL_SONG:
@@ -654,6 +650,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frames = 4;
         dmgArea.size = {58,54};
         dmgArea.projectileSpeed = 1;
+        dmgArea.textureID = IdolSong_Animation;
         break;
     }
     case ELITE_LAVA:
@@ -676,6 +673,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 2;
         dmgArea.duration = 2;
         dmgArea.frames = 0;
+        dmgArea.textureID = "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks.png";
         break;
     }
     case CUTTING_BOARD:
@@ -693,10 +691,12 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.knockbackTime = 0.20;
         dmgArea.size = {20,126};
         dmgArea.areaMultiplier[0] = 1.3;
+        dmgArea.textureID = CuttingBoard_Animation;
         break;
     }
     case X_POTATO:
     {
+        dmgArea.textureID = XPotato_Animation;
         dmgArea.damage = 90;
         timeBetweenAttacks = 3.5;
         dmgArea.attackCount = 1;
@@ -709,7 +709,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.projectileSpeed = 5;
         dmgArea.size = {30,42};
         dmgArea.areaMultiplier[0] = 1;
-        dmgArea.areaMultiplier[1] = 0;
+        dmgArea.areaMultiplier[1] = 0.8;
         break;
     }
     case FUBU_BEAM:
@@ -728,7 +728,7 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET3:
     case BULLET4:
     {
-        dmgArea.damage = 1;
+        dmgArea.damage = 0;
         if(ID != BULLET1 && ID != BULLET4) 
         {
             dmgArea.attackCount = 10;
@@ -776,7 +776,6 @@ void Weapon::setArea(float areaIncrease)
 {
     dmgArea.size *= (100.0 + areaIncrease) / 100.0;
     dmgArea.areaMultiplier[0] *= (100.0 + areaIncrease) / 100;
-    dmgArea.areaMultiplier[1] *= (100.0 + areaIncrease) / 100;
 }
 void Weapon::setDuration(float newDuration)
 {
@@ -1067,7 +1066,10 @@ void Weapon::updateStats()
             case 4: setAttackInterval(1.33); return;
             case 5: setDamage(200); return;
             case 6: setArea(20); return;
-            case 7: setDamage(600); dmgArea.maxed = true; return;
+            case 7: 
+            dmgArea.textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing3.png";
+            setDamage(600); 
+            return;
         }
     }
     case CUTTING_BOARD:
@@ -1136,7 +1138,7 @@ bool hitPlayer(DamagingArea &weapon, Player &player)
     {
         if (checkCircleCollision(Circle{weapon.center, 10}, player.collider))
         {
-            player.health -= 1;
+            player.health -= 0;
             weapon.hitID[1] = weapon.hitCooldown;
             --weapon.hitLimit;
             return true;

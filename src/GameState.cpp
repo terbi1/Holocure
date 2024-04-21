@@ -82,6 +82,7 @@ void GameStates::start()
     playerHUD.HUD_Timer.start();
     optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG, 1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
     weapons.push_back(Weapon(AXE));
+    weapons.push_back(Weapon(X_POTATO));
     reqNextLevel = 79;
     spawnCooldown = 0;
     specialCD = 0;
@@ -216,29 +217,29 @@ void GameStates::update(float timeStep, bool &shake)
 
     // spawn enemies
 
-    // if (!boss)
-    // {
-    //     bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
-    // }
+    if (!boss)
+    {
+        bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
+    }
 
     updateSpawnPool(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
 
     spawnCooldown -= timeStep;
 
-    if (spawnCooldown <= 0)
-    {
-        int temp = rand() % (int)spawnPool.size();
-        std::unordered_set<ENEMY_TYPE>::iterator it;
-        it = spawnPool.begin();
-        for (int i = 0; i < temp; ++i)
-            ++it;
-        for (int i = 0; i < spawnRate; ++i)
-        {
-            spawn(enemies, player.collider.center, *it, EnemyCount);
-            ++EnemyCount;
-            spawnCooldown = SPAWN_CD;
-        }
-    }
+    // if (spawnCooldown <= 0)
+    // {
+    //     int temp = rand() % (int)spawnPool.size();
+    //     std::unordered_set<ENEMY_TYPE>::iterator it;
+    //     it = spawnPool.begin();
+    //     for (int i = 0; i < temp; ++i)
+    //         ++it;
+    //     for (int i = 0; i < spawnRate; ++i)
+    //     {
+    //         spawn(enemies, player.collider.center, *it, EnemyCount);
+    //         ++EnemyCount;
+    //         spawnCooldown = SPAWN_CD;
+    //     }
+    // }
 
     // dmg numbers
     for (auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
@@ -674,8 +675,6 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
     }
     camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2 + shakeX;
     camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2 + shakeY;
-    // camera.w = SCREEN_WIDTH;
-    // camera.h = SCREEN_HEIGHT;
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
@@ -714,9 +713,10 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
     {
-        SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
-        dmgText.loadFromRenderedText(std::to_string(it->dmg), it->color, DMG_font, renderer);
-        dmgText.render(renderer, &temp);
+        // SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
+        // dmgText.loadFromRenderedText(std::to_string(it->dmg), it->color, DMG_font, renderer);
+        // dmgText.render(renderer, &temp);
+        it->render(renderer, DMG_font, dmgText, camera.x, camera.y);
     }
 
     playerHUD.render(renderer, pause, leveledUp, isOver, weapons);

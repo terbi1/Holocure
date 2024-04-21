@@ -136,6 +136,7 @@ void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
 
 void Tabs_LevelUp::render(SDL_Renderer* renderer, TTF_Font* font)
 {
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     SDL_Rect caseRect{275, 20, 64, 64};
     SDL_Rect iconRect{282, 32, 50, 40};
     currentButton = (currentButton + 4) % 4;
@@ -147,6 +148,8 @@ void Tabs_LevelUp::render(SDL_Renderer* renderer, TTF_Font* font)
         caseRect.y += 110;
         iconRect.y += 110;
         optionCase.render(renderer, &caseRect);
+        ResourceManager::getInstance().Draw(caseRect.x, caseRect.y, caseRect.w, caseRect.h);
+        ResourceManager::getInstance().Render(OptionCase, renderer);
         SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(iconTexture[i], renderer), NULL, &iconRect);
     }
     for(int i = 0; i < 4; ++i)

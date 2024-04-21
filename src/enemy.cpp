@@ -3,7 +3,7 @@
 
 Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
 {
-    collider.center = m_center;
+    collider.center = movingCenter = m_center;
     type = m_type;
     ID = m_ID;
 
@@ -84,7 +84,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     {
         health = 45000;
         atk = 20;
-        speed = 1.0;
+        speed = 4.0;
         expValue = 6000;
         collider.radius = 32;
         frames = 3;
@@ -123,15 +123,21 @@ void Enemy::update(Vector2f player_center, float timeStep)
     }
     if(type == A_CHAN)
     {
-        circularMotion(collider.center, player_center, 0.01 * speed);
+
+        angle += 0.5;
+
+        collider.center.x = 400 * sinf(angle / 180.0f * M_PI) + movingCenter.x;
+        collider.center.y = 400 * sinf(angle / 180.0f * M_PI) * cosf(angle / 180.0f * M_PI) + movingCenter.y;
+        // circularMotion(collider.center, player_center, 0.01 * speed);
         specialCD[0] -= timeStep;
         specialCD[1] -= timeStep;
         specialCD[2] -= timeStep;
         specialDuration[0] -= timeStep;
         if(specialCD[2] <= 0) notMoving = true;
+    collider.center += direction * speed;
+        return;
     }
 
-    collider.center += direction * speed;
 
     if(knockbackTime > 0)
     {
@@ -150,7 +156,6 @@ void Enemy::getKnockedBack(Vector2f direction, float time, float speed)
 
 void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 {
-
     float multiplier;
 
     switch ((int)type)

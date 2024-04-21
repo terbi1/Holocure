@@ -30,4 +30,5 @@ struct ExpDrop : public Drop
     bool pickedUp(Vector2f player_pos);
     void render(SDL_Renderer* renderer, int camX, int camY);
     int expValue;
+    int textureID;
 };
