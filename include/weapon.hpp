@@ -16,27 +16,35 @@ const int frames = 8;
 
 enum WEAPON_ID {
     NONE,
-    FUBU_BEAM,
     AXE,
     SPIDER_COOKING,
     X_POTATO,
+    POTATO_EXPLOSION,
     CEO_TEARS,
     FAN_BEAM,
     BL_BOOK,
     PSYCHO_AXE,
     IDOL_SONG,
     ELITE_LAVA,
+    CUTTING_BOARD,
     FALLING_BLOCKS,
     ATK_UP,
     SPD_UP,
     HP_UP,
     HP_RECOVER,
+    FUBU_BEAM,
+    BULLET1,
+    BULLET2,
+    BULLET3,
+    BULLET4
 };
 
 struct DamagingArea
 {
     WEAPON_ID weaponID;
+    std::string textureID;
     DamagingArea();
+    bool isActive{true};
     float timePassed{0};
     float duration;
     float damage;
@@ -46,20 +54,26 @@ struct DamagingArea
     Vector2f size;
     float projectileSpeed;
     int hitLimit;
+    float knockbackSpeed{0};
+    float knockbackTime{0};
     std::unordered_map<int, float> hitID;
     int currentFrame{-1};
     int frames;
     int attackCount{1};
     float frameTime{0};
     float lastFrameTime{-100};
-    int angle{0};
+    float angle{0};
     float radius;
     float fallTime;
     float hitCooldown{0};
-    // SDL_RendererFlip flip{SDL_FLIP_NONE};
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
+    float areaMultiplier[2]{0,0};
+    void update(float timeStep, Vector2f player_center, SDL_Rect camera, bool &shake, int &shakeTime);
+    bool hitEnemy(Circle &enemyCollider, int enemyID);
+    void explode();
+    void render(SDL_Renderer* renderer, Player player, int camX, int camY);
 };
 
 struct Weapon {
@@ -77,15 +91,11 @@ struct Weapon {
     void setArea(float areaIncrease);
     void setDuration(float durationReduction);
     void setAttackCount(int count);
+    void setKnockback(float time, float speed);
     void updateStats();
+    void initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_RendererFlip playerFlip, int count, Vector2f direction = {0,0});
 };
 
-void renderWeapon(SDL_Renderer* renderer, DamagingArea& weapon, Player player, int frame, int camX, int camY);
-
 int damageCal(DamagingArea weapon, Player player);
-
-void inflictDamage(DamagingArea &weapon, Player player, int& enemyHealth, bool& isHit, int enemyID);
-
-bool hitEnemy(DamagingArea &weapon, Circle enemyCollider,int& enemyHealth, bool& isHit, int enemyID, Player player);
 
 bool hitPlayer(DamagingArea& weapon, Player& player);

@@ -80,23 +80,72 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         frames = 11;
         break;
     }
+    case A_CHAN:
+    {
+        health = 45000;
+        atk = 20;
+        speed = 1.0;
+        expValue = 6000;
+        collider.radius = 32;
+        frames = 3;
+        break;
+    }
     }
 }
 
-void Enemy::move(Vector2f player_center)
+void Enemy::update(Vector2f player_center, float timeStep)
 {
+    timePassed += timeStep;
+    frameTime -= timeStep;
+    cd -= timeStep;
+    if (frameTime <= 0)
+    {
+        currentFrame = (currentFrame + 1) % (frames + 1);
+        frameTime = enemyFrameTime;
+    }
+    if(notMoving)
+    {
+        if(specialCD[3] <= 0)
+        {
+            specialCD[3] = 6;
+            notMoving = false;
+        }
+        specialCD[3] -= timeStep;
+        return;
+    }
     if(timePassed >= 0.3)
     {
-        if (collider.center.x >= player_center.x)
-            flip = SDL_FLIP_HORIZONTAL;
-        else
-            flip = SDL_FLIP_NONE;
-        // Vector2f moveVector = vectorNormalize(player_center - collider.center);
+        flip = collider.center.x >= player_center.x ? SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE;
+        
         direction = vectorNormalize(player_center - collider.center);
+        
         timePassed = 0;
     }
-    // collider.center += moveVector * speed;
+    if(type == A_CHAN)
+    {
+        circularMotion(collider.center, player_center, 0.01 * speed);
+        specialCD[0] -= timeStep;
+        specialCD[1] -= timeStep;
+        specialCD[2] -= timeStep;
+        specialDuration[0] -= timeStep;
+        if(specialCD[2] <= 0) notMoving = true;
+    }
+
     collider.center += direction * speed;
+
+    if(knockbackTime > 0)
+    {
+        collider.center += knockbackDir * knockbackSpeed;
+        knockbackTime -= timeStep;
+    }
+}
+
+void Enemy::getKnockedBack(Vector2f direction, float time, float speed)
+{
+    if(type == FUBUZILLA) return;
+    knockbackDir = direction;
+    knockbackTime = time;
+    knockbackSpeed = speed;
 }
 
 void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
@@ -138,13 +187,15 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         currentTexture = Gloom_Animation[frame];
         multiplier = 1.5;
         break;
+    case A_CHAN:
+        currentTexture = AChan_Animation[frame];
+        multiplier = 1.5;
+        break;
     }
-
-    animation.importTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer));
 
     SDL_Rect dst;
 
-    SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
+    SDL_QueryTexture(ResourceManager::getInstance().getTexture(currentTexture, renderer), NULL, NULL, &dst.w, &dst.h);
     dst.w *= multiplier;
     dst.h *= multiplier;
 
@@ -153,13 +204,17 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
 
     if (isHit)
     {
-        SDL_SetTextureColorMod(animation.getTexture(), 255, 0, 0);
+        SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,0,0);
+    }
+    ResourceManager::getInstance().Draw(dst.x,dst.y,dst.w,dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(currentTexture, renderer, flip, 0);
+
+    if (isHit)
+    {
+        SDL_SetTextureColorMod(ResourceManager::getInstance().getTexture(currentTexture, renderer), 255,255,255);
         isHit = false;
     }
-    else
-        SDL_SetTextureColorMod(animation.getTexture(), 255, 255, 255);
-
-    SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
 }
 
 void spawn(std::vector<Enemy> &enemies, Vector2f playerPos, ENEMY_TYPE type, int ID)

@@ -54,6 +54,7 @@ void Game::init(const char *p_title, int p_w, int p_h)
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
         return;
     }
+    Mix_VolumeMusic(64);    
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -89,11 +90,13 @@ void Game::handleEvents()
 	case Title:
 		tabs_title.handleEvents(isRunning);
 		currentTab = tabs_title.getDirect();
+		if(currentTab == Room1) gameState.start();
 		break;
 	case Room1:
 		// tabs_room1.handleEvents();
 		gameState.handleEvent();
 		currentTab = gameState.getDirect();
+		if(currentTab == Title) gameState.reset();
 		break;
 	// case Level_Up:
 	// 	tabs_levelup.handleEvents();

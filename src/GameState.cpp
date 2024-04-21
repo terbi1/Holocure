@@ -1,5 +1,5 @@
 
-#include "GameState.hpp"
+#include "GameStates.hpp"
 
 bool isOutsideOfView(Circle object, int camX, int camY)
 {
@@ -9,43 +9,109 @@ bool isOutsideOfView(Circle object, int camX, int camY)
     return false;
 }
 
-GameState::GameState()
+void GameStates::weaponUpdate()
+{
+    if (choice == -1)
+        return;
+    switch (optionLevel[choice])
+    {
+    case 0:
+    {
+        switch ((int)optionKey[choice])
+        {
+        case ATK_UP:
+            player.increaseATK(8);
+            break;
+        case SPD_UP:
+            player.increaseSpeed(12);
+            break;
+        case HP_UP:
+            player.increaseMaxHP(10);
+            break;
+        case HP_RECOVER:
+            player.heal(20);
+            break;
+        }
+        break;
+    }
+    case 1:
+    {
+        weapons.push_back(Weapon(optionKey[choice]));
+        optionPool[optionKey[choice]] = 2;
+        break;
+    }
+    default:
+    {
+        for (auto it = weapons.begin(); it != weapons.end(); ++it)
+        {
+            if (it->ID != optionKey[choice])
+                continue;
+
+            it->updateStats();
+
+            if (it->level < 7)
+            {
+                optionPool[it->ID] = it->level + 1;
+            }
+            else
+            {
+                optionPool.erase(it->ID);
+            }
+
+            break;
+        }
+        break;
+    }
+    }
+    choice = -1;
+    optionKey.clear();
+    optionLevel.clear();
+    checkWeaponLimit();
+}
+
+GameStates::GameStates()
 {
 }
 
-GameState::~GameState()
+GameStates::~GameStates()
 {
 }
 
-void GameState::loadMedia(SDL_Renderer *renderer)
+void GameStates::start()
+{
+    playerHUD.HUD_Timer.start();
+    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG, 1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
+    weapons.push_back(Weapon(AXE));
+    reqNextLevel = 79;
+    spawnCooldown = 0;
+    specialCD = 0;
+    EnemyCount = 0;
+    camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+    choice = -1;
+    pause = false;
+    isOver = false;
+    leveledUp = false;
+    player.collider.center = {SCREEN_WIDTH / 2 + 16, SCREEN_HEIGHT / 2 + 26};
+    camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+}
+
+void GameStates::loadMedia(SDL_Renderer *renderer)
 {
     DMG_font = TTF_OpenFont(font_8bitPLus.c_str(), 24);
-
-    weapons.push_back(Weapon(AXE));
-    // weapons.push_back(Weapon(SPIDER_COOKING));
-    // weapons.push_back(Weapon(CEO_TEARS));
-    // weapons.push_back(Weapon(FAN_BEAM));
-    // weapons.push_back(Weapon(BL_BOOK));
-    // weapons.push_back(Weapon(PSYCHO_AXE));
-    // weapons.push_back(Weapon(IDOL_SONG));
-    // weapons.push_back(Weapon(ELITE_LAVA));
-
     playerHUD.initHUD(renderer, player.health);
-    playerHUD.HUD_Timer.start();
-    playerHUD.HUD_Timer.pause();
 }
 
-Tabs GameState::getDirect()
+Tabs GameStates::getDirect()
 {
     return direct;
 }
 
-bool GameState::getPause()
+bool GameStates::getPause()
 {
     return pause;
 }
 
-void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
+void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
 {
 
     if (minuteTimer == 0 && secondTimer == 0)
@@ -87,21 +153,42 @@ void GameState::updateSpawnPool(int minuteTimer, int secondTimer)
     spawnRate = (minuteTimer * 60 + secondTimer) / 20 + 10;
 }
 
-void GameState::bossSpawn(int minuteTimer, int secondTimer)
+void GameStates::bossSpawn(int minuteTimer, int secondTimer)
 {
-    if (minuteTimer == 10 && secondTimer == 0)
+    if (minuteTimer == 0 && secondTimer == 0)
     {
-        spawn(enemies, player.collider.center, FUBUZILLA, EnemyCount);
+        spawn(enemies, player.collider.center, A_CHAN, EnemyCount);
         ++EnemyCount;
-        weapons.push_back(Weapon(FUBU_BEAM));
+        // weapons.push_back(Weapon(FUBU_BEAM));
         boss = true;
+        finalBoss = true;
     }
 }
 
-void GameState::update(float timeStep, bool &shake)
+void GameStates::checkWeaponLimit()
+{
+    int weaponCount = (int)weapons.size();
+    for (auto it = weapons.begin(); it != weapons.end(); ++it)
+    {
+        if (it->ID == FUBU_BEAM || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
+            --weaponCount;
+    }
+    if (weaponCount < MAX_WEAPON)
+        return;
+    for (auto it = optionPool.begin(); it != optionPool.end();)
+    {
+        if (it->second == 1)
+            it = optionPool.erase(it);
+        else
+            ++it;
+    }
+}
+
+void GameStates::update(float timeStep, bool &shake)
 {
     if (pause || leveledUp)
     {
+        Mix_VolumeMusic(20);
         playerHUD.HUD_Timer.pause();
         return;
     }
@@ -110,7 +197,10 @@ void GameState::update(float timeStep, bool &shake)
         return;
     }
     else
+    {
         playerHUD.HUD_Timer.unpause();
+        Mix_VolumeMusic(64);
+    }
 
     if (shakeTime == 0)
         shake = false;
@@ -122,63 +212,14 @@ void GameState::update(float timeStep, bool &shake)
         SDL_ResetKeyboard();
     }
 
-    if (choice != -1)
-    {
-        if(optionLevel[choice] == 0)
-        {
-            switch((int)optionKey[choice])
-            {
-                case ATK_UP: 
-                player.atk += 8;
-                break;
-                case SPD_UP: 
-                player.increaseSpeed(12);
-                break;
-                case HP_UP: break;
-                case HP_RECOVER: break;
-            }
-        }
-        else if (optionLevel[choice] == 1)
-        {
-            weapons.push_back(Weapon(optionKey[choice]));
-            optionPool[optionKey[choice]] = 2;
-        }
-        else
-        {
-            for (auto it = weapons.begin(); it != weapons.end(); ++it)
-            {
-                if (it->ID == optionKey[choice])
-                {
-                    it->updateStats();
-                    // choice = -1;
-                    if (it->level < 7)
-                    {
-                        // optionPool.insert({it->ID, it->level});
-                        optionPool[it->ID] = it->level + 1;
-                    }
-                    else
-                        optionPool.erase(it->ID);
-                    break;
-                }
-            }
-        }
-        // if (choice != -1)
-        // {
-        //     weapons.push_back(Weapon(optionKey[choice]));
-        //     optionPool[optionKey[choice]] = 2;
-        //     choice = -1;
-        // }
-        // ++optionPool[optionKey[choice]];
-        choice = -1;
-        optionKey.clear();
-        optionLevel.clear();
-    }
+    weaponUpdate();
+
     // spawn enemies
 
-    if (!boss)
-    {
-        bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
-    }
+    // if (!boss)
+    // {
+    //     bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
+    // }
 
     updateSpawnPool(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
 
@@ -214,32 +255,45 @@ void GameState::update(float timeStep, bool &shake)
     // player event
     Vector2f temp = player.collider.center;
     SDL_RendererFlip temp2;
-    player.move();
+    player.update(timeStep);
     moved = player.collider.center - temp;
     if (specialCD > 0)
         specialCD -= timeStep;
+
+    // create drops
+    for (auto it = enemies.begin(); it != enemies.end(); ++it)
+    {
+        if (it->health > 0)
+            continue;
+        dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
+        if (it->type == FUBUZILLA)
+        {
+            for (auto it2 = weapons.begin(); it2 != weapons.end(); ++it2)
+            {
+                if (it2->ID == FUBU_BEAM)
+                {
+                    weapons.erase(it2);
+                    break;
+                }
+            }
+        }
+        it = enemies.erase(it);
+        --it;
+    }
 
     // enemy move
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
-        it->timePassed += timeStep;
-        it->frameTime -= timeStep;
-
-        if (it->frameTime <= 0)
-        {
-            ++it->currentFrame;
-            if (it->currentFrame > it->frames)
-                it->currentFrame = 0;
-            it->frameTime = enemyFrameTime;
-        }
-
-        it->move(player.collider.center);
-
+        it->update(player.collider.center, timeStep);
         if (it->type == FUBUZILLA)
         {
             temp = it->collider.center;
             temp2 = it->flip;
+        }
+        else if (it->type == A_CHAN)
+        {
+            temp = it->collider.center;
         }
     }
 
@@ -250,8 +304,11 @@ void GameState::update(float timeStep, bool &shake)
     float right = -1e9;
     for (int i = 0; i < (int)enemies.size(); ++i)
     {
-        if (enemies[i].type == FUBUZILLA)
+        if (enemies[i].type == FUBUZILLA || enemies[i].type == A_CHAN)
+        {
+            bossIndex = i;
             continue;
+        }
         if (enemies[i].collider.center.x - enemies[i].collider.radius > right)
         {
             if ((int)active.size() >= 2)
@@ -274,7 +331,6 @@ void GameState::update(float timeStep, bool &shake)
                 {
                     float dis = distance(enemies[*it2].collider.center, enemies[*it3].collider.center);
                     enemies[*it2].direction += (enemies[*it2].collider.center - enemies[*it3].collider.center) * (1.0f / (1.0f + dis * dis));
-                    // collisionEvent(enemies[*it2].collider, enemies[*it3].collider);
                 }
             }
         }
@@ -283,10 +339,9 @@ void GameState::update(float timeStep, bool &shake)
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
         if (it->cd > 0)
-        {
-            it->cd -= timeStep;
-        }
-        else if (checkCircleCollision(player.collider, it->collider))
+            continue;
+
+        if (checkCircleCollision(player.collider, it->collider))
         {
             it->cd = EnemyCD;
             player.health -= it->atk;
@@ -294,9 +349,38 @@ void GameState::update(float timeStep, bool &shake)
         }
     }
 
+    if (finalBoss)
+    {
+        if (enemies[bossIndex].specialCD[0] <= 0)
+        {
+            weapons.push_back(Weapon(BULLET1));
+            enemies[bossIndex].specialCD[0] = 2;
+            enemies[bossIndex].specialDuration[0] = 0.8;
+        }
+        else if (enemies[bossIndex].specialCD[1] <= 0)
+        {
+            weapons.push_back(Weapon(BULLET2));
+            enemies[bossIndex].specialCD[1] = 2;
+        }
+        else if (enemies[bossIndex].specialCD[2] <= 0)
+        {
+            int random = rand() % 2;
+            weapons.push_back((random == 0 ? Weapon(BULLET4) : Weapon(BULLET3)));
+            enemies[bossIndex].specialCD[2] = 9;
+        }
+    }
+
     // initiate attacks
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
+        if (it->specialDuration[1] <= 0)
+        {
+            it->specialDuration[1] = it->specialDuration[0];
+            weapons.erase(it);
+            --it;
+            continue;
+        }
+
         it->cooldown -= timeStep;
 
         if (it->cooldown > 0)
@@ -306,254 +390,246 @@ void GameState::update(float timeStep, bool &shake)
 
         for (int i = 0; i < it->dmgArea.attackCount; ++i)
         {
-            switch ((int)it->ID)
+            Vector2f temp1{0, 0};
+            if (it->ID == CEO_TEARS)
             {
-            case AXE:
-            {
-                it->dmgArea.center = player.collider.center;
-                it->dmgArea.angle = player.arrowAngle;
-                // it->dmgArea.flip = player.flip;
-                break;
-            }
-            case SPIDER_COOKING:
-            {
-                it->dmgArea.center = player.collider.center;
-                break;
-            }
-            case CEO_TEARS:
-            {
-                it->dmgArea.center = player.collider.center;
                 int index = rand() % (int)enemies.size();
-                it->dmgArea.direction = vectorNormalize(enemies[index].collider.center - player.collider.center);
-                break;
+                temp1 = vectorNormalize(enemies[index].collider.center - player.collider.center);
             }
-            case FAN_BEAM:
+
+            it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, i, temp1);
+
+            if (it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3 && it->ID != BULLET4)
             {
-                it->dmgArea.center = player.collider.center;
-                if (player.flip == SDL_FLIP_HORIZONTAL)
-                    it->dmgArea.angle = 180 + 180 * i;
-                else
-                    it->dmgArea.angle = 0 + 180 * i;
-                break;
+                activeAttack.push_back(it->dmgArea);
             }
-            case BL_BOOK:
-            {
-                Vector2f temp{player.collider.center.x, player.collider.center.y - it->dmgArea.radius};
-                circularMotion(temp, player.collider.center, 2 * PI / it->dmgArea.attackCount * i);
-                it->dmgArea.center = temp;
-                break;
-            }
-            case PSYCHO_AXE:
-            {
-                it->dmgArea.rotatingCenter = player.collider.center;
-                break;
-            }
-            case IDOL_SONG:
-            {
-                it->dmgArea.center = it->dmgArea.direction = player.collider.center;
-                it->dmgArea.count = i;
-                it->dmgArea.angle = player.arrowAngle;
-                break;
-            }
-            case FUBU_BEAM:
+            else if (it->ID == FUBU_BEAM)
             {
                 it->dmgArea.center = temp;
                 if (temp2 == SDL_FLIP_HORIZONTAL)
                     it->dmgArea.angle = 180;
                 else
                     it->dmgArea.angle = 0;
-                break;
+                bossAttack.push_back(it->dmgArea);
             }
-            case ELITE_LAVA:
+            else if (it->ID == BULLET1)
             {
-                it->dmgArea.center = Vector2f{randomFloat(-SCREEN_WIDTH / 3, SCREEN_WIDTH / 3), randomFloat(-SCREEN_HEIGHT / 3, SCREEN_HEIGHT / 3)} + player.collider.center;
-                break;
+                it->dmgArea.center = temp;
+                it->dmgArea.direction = vectorNormalize(player.collider.center - it->dmgArea.center);
+                bossAttack.push_back(it->dmgArea);
             }
-            case FALLING_BLOCKS:
+            else if (it->ID == BULLET4)
             {
-                it->specialDuration[1] -= it->timeBetweenAttacks;
-                if (it->specialDuration[1] <= 0)
-                {
-                    it->specialDuration[1] = it->specialDuration[0];
-                    weapons.erase(it);
-                    --it;
-                    continue;
-                }
-                it->dmgArea.center = Vector2f{randomInt(-5, 5) * 98, -SCREEN_HEIGHT / 2} + player.collider.center;
-                it->dmgArea.fallTime = (rand() % 6 + 1) * 0.12;
-                it->dmgArea.count = rand() % 12;
+                it->dmgArea.center = temp;
+                it->dmgArea.angle = it->dmgArea.attackCount * 4;
+                ++it->dmgArea.attackCount;
+                bossAttack.push_back(it->dmgArea);
                 break;
             }
+            else if (it->ID == BULLET2)
+            {
+                // it->dmgArea.center = player.collider.center;
+                it->dmgArea.center = temp;
+                it->dmgArea.angle = i * 36;
+                bossAttack.push_back(it->dmgArea);
             }
-            activeAttack.push_back(it->dmgArea);
+            else if (it->ID == BULLET3)
+            {
+                it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
+                it->dmgArea.angle = i * 72;
+                it->dmgArea.count = i;
+                bossAttack.push_back(it->dmgArea);
+            }
+        }
+    }
+
+    for (auto it = weapons.begin(); it != weapons.end(); ++it)
+    {
+        if ((it->ID == BULLET1 && enemies[bossIndex].specialDuration[0] <= 0) || it->ID == BULLET2 || ((it->ID == BULLET4 || it->ID == BULLET3) && enemies[bossIndex].specialCD[3] <= 0))
+        {
+            weapons.erase(it);
+            --it;
         }
     }
 
     // active attacks
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
-        it->frameTime -= timeStep;
-        it->duration -= timeStep;
 
-        if (it->duration <= 0)
+        it->update(timeStep, player.collider.center, camera, shake, shakeTime);
+
+        if (!it->isActive)
         {
             activeAttack.erase(it);
             --it;
             continue;
         }
 
-        if (it->frameTime <= 0)
-        {
-            it->frameTime = spriteFrameTime;
-            ++it->currentFrame;
-            if (it->currentFrame > it->frames)
-                it->currentFrame = 0;
-        }
+        // switch ((int)it->weaponID)
+        // {
+        // case AXE:
+        //     it->center = player.collider.center;
+        //     break;
+        // case CEO_TEARS:
+        //     it->center += it->direction * it->projectileSpeed;
+        //     break;
+        // case SPIDER_COOKING:
+        //     it->center = player.collider.center;
+        //     break;
+        // case FAN_BEAM:
+        //     it->center = player.collider.center;
+        //     break;
+        // case BL_BOOK:
+        // {
+        //     it->center += player.collider.center - it->rotatingCenter;
+        //     it->rotatingCenter = player.collider.center;
+        //     circularMotion(it->center, player.collider.center, -0.01 * it->projectileSpeed);
+        //     break;
+        // }
+        // case PSYCHO_AXE:
+        // {
+        //     it->timePassed += timeStep;
+        //     spiralMotion(it->center, it->rotatingCenter, 0.01, it->timePassed);
+        //     break;
+        // }
+        // case IDOL_SONG:
+        // {
+        //     int temp = (it->count == 0 ? 1 : -1);
+        //     it->center.y += temp * it->projectileSpeed;
+        //     it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 * it->projectileSpeed + it->direction.x;
+        //     break;
+        // }
+        // case ELITE_LAVA:
+        // {
+        //     break;
+        // }
+        // case FALLING_BLOCKS:
+        // {
+        //     if (it->fallTime > 0)
+        //     {
+        //         it->center.y += 8;
+        //         it->fallTime -= timeStep;
+        //         if (it->fallTime <= 0)
+        //         {
+        //             shake = true;
+        //             shakeTime = 30;
+        //         }
+        //     }
+        //     break;
+        // }
+        // case CUTTING_BOARD:
+        // {
+        //     if (it->fallTime > 0)
+        //     {
+        //         it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+        //         it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+        //         it->fallTime -= timeStep;
+        //     }
+        //     break;
+        // }
+        // case X_POTATO:
+        // {
+        //     if (it->fallTime > 0)
+        //     {
+        //         it->center += it->direction * it->projectileSpeed;
+        //         it->angle += 20;
+        //         circleBounce(Circle{it->center, it->radius}, it->direction, camera);
+        //         it->fallTime -= timeStep;
+        //         if (it->fallTime <= 0)
+        //         {
+        //             it->explode();
+        //         }
+        //     }
+        //     break;
+        // }
+        // }
 
+        for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
+        {
+            if (it->hitID.find(it2->ID) != it->hitID.end())
+            {
+                it->hitID[it2->ID] -= timeStep;
+                if (it->hitID[it2->ID] > 0)
+                    continue;
+                else
+                    it->hitID.erase(it2->ID);
+            }
+
+            if (it->hitEnemy(it2->collider, it2->ID))
+            {
+                it2->getKnockedBack(vectorNormalize(it2->collider.center - player.collider.center), it->knockbackTime, it->knockbackSpeed);
+                it2->takeDamage(damageCal(*it, player));
+                dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
+            }
+            if (it->hitLimit == 0)
+            {
+                activeAttack.erase(it);
+                --it;
+                break;
+            }
+
+        }
+    }
+
+    for (auto it = bossAttack.begin(); it != bossAttack.end(); ++it)
+    {
+
+        it->update(timeStep, player.collider.center, camera, shake, shakeTime);
+
+        if (!it->isActive)
+        {
+            bossAttack.erase(it);
+            --it;
+            continue;
+        }
         switch ((int)it->weaponID)
         {
-        case AXE:
-            it->center = player.collider.center;
-            break;
-        case CEO_TEARS:
-            it->center += it->direction * it->projectileSpeed;
-            break;
-        case SPIDER_COOKING:
-            it->center = player.collider.center;
-            break;
-        case FAN_BEAM:
-            it->center = player.collider.center;
-            break;
-        case BL_BOOK:
-        {
-            it->center += moved;
-            circularMotion(it->center, player.collider.center, -0.01 * it->projectileSpeed);
-            break;
-        }
-        case PSYCHO_AXE:
-        {
-            it->timePassed += timeStep;
-            spiralMotion(it->center, it->rotatingCenter, 0.01, it->timePassed);
-            break;
-        }
-        case IDOL_SONG:
-        {
-            int temp;
-            if (it->count == 0)
-                temp = 1;
-            else
-                temp = -1;
-
-            it->center.y += temp * it->projectileSpeed;
-            it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 * it->projectileSpeed + it->direction.x;
-
-            break;
-        }
         case FUBU_BEAM:
         {
             it->center = temp;
             break;
         }
-        case ELITE_LAVA:
+        case BULLET1:
         {
+            it->center += it->direction * it->projectileSpeed;
             break;
         }
-        case FALLING_BLOCKS:
+        case BULLET2:
+        case BULLET4:
         {
-            // std::cout << it->fallTime << '\n';
-            if (it->fallTime > 0)
-            {
-                it->center.y += 8;
-                it->fallTime -= timeStep;
-                if (it->fallTime <= 0)
-                {
-                    shake = true;
-                    shakeTime = 30;
-                }
-            }
-            // else if(it->fallTime <= 0 && it->fallTime > -0.01)
-            // {
-            //     shake = true;
-            // }
+            it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+            it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+            break;
+        }
+        case BULLET3:
+        {
+            int temp = (it->count < 5 ? -1 : 1);
+            it->center.x -= temp * cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+            it->center.y -= temp * sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
+
+            circularMotion(it->center, it->rotatingCenter, temp * it->projectileSpeed * 0.2f / 180.0f * M_PI);
+            it->angle += temp * it->projectileSpeed * 0.2f;
             break;
         }
         }
 
-        if (it->ofPlayer)
+        if (hitPlayer(*it, player))
+            dmgNumbers.push_back(DamageNumber{(int)it->damage, player.collider.center, {255, 0, 0}});
+        if (it->hitLimit == 0)
         {
-            for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
-            {
-                if (it->hitID.find(it2->ID) != it->hitID.end())
-                {
-                    it->hitID[it2->ID] -= timeStep;
-                    if (it->hitID[it2->ID] > 0)
-                        continue;
-                    else
-                        it->hitID.erase(it2->ID);
-                }
-
-                if (hitEnemy(*it, it2->collider, it2->health, it2->isHit, it2->ID, player))
-                {
-                    dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
-                }
-
-                if (it->hitLimit == 0)
-                {
-                    // std::cout << 1;
-                    activeAttack.erase(it);
-                    --it;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if (hitPlayer(*it, player))
-                dmgNumbers.push_back(DamageNumber{15, player.collider.center, {255, 0, 0}});
+            bossAttack.erase(it);
+            --it;
+            break;
         }
     }
 
-    // create drops
-
-    for (auto it = enemies.begin(); it != enemies.end();)
-    {
-        if (it->health <= 0)
-        {
-            dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
-            if (it->type == FUBUZILLA)
-            {
-                for (auto it2 = weapons.begin(); it2 != weapons.end(); ++it2)
-                {
-                    if (it2->ID == FUBU_BEAM)
-                    {
-                        weapons.erase(it2);
-                        break;
-                    }
-                }
-            }
-            it = enemies.erase(it);
-            // --it;
-        }
-        else ++it;
-    }
-
-    // moving animation frame
-    ++player.currentFrame;
-    if ((player.currentFrame / 2 / player.state) > (player.state - 1))
-    {
-        player.currentFrame = 0;
-    }
-
-    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end();)
+    for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
     {
         if (itDrop->pickedUp(player.collider.center))
         {
             player.currentExp += itDrop->expValue;
             itDrop = dropItems.erase(itDrop);
-        }
-        else
-        {
-            ++itDrop;
+            --itDrop;
         }
     }
 
@@ -578,72 +654,7 @@ void GameState::update(float timeStep, bool &shake)
                 ++it;
             optionKey.push_back(it->first);
             optionLevel.push_back(it->second);
-            switch ((int)it->first)
-            {
-            case PSYCHO_AXE:
-                playerHUD.tabs_levelup.optionName[i] = "Psycho Axe LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(PsychoAxeDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = PsychoAxe_Icon;
-                break;
-            case SPIDER_COOKING:
-                playerHUD.tabs_levelup.optionName[i] = "Spider Cooking LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(SpiderCookingDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = SpiderCooking_Icon;
-                break;
-            case BL_BOOK:
-                playerHUD.tabs_levelup.optionName[i] = "BL Book LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(BLBookDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = BLBook_Icon;
-                break;
-            case ELITE_LAVA:
-                playerHUD.tabs_levelup.optionName[i] = "Elite Lava LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(EliteLavaDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = LavaPool_Icon;
-                break;
-            case FAN_BEAM:
-                playerHUD.tabs_levelup.optionName[i] = "Fan Beam LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(FanBeamDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = FanBeam_Icon;
-                break;
-            case CEO_TEARS:
-                playerHUD.tabs_levelup.optionName[i] = "CEO's Tears LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(CeoTearsDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = CEOTears_Icon;
-                break;
-            case IDOL_SONG:
-                playerHUD.tabs_levelup.optionName[i] = "Idol Song LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(IdolSongDescription[it->second - 1]);
-                playerHUD.tabs_levelup.iconTexture[i] = IdolSong_Icon;
-                break;
-            case AXE:
-                playerHUD.tabs_levelup.optionName[i] = "Axe Swing LV " + std::to_string(it->second);
-                playerHUD.tabs_levelup.upgrade[i].setText(SuiseiWeaponDescription[it->second - 1]);
-                if (it->second == 7)
-                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[1];
-                else
-                    playerHUD.tabs_levelup.iconTexture[i] = SuiseiWeapon_Icon[0];
-                break;
-            case ATK_UP:
-                playerHUD.tabs_levelup.optionName[i] = "ATK Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase ATK by 8%.");
-                playerHUD.tabs_levelup.iconTexture[i] = AttackUp_Icon;
-                break;
-            case HP_UP:
-                playerHUD.tabs_levelup.optionName[i] = "Max HP Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase Max HP by 10%.");
-                playerHUD.tabs_levelup.iconTexture[i] = MaxHPUp_Icon;
-                break;
-            case SPD_UP:
-                playerHUD.tabs_levelup.optionName[i] = "SPD Up";
-                playerHUD.tabs_levelup.upgrade[i].setText("Increase SPD by 12%.");
-                playerHUD.tabs_levelup.iconTexture[i] = SpeedUp_Icon;
-                break;
-            case HP_RECOVER:
-                playerHUD.tabs_levelup.optionName[i] = "Food";
-                playerHUD.tabs_levelup.upgrade[i].setText("Recover 20% of Max HP.");
-                playerHUD.tabs_levelup.iconTexture[i] = HPRecover_Icon;
-                break;
-            }
+            playerHUD.tabs_levelup.getResource(it->first, it->second, i);
         }
         trace.clear();
         leveledUp = true;
@@ -653,7 +664,7 @@ void GameState::update(float timeStep, bool &shake)
     playerHUD.update(player, reqNextLevel, specialCD);
 }
 
-void GameState::render(SDL_Renderer *renderer, bool shake)
+void GameStates::render(SDL_Renderer *renderer, bool shake)
 {
     int shakeX{0}, shakeY{0};
     if (shake)
@@ -663,14 +674,21 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
     }
     camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2 + shakeX;
     camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2 + shakeY;
-    camera.w = SCREEN_WIDTH;
-    camera.h = SCREEN_HEIGHT;
+    // camera.w = SCREEN_WIDTH;
+    // camera.h = SCREEN_HEIGHT;
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
         if (isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y))
             continue;
         it->render(renderer, camera.x, camera.y);
+    }
+
+    for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
+    {
+        if (it->weaponID != ELITE_LAVA)
+            continue;
+        it->render(renderer, player, camera.x, camera.y);
     }
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
@@ -682,10 +700,17 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
-        renderWeapon(renderer, *it, player, it->currentFrame, camera.x, camera.y);
+        if (it->weaponID == ELITE_LAVA)
+            continue;
+        it->render(renderer, player, camera.x, camera.y);
     }
 
-    player.render(renderer, player.currentFrame / 2 / player.state, camera.x, camera.y);
+    player.render(renderer, player.currentFrame, camera.x, camera.y);
+
+    for (auto it = bossAttack.begin(); it != bossAttack.end(); ++it)
+    {
+        it->render(renderer, player, camera.x, camera.y);
+    }
 
     for (auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
     {
@@ -697,17 +722,26 @@ void GameState::render(SDL_Renderer *renderer, bool shake)
     playerHUD.render(renderer, pause, leveledUp, isOver, weapons);
 }
 
-void GameState::reset()
+void GameStates::reset()
 {
     playerHUD.HUD_Timer.stop();
-    player.health = 70;
-    player.currentExp = 0;
-    player.LEVEL = 1;
-    reqNextLevel = 61;
     isOver = false;
+    optionKey.clear();
+    optionLevel.clear();
+    optionPool.clear();
+    trace.clear();
+    weapons.clear();
+    dropItems.clear();
+    activeAttack.clear();
+    bossAttack.clear();
+    spawnPool.clear();
+    dmgNumbers.clear();
+    enemies.clear();
+    player.resetStats();
+    boss = false;
 }
 
-void GameState::handleEvent()
+void GameStates::handleEvent()
 {
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
@@ -721,16 +755,14 @@ void GameState::handleEvent()
         weapons.push_back(Weapon(FALLING_BLOCKS));
         specialCD = player.specialCD;
     }
-    // else if (currentKeyStates[SDL_SCANCODE_X] && pause)
-    // {
-    //     pause = false;
-    // }
+
     playerHUD.handleEvents(pause, leveledUp, direct, choice);
 
-    if (currentKeyStates[SDL_SCANCODE_Z] && isOver)
+    if (currentKeyStates[SDL_SCANCODE_ESCAPE] && isOver)
     {
         reset();
         direct = Title;
+        SDL_ResetKeyboard();
         return;
     }
 

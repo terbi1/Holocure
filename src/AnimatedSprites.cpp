@@ -16,6 +16,12 @@ AnimatedSprite::~AnimatedSprite(){
     m_texture = NULL;
 }
 
+void AnimatedSprite::clean()
+{
+    SDL_DestroyTexture(m_texture);
+    m_texture = NULL;
+}
+
 void AnimatedSprite::Draw(int x, int y, int w, int h){
     // Create a rectangle
     m_dst.x = x;
@@ -37,5 +43,10 @@ void AnimatedSprite::Update(){
 
 void AnimatedSprite::Render(SDL_Renderer*& renderer, SDL_RendererFlip flip,float angle, SDL_Point* rotatingCenter){
     // SDL_RenderCopy(renderer,m_texture,&m_src,&m_dst);
+    if(m_src.x == 0 && m_src.y == 0 && m_src.w == 0 && m_src.w == 0) 
+    {
+        SDL_RenderCopyEx(renderer, m_texture, NULL, &m_dst, angle, rotatingCenter, flip);
+        return;
+    }
     SDL_RenderCopyEx(renderer, m_texture, &m_src, &m_dst, angle, rotatingCenter, flip);
 }

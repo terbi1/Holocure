@@ -297,7 +297,7 @@ void DamageNumber::render(SDL_Renderer *renderer, TTF_Font *font, LTexture textu
 {
 	dmgBox.x -= camX;
 	dmgBox.y -= camY;
-	textureText.renderText(std::to_string(dmg), color, font, renderer, dmgBox.x, dmgBox.y, 8);
+	textureText.renderText(std::to_string(dmg), color, font, renderer, dmgBox.x, dmgBox.y, 10);
 }
 
 void DamageNumber::update(float timeStep)

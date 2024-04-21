@@ -25,35 +25,45 @@ enum ENEMY_TYPE {
     DARK_SHRIMP,
     BLOOM,
     GLOOM,
-    FUBUZILLA
+    FUBUZILLA,
+    A_CHAN
 };
 
 class Enemy
 {
 public:
     int ID;
+    std::string currentTexture;
     ENEMY_TYPE type;
     Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID);
     int health;
     int atk;
     SDL_RendererFlip flip = SDL_FLIP_NONE;
     Circle collider;
-    void move(Vector2f player_pos);
+    void update(Vector2f player_pos, float timeStep);
+    void getKnockedBack(Vector2f direction, float time, float speed);
+    void takeDamage(int damage){
+        health -= damage;
+        isHit = true;
+    }
     void render(SDL_Renderer* renderer, int frame, int camX, int camY);
     bool isHit{false};
     int currentFrame{0};
-    LTexture animation;
     float cd{0};
+    float specialCD[4]{2,2,9,6};
+    float specialDuration[3]{2.1,0,6};
     int expValue;
     float frameTime{0.2};
     int frames;
     float timePassed{0.3};
     Vector2f direction;
+    Vector2f knockbackDir;
 private:
-    SDL_Texture* runAnimation[ANIMATION_FRAMES];
-    std::string currentTexture;
+    bool notMoving{false};
     float speed;
     Vector2f velocity;
+    float knockbackSpeed{0};
+    float knockbackTime{0};
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);

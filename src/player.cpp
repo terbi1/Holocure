@@ -23,12 +23,7 @@ void Player::handleEvent()
     {
         if (flippable)
         {
-            // if (arrowAngle == 180)
-            //     arrowAngle = -135;
-            // else if (arrowAngle == 0)
-            //     arrowAngle = -45;
-            // else
-                arrowAngle = -90;
+            arrowAngle = -90;
         }
         velocity.y -= SPEED;
     }
@@ -36,12 +31,7 @@ void Player::handleEvent()
     {
         if (flippable)
         {
-            // if (arrowAngle == 180)
-            //     arrowAngle = 135;
-            // else if (arrowAngle == 0)
-            //     arrowAngle = 45;
-            // else
-                arrowAngle = 90;
+            arrowAngle = 90;
         }
         velocity.y += SPEED;
     }
@@ -49,12 +39,7 @@ void Player::handleEvent()
     {
         if (flippable)
         {
-            // if (arrowAngle == -90)
-            //     arrowAngle = -135;
-            // else if (arrowAngle == 90)
-            //     arrowAngle = 135;
-            // else
-                arrowAngle = 180;
+            arrowAngle = 180;
             flip = SDL_FLIP_HORIZONTAL;
         }
         velocity.x -= SPEED;
@@ -63,35 +48,29 @@ void Player::handleEvent()
     {
         if (flippable)
         {
-            // if (arrowAngle == -90)
-            //     arrowAngle = -45;
-            // else if (arrowAngle == 90)
-            //     arrowAngle = 45;
-            // else
-                arrowAngle = 0;
+            arrowAngle = 0;
             flip = SDL_FLIP_NONE;
         }
         velocity.x += SPEED;
     }
-
 }
 
-void Player::move()
+void Player::update(float timeStep)
 {
-
-    // update the position
-    // pos.x += velocity.x;
-    // pos.y += velocity.y;
     collider.center += velocity;
+
     // update sprite states
     if (velocity.x == 0 && velocity.y == 0)
         state = IDLE;
     else
         state = RUN;
 
-    // move hitbox
-    hitBox.x = pos.x + 2;
-    hitBox.y = pos.y + 8;
+    timePassed -= timeStep;
+    if (timePassed <= 0)
+    {
+        currentFrame = (currentFrame + 1) % (int)state;
+        timePassed = 0.1;
+    }
 }
 
 void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
@@ -100,17 +79,30 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     dst.x = collider.center.x - camX - 48;
     dst.y = collider.center.y - camY - 54;
 
-    switch((int)state)
+    switch ((int)state)
     {
-        case IDLE: animation.importTexture(ResourceManager::getInstance().getTexture(IdleAnimation_Suisei[frame].c_str(), renderer)); break;
-        case RUN: animation.importTexture(ResourceManager::getInstance().getTexture(RunAnimation_Suisei[frame].c_str(), renderer)); break;
+    case IDLE:
+        textureID = IdleAnimation_Suisei[frame];
+        break;
+    case RUN:
+        textureID = RunAnimation_Suisei[frame];
+        break;
     }
-    SDL_QueryTexture(animation.getTexture(), NULL, NULL, &dst.w, &dst.h);
+    SDL_QueryTexture(ResourceManager::getInstance().getTexture(textureID, renderer), NULL, NULL, &dst.w, &dst.h);
     dst.w *= 1.5;
     dst.h *= 1.5;
-    SDL_RenderCopyEx(renderer, ResourceManager::getInstance().getTexture(PlayerArrow, renderer), NULL, &dst, (float)arrowAngle, NULL, SDL_FLIP_NONE);
+    ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(PlayerArrow, renderer, SDL_FLIP_NONE, (float)arrowAngle);
     dst.y -= 20;
-    SDL_RenderCopyEx(renderer, animation.getTexture(), NULL, &dst, 0, NULL, flip);
+    ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Render(textureID, renderer, flip, 0);
+}
+
+void Player::increaseATK(float increase)
+{
+    atk += increase;
 }
 
 void Player::increaseSpeed(float increasePercent)
@@ -118,3 +110,25 @@ void Player::increaseSpeed(float increasePercent)
     SPEED *= (100 + increasePercent) / 100;
 }
 
+void Player::heal(float healPercent)
+{
+    health += (float)maxHP * healPercent / 100.0f;
+    if (health > maxHP)
+        health = maxHP;
+}
+
+void Player::increaseMaxHP(float increasePercent)
+{
+    maxHP *= (100.0f + increasePercent) / 100.0f;
+}
+
+void Player::resetStats()
+{
+    health = maxHP = 70;
+    LEVEL = 1;
+    arrowAngle = 0;
+    currentExp = 0;
+    atk = 130;
+    SPEED = 1.3;
+    flip = SDL_FLIP_NONE;
+}
