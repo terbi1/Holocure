@@ -25,7 +25,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         atk = 4;
         speed = 0.4;
         expValue = 7;
-        collider.radius = 21;
+        collider.radius = 15;
         frames = 2;
         break;
     }
@@ -70,6 +70,46 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         frames = 2;
         break;
     }
+    case DEAD_BATTER:
+    {
+        health = 150;
+        atk = 7;
+        speed = 0.6;
+        expValue = 9;
+        collider.radius = 22;
+        frames = 2;
+        break;
+    }
+    case MIKOP:
+    {
+        health = 200;
+        atk = 8;
+        speed = 0.9;
+        expValue = 10;
+        collider.radius = 18;
+        frames = 2;
+        break;
+    }
+    case HOSHIYOMI:
+    {
+        health = 1000;
+        atk = 10;
+        speed = 0.5f;
+        expValue = 13;
+        collider.radius = 17;
+        frames = 2;
+        break;
+    }
+    case SORATOMO:
+    {
+        health = 250;
+        atk = 6;
+        speed = 0.9;
+        expValue = 10;
+        collider.radius = 9;
+        frames = 2;
+        break;
+    }
     case FUBUZILLA:
     {
         health = 8000;
@@ -82,11 +122,11 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     }
     case A_CHAN:
     {
-        health = 45000;
-        atk = 20;
-        speed = 4.0;
+        health = 20000;
+        atk = 5;
+        speed = 1.0;
         expValue = 6000;
-        collider.radius = 32;
+        collider.radius = 14;
         frames = 3;
         break;
     }
@@ -123,8 +163,8 @@ void Enemy::update(Vector2f player_center, float timeStep)
     }
     if(type == A_CHAN)
     {
-
-        angle += 0.5;
+        direction = vectorNormalize(player_center - movingCenter);
+        angle += 0.3 * temp;
 
         collider.center.x = 400 * sinf(angle / 180.0f * M_PI) + movingCenter.x;
         collider.center.y = 400 * sinf(angle / 180.0f * M_PI) * cosf(angle / 180.0f * M_PI) + movingCenter.y;
@@ -134,10 +174,15 @@ void Enemy::update(Vector2f player_center, float timeStep)
         specialCD[2] -= timeStep;
         specialDuration[0] -= timeStep;
         if(specialCD[2] <= 0) notMoving = true;
-    collider.center += direction * speed;
+        movingCenter += direction * speed;
+        if(notMoving)
+        {
+            temp = (movingCenter.x < player_center.x ? 1:-1);
+        }
         return;
     }
 
+    collider.center += direction * speed;
 
     if(knockbackTime > 0)
     {
@@ -166,7 +211,7 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     case DEADBEAT:
         currentTexture = Deadbeat_Animation[frame];
-        multiplier = 2;
+        multiplier = 1.5;
         break;
     case TAKODACHI:
         currentTexture = Takodachi_Animation[frame];
@@ -194,6 +239,22 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         break;
     case A_CHAN:
         currentTexture = AChan_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case DEAD_BATTER:
+        currentTexture = DeadBatter_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case MIKOP:
+        currentTexture = MikoP_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case HOSHIYOMI:
+        currentTexture = Hoshiyomi_Animation[frame];
+        multiplier = 1.5;
+        break;
+    case SORATOMO:
+        currentTexture = Soratomo_Animation[frame];
         multiplier = 1.5;
         break;
     }

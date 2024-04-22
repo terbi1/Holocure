@@ -728,7 +728,7 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET3:
     case BULLET4:
     {
-        dmgArea.damage = 0;
+        dmgArea.damage = 1;
         if(ID != BULLET1 && ID != BULLET4) 
         {
             dmgArea.attackCount = 10;

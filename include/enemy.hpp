@@ -25,6 +25,10 @@ enum ENEMY_TYPE {
     DARK_SHRIMP,
     BLOOM,
     GLOOM,
+    DEAD_BATTER,
+    MIKOP,
+    HOSHIYOMI,
+    SORATOMO,
     FUBUZILLA,
     A_CHAN
 };
@@ -65,6 +69,7 @@ private:
     float angle{0};
     float knockbackSpeed{0};
     float knockbackTime{0};
+    float temp{1};
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);

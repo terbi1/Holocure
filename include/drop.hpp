@@ -9,7 +9,7 @@
 
 enum DROP_TYPE {
     EXP,
-    COIN
+    FOOD
 };
 
 struct Drop 

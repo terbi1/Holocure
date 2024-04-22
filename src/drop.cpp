@@ -22,9 +22,18 @@ Drop::Drop()
 ExpDrop::ExpDrop(int m_expValue, Vector2f m_pos) 
 {
     pos = m_pos;
-    expValue = m_expValue;
-    ID = EXP;
-    if(expValue <= 10) textureID = 0;
+    if(rand() % 200 == 0)
+    {
+        expValue = -1;
+        ID = FOOD;
+    }
+    else
+    {
+        expValue = m_expValue;
+        ID = EXP;
+    }
+    if(expValue == -1) textureID = 6;
+    else if(expValue <= 10) textureID = 0;
     else if(expValue >= 11 && expValue <= 19) textureID = 1;
     else if(expValue >= 20 && expValue <= 49) textureID = 2;
     else if(expValue >= 50 && expValue <= 99) textureID = 3;
