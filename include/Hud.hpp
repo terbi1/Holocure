@@ -18,10 +18,6 @@ struct HUD
     HUD();
     ~HUD();
     LTexture expBar[2];
-    LTexture portrait;
-    LTexture title;
-    LTexture pauseScreen;
-    LTexture pauseMenu;
     LTexture hp[2];
     LTexture specialSymbol;
     LTexture specialBar[4];

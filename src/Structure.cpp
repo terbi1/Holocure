@@ -15,7 +15,7 @@ LTexture::LTexture()
 
 LTexture::~LTexture()
 {
-	// free();
+	free();
 	// if(mTexture == NULL) std::cout << 1;
 }
 
@@ -295,9 +295,9 @@ bool LTimer::isPaused()
 
 void DamageNumber::render(SDL_Renderer *renderer, TTF_Font *font, LTexture textureText, int camX, int camY)
 {
-	dmgBox.x -= camX;
-	dmgBox.y -= camY;
-	textureText.renderText(std::to_string(dmg), color, font, renderer, dmgBox.x, dmgBox.y, 10);
+	// dmgBox.x -= camX;
+	// dmgBox.y -= camY;
+	textureText.renderText(std::to_string(dmg), color, font, renderer, dmgBox.x - camX, dmgBox.y - camY, 24 + dmg / 10 * 2);
 }
 
 void DamageNumber::update(float timeStep)
@@ -307,143 +307,6 @@ void DamageNumber::update(float timeStep)
 }
 
 #pragma endregion
-
-// LButton::LButton(){
-// 	keyDown = new LTexture;
-// 	keyUp = new LTexture;
-// 	inside = 0;
-// 	pressed = 0;
-// 	xPos = 0; yPos = 0; xCen = 0; yCen = 0;
-// }
-// LButton::LButton(LTexture* _keyUp, LTexture* _keyDown)
-// {
-// 	motionMouse = 0;
-// 	keyUp = _keyUp;
-// 	keyDown = _keyDown;
-// 	width = keyUp->getWidth();
-// 	height = keyUp->getHeight();
-// 	xPos = 0; yPos = 0; xCen = 0; yCen = 0;
-// }
-// LButton::~LButton(){
-// 	keyUp->free();
-// 	keyDown->free();
-// 	delete keyUp;
-// 	delete keyDown;
-// }
-// bool LButton::getPressed()
-// {
-// 	return pressed;
-// }
-// bool LButton::getInside()
-// {
-// 	return inside;
-// }
-// int LButton::getXCen(){return xCen;}
-// int LButton::getYCen(){return yCen;}
-// int LButton::getXPos(){return xPos;}
-// int LButton::getYPos(){return yPos;}
-// int LButton::getWidth(){return width;}
-// int LButton::getHeight(){return height;}
-// void LButton::setSize(int w, int h){width = w; height = h;}
-// void LButton::setPressed(bool _pressed){pressed = _pressed;}
-// void LButton::setTexture(LTexture* _keyUp, LTexture* _keyDown)
-// {
-// 	keyUp = _keyUp;
-// 	keyDown = _keyDown;
-// 	width = keyUp->getWidth();
-// 	height = keyUp->getHeight();
-// }
-// void LButton::setPosition( int x, int y )
-// {
-// 	xPos = x; yPos = y;
-// }
-// void LButton::setCenterPosition( int x, int y )
-// {
-// 	xCen = x; yCen = y;
-// }
-// void LButton::handleEvents(SDL_Event* e, bool circleButton)
-// {
-// 	if (xPos == 0 && yPos == 0)
-// 	{
-// 		xPos = xCen - width/2, yPos = yCen - height/2;
-// 	}
-// 	motionMouse = 0;
-// 	pressed = 0;
-// 	if( e->type == SDL_MOUSEMOTION || e->type == SDL_MOUSEBUTTONDOWN || e->type == SDL_MOUSEBUTTONUP )
-// 	{
-// 		int x, y;
-// 		SDL_GetMouseState( &x, &y );
-// 		bool inside = true;
-// 		if (!circleButton)
-// 		{
-// 			inside = isInside(x, y);
-// 		}
-// 		else
-// 		{
-// 			if ( (x-xCen)*(x-xCen) + (y-yCen)*(y-yCen) <= width*width/4 )
-// 			{
-// 				inside = true;
-// 			}else
-// 			{
-// 				inside = false;
-// 			}
-// 		}
-// 		if (inside)
-// 		{
-// 			switch (e->type)
-// 			{
-// 				case SDL_MOUSEMOTION:
-// 					motionMouse = 1;
-// 					break;
-// 				case SDL_MOUSEBUTTONDOWN:
-// 					playSoundEffects(se_mouseClick);
-// 					motionMouse = 1;
-// 					pressed = 1;
-// 					break;
-// 				case SDL_MOUSEBUTTONUP:
-// 					pressed = 0;
-// 					break;
-// 				default:
-// 					break;
-// 			}
-// 		}
-// 	}
-
-// }
-// void LButton::render(SDL_Renderer* renderer, int x, int y)
-// {
-// 	if (x==0&&y==0)
-// 	{
-// 		x=xPos; y = yPos;
-// 	}
-// 	if (motionMouse)
-// 	{
-// 		keyDown->render(renderer, x, y);
-// 	}
-// 	else
-// 	{
-// 		keyUp->render(renderer, x, y);
-// 	}
-// }
-// bool LButton::isInside(int x, int y){
-// 	if (x<xPos)
-// 	{
-// 		return false;
-// 	}
-// 	else if (x>xPos+width)
-// 	{
-// 		return false;
-// 	}
-// 	else if (y<yPos)
-// 	{
-// 		return false;
-// 	}
-// 	else if (y>yPos + height)
-// 	{
-// 		return false;
-// 	}
-// 	return true;
-// }
 
 LButton::LButton()
 {

@@ -13,8 +13,6 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
 {
     tabs_levelup.setUp(renderer);
     HUD_font = TTF_OpenFont(font_8bitPLus.c_str(), 28);
-    expBar[0].loadFromFile(HUD_expBarBase, renderer);
-    expBar[1].loadFromFile(HUD_expBarTop, renderer);
     specialBar[0].loadFromFile(Special_Bar[0], renderer);
     specialBar[1].loadFromFile(Special_Bar[1], renderer);
     specialBar[2].loadFromFile(Special_Bar[2], renderer);
@@ -22,14 +20,8 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     specialSymbol.loadFromFile(SuiseiSpecial, renderer);
     weaponSlot.loadFromFile(EmptyWeaponSlot, renderer);
     weaponSlot.setAlpha(100);
-    portrait.loadFromFile(Portrait_Suisei, renderer);
-    portrait.loadFromFile(Portrait_Suisei, renderer);
-    pauseScreen.loadFromFile(Black_Screen, renderer);
-    pauseScreen.setAlpha(100);
     SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Black_Screen, renderer),100);
-    title.loadFromFile(Title_Suisei, renderer);
-    title.setAlpha(100);
-    pauseMenu.loadFromFile(Pause_Menu, renderer);
+    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Title_Suisei, renderer), 100);
     hp[0].loadFromFile(HealthBar[0], renderer);
     hpBaseBar.w = 230;
     hp[1].loadFromFile(HealthBar[1], renderer);
@@ -61,14 +53,18 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
 
 void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
 {
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     if (pause)
     {
-        // pauseScreen.render(renderer, &screen);
-        ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
         ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
         ResourceManager::getInstance().Render(Black_Screen, renderer);
-        title.render(renderer, &pausePortrait);
-        pauseMenu.render(renderer, &pauseRect);
+
+        ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
+        ResourceManager::getInstance().Render(Title_Suisei, renderer);
+
+        ResourceManager::getInstance().Draw(pauseRect.x, pauseRect.y, pauseRect.w, pauseRect.h);
+        ResourceManager::getInstance().Render(Pause_Menu, renderer);
         currentButton = (currentButton + totalButtons) % totalButtons;
         for (int i = 0; i < totalButtons; ++i)
         {
@@ -84,20 +80,36 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     }
     else if(leveledUp)
     {
-        pauseScreen.render(renderer, &screen);
-        title.render(renderer, &pausePortrait);
+        ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
+        ResourceManager::getInstance().Render(Black_Screen, renderer);
+
+        ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
+        ResourceManager::getInstance().Render(Title_Suisei, renderer);
+
         tabs_levelup.render(renderer, HUD_font);
     }
     else if (isOver)
     {
-        pauseScreen.render(renderer, &screen);
+        ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+        ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
+        ResourceManager::getInstance().Render(Black_Screen, renderer);
         textureText.renderText(gameOverText.c_str(), {255, 255, 255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 130, 100, 48);
     }
 
-    expBar[0].render(renderer, &expBaseBar);
-    expBar[1].render(renderer, &expTopBar[1], &expTopBar[0]);
 
-    portrait.render(renderer, &portraitRectDST, &portraitRectSRC);
+
+    ResourceManager::getInstance().Draw(expBaseBar.x, expBaseBar.y, expBaseBar.w, expBaseBar.h);
+    ResourceManager::getInstance().Render(HUD_expBarBase, renderer);
+
+    ResourceManager::getInstance().Draw(expTopBar[1].x, expTopBar[1].y, expTopBar[1].w, expTopBar[1].h);
+    ResourceManager::getInstance().PlayFrame(0,0,expTopBar[0].w,expTopBar[0].h,0);
+    ResourceManager::getInstance().Render(HUD_expBarTop, renderer);
+
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Draw(portraitRectDST.x, portraitRectDST.y, portraitRectDST.w, portraitRectDST.h);
+    ResourceManager::getInstance().Render(Portrait_Suisei, renderer);
+
     int temp{0};
     weaponRect = {52.5f, 55, 25 * 1.5, 20 * 1.5};
     levelLabel.x = 55.5f;

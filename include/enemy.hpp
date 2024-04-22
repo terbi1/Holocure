@@ -25,6 +25,10 @@ enum ENEMY_TYPE {
     DARK_SHRIMP,
     BLOOM,
     GLOOM,
+    DEAD_BATTER,
+    MIKOP,
+    HOSHIYOMI,
+    SORATOMO,
     FUBUZILLA,
     A_CHAN
 };
@@ -50,7 +54,7 @@ public:
     bool isHit{false};
     int currentFrame{0};
     float cd{0};
-    float specialCD[4]{2,2,9,6};
+    float specialCD[4]{4,4,14,6};
     float specialDuration[3]{2.1,0,6};
     int expValue;
     float frameTime{0.2};
@@ -61,9 +65,11 @@ public:
 private:
     bool notMoving{false};
     float speed;
-    Vector2f velocity;
+    Vector2f movingCenter{0,0};
+    float angle{0};
     float knockbackSpeed{0};
     float knockbackTime{0};
+    float temp{1};
 };
 
 void spawn(std::vector<Enemy>& gang, Vector2f playerPos, ENEMY_TYPE type, int ID);

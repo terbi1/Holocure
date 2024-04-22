@@ -82,6 +82,7 @@ void GameStates::start()
     playerHUD.HUD_Timer.start();
     optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG, 1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
     weapons.push_back(Weapon(AXE));
+    // weapons.push_back(Weapon(X_POTATO));
     reqNextLevel = 79;
     spawnCooldown = 0;
     specialCD = 0;
@@ -144,22 +145,59 @@ void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
         spawnPool.insert(BLOOM);
         spawnPool.insert(GLOOM);
     }
-    if (minuteTimer == 11 && secondTimer == 0)
+    if (minuteTimer == 10 && secondTimer == 0)
     {
         spawnPool.erase(BLOOM);
         spawnPool.erase(GLOOM);
     }
+    if (minuteTimer == 5 && secondTimer == 55)
+    {
+        spawnPool.insert(DEAD_BATTER);
+    }
+    if (minuteTimer == 8 && secondTimer == 30)
+    {
+        spawnPool.erase(DEAD_BATTER);
+    }
+    if (minuteTimer == 8 && secondTimer == 30)
+    {
+        spawnPool.insert(MIKOP);
+    }
+    if (minuteTimer == 11 && secondTimer == 0)
+    {
+        spawnPool.erase(MIKOP);
+    }
 
-    spawnRate = (minuteTimer * 60 + secondTimer) / 20 + 10;
+    if (minuteTimer == 11 && secondTimer == 0)
+    {
+        spawnPool.insert(HOSHIYOMI);
+    }
+    if (minuteTimer == 12 && secondTimer == 0)
+    {
+        spawnPool.erase(HOSHIYOMI);
+    }
+
+    if (minuteTimer == 12 && secondTimer == 0)
+    {
+        spawnPool.insert(SORATOMO);
+    }
+
+    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1);
 }
 
 void GameStates::bossSpawn(int minuteTimer, int secondTimer)
 {
-    if (minuteTimer == 0 && secondTimer == 0)
+    if (minuteTimer == 8 && secondTimer == 0)
     {
+        spawn(enemies, player.collider.center, FUBUZILLA, EnemyCount);
+        ++EnemyCount;
+        weapons.push_back(Weapon(FUBU_BEAM));
+        boss = true;
+    }
+    if (minuteTimer == 12 && secondTimer == 0)
+    {
+        enemies.clear();
         spawn(enemies, player.collider.center, A_CHAN, EnemyCount);
         ++EnemyCount;
-        // weapons.push_back(Weapon(FUBU_BEAM));
         boss = true;
         finalBoss = true;
     }
@@ -216,10 +254,10 @@ void GameStates::update(float timeStep, bool &shake)
 
     // spawn enemies
 
-    // if (!boss)
-    // {
-    //     bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
-    // }
+    if (!boss)
+    {
+        bossSpawn(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
+    }
 
     updateSpawnPool(playerHUD.HUD_Timer.getTicks(Minute), playerHUD.HUD_Timer.getTicks(Second) - 60 * playerHUD.HUD_Timer.getTicks(Minute));
 
@@ -268,6 +306,7 @@ void GameStates::update(float timeStep, bool &shake)
         dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
         if (it->type == FUBUZILLA)
         {
+            boss = false;
             for (auto it2 = weapons.begin(); it2 != weapons.end(); ++it2)
             {
                 if (it2->ID == FUBU_BEAM)
@@ -354,19 +393,19 @@ void GameStates::update(float timeStep, bool &shake)
         if (enemies[bossIndex].specialCD[0] <= 0)
         {
             weapons.push_back(Weapon(BULLET1));
-            enemies[bossIndex].specialCD[0] = 2;
+            enemies[bossIndex].specialCD[0] = 4;
             enemies[bossIndex].specialDuration[0] = 0.8;
         }
         else if (enemies[bossIndex].specialCD[1] <= 0)
         {
             weapons.push_back(Weapon(BULLET2));
-            enemies[bossIndex].specialCD[1] = 2;
+            enemies[bossIndex].specialCD[1] = 4;
         }
         else if (enemies[bossIndex].specialCD[2] <= 0)
         {
             int random = rand() % 2;
             weapons.push_back((random == 0 ? Weapon(BULLET4) : Weapon(BULLET3)));
-            enemies[bossIndex].specialCD[2] = 9;
+            enemies[bossIndex].specialCD[2] = 14;
         }
     }
 
@@ -465,85 +504,6 @@ void GameStates::update(float timeStep, bool &shake)
             continue;
         }
 
-        // switch ((int)it->weaponID)
-        // {
-        // case AXE:
-        //     it->center = player.collider.center;
-        //     break;
-        // case CEO_TEARS:
-        //     it->center += it->direction * it->projectileSpeed;
-        //     break;
-        // case SPIDER_COOKING:
-        //     it->center = player.collider.center;
-        //     break;
-        // case FAN_BEAM:
-        //     it->center = player.collider.center;
-        //     break;
-        // case BL_BOOK:
-        // {
-        //     it->center += player.collider.center - it->rotatingCenter;
-        //     it->rotatingCenter = player.collider.center;
-        //     circularMotion(it->center, player.collider.center, -0.01 * it->projectileSpeed);
-        //     break;
-        // }
-        // case PSYCHO_AXE:
-        // {
-        //     it->timePassed += timeStep;
-        //     spiralMotion(it->center, it->rotatingCenter, 0.01, it->timePassed);
-        //     break;
-        // }
-        // case IDOL_SONG:
-        // {
-        //     int temp = (it->count == 0 ? 1 : -1);
-        //     it->center.y += temp * it->projectileSpeed;
-        //     it->center.x = temp * sin((2.5 - it->duration) * 10) * 100 * it->projectileSpeed + it->direction.x;
-        //     break;
-        // }
-        // case ELITE_LAVA:
-        // {
-        //     break;
-        // }
-        // case FALLING_BLOCKS:
-        // {
-        //     if (it->fallTime > 0)
-        //     {
-        //         it->center.y += 8;
-        //         it->fallTime -= timeStep;
-        //         if (it->fallTime <= 0)
-        //         {
-        //             shake = true;
-        //             shakeTime = 30;
-        //         }
-        //     }
-        //     break;
-        // }
-        // case CUTTING_BOARD:
-        // {
-        //     if (it->fallTime > 0)
-        //     {
-        //         it->center.x += cosf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
-        //         it->center.y += sinf((it->angle + 180.0f) / 180.0f * M_PI) * it->projectileSpeed;
-        //         it->fallTime -= timeStep;
-        //     }
-        //     break;
-        // }
-        // case X_POTATO:
-        // {
-        //     if (it->fallTime > 0)
-        //     {
-        //         it->center += it->direction * it->projectileSpeed;
-        //         it->angle += 20;
-        //         circleBounce(Circle{it->center, it->radius}, it->direction, camera);
-        //         it->fallTime -= timeStep;
-        //         if (it->fallTime <= 0)
-        //         {
-        //             it->explode();
-        //         }
-        //     }
-        //     break;
-        // }
-        // }
-
         for (auto it2 = enemies.begin(); it2 != enemies.end(); ++it2)
         {
             if (it->hitID.find(it2->ID) != it->hitID.end())
@@ -627,7 +587,16 @@ void GameStates::update(float timeStep, bool &shake)
     {
         if (itDrop->pickedUp(player.collider.center))
         {
-            player.currentExp += itDrop->expValue;
+            switch(itDrop->ID)
+            {
+                case EXP:
+                player.currentExp += itDrop->expValue;
+                break;
+                case FOOD:
+                dmgNumbers.push_back(DamageNumber{(int)(player.maxHP * 0.2), player.collider.center, {0, 255, 0}});
+                player.health = std::min(player.health + player.maxHP * 0.2, (double)player.maxHP);
+                break;
+            }
             itDrop = dropItems.erase(itDrop);
             --itDrop;
         }
@@ -674,8 +643,6 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
     }
     camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2 + shakeX;
     camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2 + shakeY;
-    // camera.w = SCREEN_WIDTH;
-    // camera.h = SCREEN_HEIGHT;
 
     for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
     {
@@ -714,9 +681,10 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
     {
-        SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
-        dmgText.loadFromRenderedText(std::to_string(it->dmg), it->color, DMG_font, renderer);
-        dmgText.render(renderer, &temp);
+        // SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
+        // dmgText.loadFromRenderedText(std::to_string(it->dmg), it->color, DMG_font, renderer);
+        // dmgText.render(renderer, &temp);
+        it->render(renderer, DMG_font, dmgText, camera.x, camera.y);
     }
 
     playerHUD.render(renderer, pause, leveledUp, isOver, weapons);
