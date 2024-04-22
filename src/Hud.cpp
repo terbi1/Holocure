@@ -11,7 +11,7 @@ HUD::~HUD()
 
 void HUD::initHUD(SDL_Renderer *renderer, int health)
 {
-    tabs_levelup.setUp(renderer);
+    // tabs_levelup.setUp(renderer);
     HUD_font = TTF_OpenFont(font_8bitPLus.c_str(), 28);
     specialBar[0].loadFromFile(Special_Bar[0], renderer);
     specialBar[1].loadFromFile(Special_Bar[1], renderer);
@@ -86,15 +86,12 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
 
         ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
         ResourceManager::getInstance().Render(Title_Suisei, renderer);
-
-        tabs_levelup.render(renderer, HUD_font);
     }
     else if (isOver)
     {
         ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
         ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
         ResourceManager::getInstance().Render(Black_Screen, renderer);
-        textureText.renderText(gameOverText.c_str(), {255, 255, 255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 130, 100, 48);
     }
 
 
@@ -174,15 +171,15 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
 
 void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
 {
-    if(leveledUp)
-    {
-        tabs_levelup.handleEvents(leveledUp, choice);
-        // direct = Level_Up;
-        // leveledUp = false;
-        // SDL_ResetKeyboard();
-        return;
-    }
-    direct = Room1;
+    // if(leveledUp)
+    // {
+    //     tabs_levelup.handleEvents(leveledUp, choice);
+    //     // direct = Level_Up;
+    //     // leveledUp = false;
+    //     // SDL_ResetKeyboard();
+    //     return;
+    // }
+    // direct = Room1;
     if (!pause) return;
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);

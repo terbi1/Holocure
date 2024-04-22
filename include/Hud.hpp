@@ -17,7 +17,6 @@ struct HUD
 {
     HUD();
     ~HUD();
-    LTexture expBar[2];
     LTexture hp[2];
     LTexture specialSymbol;
     LTexture specialBar[4];
@@ -55,5 +54,5 @@ struct HUD
     int currentButton{0};
     int count{0};
     void handleEvents(bool &isRunning, bool &leveledUp, Tabs& direct, int &choice);
-    Tabs_LevelUp tabs_levelup;
+    // Tabs_LevelUp tabs_levelup;
 };

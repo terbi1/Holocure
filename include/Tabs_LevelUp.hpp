@@ -16,7 +16,7 @@ struct Tabs_LevelUp
     Tabs direct = Level_Up;
     Tabs getDirect();
     void setUp(SDL_Renderer* renderer);
-    void getResource(WEAPON_ID type, int level, int i);
+    void getResource(std::vector<WEAPON_ID> optionType, std::vector<int> optionLevel);
     LButton upgrade[4];
     LTexture optionCase;
     LTexture textureText;

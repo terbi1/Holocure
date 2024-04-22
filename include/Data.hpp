@@ -127,5 +127,6 @@ enum Tabs
     InGame,
     Settings,
     Pause,
-    Level_Up
+    Level_Up,
+    End
 };

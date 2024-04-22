@@ -230,8 +230,9 @@ void GameStates::update(float timeStep, bool &shake)
         playerHUD.HUD_Timer.pause();
         return;
     }
-    else if (isOver)
+    else if (isOver || isWon)
     {
+        direct = End;
         return;
     }
     else
@@ -313,6 +314,18 @@ void GameStates::update(float timeStep, bool &shake)
                 {
                     weapons.erase(it2);
                     break;
+                }
+            }
+        }
+        else if (it->type == A_CHAN)
+        {
+            boss = false;
+            for (auto it = weapons.begin(); it != weapons.end(); ++it)
+            {
+                if (it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET4 || it->ID == BULLET3)
+                {
+                    weapons.erase(it);
+                    --it;
                 }
             }
         }
@@ -623,13 +636,15 @@ void GameStates::update(float timeStep, bool &shake)
                 ++it;
             optionKey.push_back(it->first);
             optionLevel.push_back(it->second);
-            playerHUD.tabs_levelup.getResource(it->first, it->second, i);
         }
+        // playerHUD.tabs_levelup.getResource(optionKey, optionLevel);
         trace.clear();
         leveledUp = true;
+        direct = Level_Up;
+        Mix_VolumeMusic(20);
+        playerHUD.HUD_Timer.pause();
         SDL_ResetKeyboard();
     }
-
     playerHUD.update(player, reqNextLevel, specialCD);
 }
 
@@ -681,9 +696,6 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
 
     for (auto it = dmgNumbers.begin(); it != dmgNumbers.end(); ++it)
     {
-        // SDL_Rect temp{it->dmgBox.x - camera.x, it->dmgBox.y - camera.y, it->dmgBox.w, it->dmgBox.h};
-        // dmgText.loadFromRenderedText(std::to_string(it->dmg), it->color, DMG_font, renderer);
-        // dmgText.render(renderer, &temp);
         it->render(renderer, DMG_font, dmgText, camera.x, camera.y);
     }
 
@@ -693,7 +705,6 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
 void GameStates::reset()
 {
     playerHUD.HUD_Timer.stop();
-    isOver = false;
     optionKey.clear();
     optionLevel.clear();
     optionPool.clear();
@@ -711,7 +722,7 @@ void GameStates::reset()
 
 void GameStates::handleEvent()
 {
-
+    if(!leveledUp && !(isOver || isWon)) direct = Room1;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_ESCAPE] && !pause && !isOver)
@@ -738,4 +749,9 @@ void GameStates::handleEvent()
         return;
 
     player.handleEvent();
+}
+
+bool GameStates::getOver()
+{
+    return isOver;
 }

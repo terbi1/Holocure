@@ -14,18 +14,15 @@ Tabs Tabs_Title::getDirect() {
 
 void Tabs_Title::setUpMenu(SDL_Renderer* renderer) {
     titleFont = TTF_OpenFont(font_8bitPLus.c_str(),12);
-    titleBackground.loadFromFile(Black_Screen, renderer);
-    // button[1] = LButton{"Quit",SDL_Rect{700,260,250,52}};
-    // button[0] = LButton{"Play",SDL_Rect{700,200,250,52}};
     button[0] = LButton{"Play",Vector2f{825, 226}, Vector2f{250,52}, 0};
     button[1] = LButton{"Quit",Vector2f{825, 286}, Vector2f{250,52}, 0};
     button[0].setCurrentButton();
 }
 
 void Tabs_Title::render(SDL_Renderer* renderer) {
-    SDL_Rect renderQuad {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
-    titleBackground.render(renderer, &renderQuad);
-
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Draw(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+    ResourceManager::getInstance().Render(BG_Title, renderer);
     currentButton = (currentButton + totalButtons) % totalButtons;
     for(int i = 0; i < totalButtons; ++i)
     {
@@ -33,8 +30,6 @@ void Tabs_Title::render(SDL_Renderer* renderer) {
         else button[i].notCurrentButton();
         button[i].render(renderer, titleFont);
     }
-    // button[0].render(renderer, titleFont);
-    // button[1].render(renderer, titleFont);
 }
 
 void Tabs_Title::handleEvents(bool &isRunning) {

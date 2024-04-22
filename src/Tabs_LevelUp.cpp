@@ -24,59 +24,60 @@ void Tabs_LevelUp::setUp(SDL_Renderer* renderer)
     upgrade[0].setCurrentButton();
 }
 
-void Tabs_LevelUp::getResource(WEAPON_ID type, int level, int i)
+void Tabs_LevelUp::getResource(std::vector<WEAPON_ID> optionType, std::vector<int> optionLevel)
 {
-    switch ((int)type)
+    for(int i = 0; i < 4; ++i)
+    switch ((int)optionType[i])
             {
             case PSYCHO_AXE:
-                optionName[i] = "Psycho Axe LV " + std::to_string(level);
-                upgrade[i].setText(PsychoAxeDescription[level - 1]);
+                optionName[i] = "Psycho Axe LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(PsychoAxeDescription[optionLevel[i] - 1]);
                 iconTexture[i] = PsychoAxe_Icon;
                 break;
             case SPIDER_COOKING:
-                optionName[i] = "Spider Cooking LV " + std::to_string(level);
-                upgrade[i].setText(SpiderCookingDescription[level - 1]);
+                optionName[i] = "Spider Cooking LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(SpiderCookingDescription[optionLevel[i] - 1]);
                 iconTexture[i] = SpiderCooking_Icon;
                 break;
             case BL_BOOK:
-                optionName[i] = "BL Book LV " + std::to_string(level);
-                upgrade[i].setText(BLBookDescription[level - 1]);
+                optionName[i] = "BL Book LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(BLBookDescription[optionLevel[i] - 1]);
                 iconTexture[i] = BLBook_Icon;
                 break;
             case ELITE_LAVA:
-                optionName[i] = "Elite Lava LV " + std::to_string(level);
-                upgrade[i].setText(EliteLavaDescription[level - 1]);
+                optionName[i] = "Elite Lava LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(EliteLavaDescription[optionLevel[i] - 1]);
                 iconTexture[i] = LavaPool_Icon;
                 break;
             case FAN_BEAM:
-                optionName[i] = "Fan Beam LV " + std::to_string(level);
-                upgrade[i].setText(FanBeamDescription[level - 1]);
+                optionName[i] = "Fan Beam LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(FanBeamDescription[optionLevel[i] - 1]);
                 iconTexture[i] = FanBeam_Icon;
                 break;
             case CEO_TEARS:
-                optionName[i] = "CEO's Tears LV " + std::to_string(level);
-                upgrade[i].setText(CeoTearsDescription[level - 1]);
+                optionName[i] = "CEO's Tears LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(CeoTearsDescription[optionLevel[i] - 1]);
                 iconTexture[i] = CEOTears_Icon;
                 break;
             case IDOL_SONG:
-                optionName[i] = "Idol Song LV " + std::to_string(level);
-                upgrade[i].setText(IdolSongDescription[level - 1]);
+                optionName[i] = "Idol Song LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(IdolSongDescription[optionLevel[i] - 1]);
                 iconTexture[i] = IdolSong_Icon;
                 break;
             case CUTTING_BOARD:
-                optionName[i] = "Cutting Board LV " + std::to_string(level);
-                upgrade[i].setText(CuttingBoardDescription[level - 1]);
+                optionName[i] = "Cutting Board LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(CuttingBoardDescription[optionLevel[i] - 1]);
                 iconTexture[i] = CuttingBoard_Icon;
                 break;
             case X_POTATO:
-                optionName[i] = "X Potato LV " + std::to_string(level);
-                upgrade[i].setText(XPotatoDescription[level - 1]);
+                optionName[i] = "X Potato LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(XPotatoDescription[optionLevel[i] - 1]);
                 iconTexture[i] = XPotato_Icon;
                 break;
             case AXE:
-                optionName[i] = "Axe Swing LV " + std::to_string(level);
-                upgrade[i].setText(SuiseiWeaponDescription[level - 1]);
-                if (level == 7)
+                optionName[i] = "Axe Swing LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(SuiseiWeaponDescription[optionLevel[i] - 1]);
+                if (optionLevel[i] == 7)
                     iconTexture[i] = SuiseiWeapon_Icon[1];
                 else
                     iconTexture[i] = SuiseiWeapon_Icon[0];
@@ -106,7 +107,7 @@ void Tabs_LevelUp::getResource(WEAPON_ID type, int level, int i)
 
 void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
 {
-    // direct = Level_Up;
+    direct = Level_Up;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER])
@@ -119,7 +120,9 @@ void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
                 break;
             }
         }
+        std::cout << choice;
         leveledUp = false;
+        direct = Room1;
         return;
     }
     else if (currentKeyStates[SDL_SCANCODE_UP])

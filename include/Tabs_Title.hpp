@@ -17,7 +17,6 @@ public:
     void render(SDL_Renderer* renderer);
     LButton button[2];
 private:
-    LTexture titleBackground;
     int totalButtons{2};
     Tabs direct{Title};
     int currentButton{0};

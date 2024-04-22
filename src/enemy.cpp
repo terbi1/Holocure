@@ -12,7 +12,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     case SHRIMP:
     {
         health = 8;
-        atk = 2;
+        atk = 100;
         speed = 0.35;
         expValue = 6;
         collider.radius = 18;
