@@ -145,7 +145,7 @@ void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
         spawnPool.insert(BLOOM);
         spawnPool.insert(GLOOM);
     }
-    if (minuteTimer == 11 && secondTimer == 0)
+    if (minuteTimer == 10 && secondTimer == 0)
     {
         spawnPool.erase(BLOOM);
         spawnPool.erase(GLOOM);
@@ -181,7 +181,7 @@ void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
         spawnPool.insert(SORATOMO);
     }
 
-    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 20:1);
+    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1);
 }
 
 void GameStates::bossSpawn(int minuteTimer, int secondTimer)

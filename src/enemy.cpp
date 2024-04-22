@@ -94,7 +94,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     {
         health = 1000;
         atk = 10;
-        speed = 0.5f;
+        speed = 0.4f;
         expValue = 13;
         collider.radius = 17;
         frames = 2;
