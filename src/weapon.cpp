@@ -34,6 +34,14 @@ void DamagingArea::update(float timeStep, Vector2f player_center, SDL_Rect camer
         case AXE:
             center = player_center;
             break;
+        case NUTS:
+            center += direction * projectileSpeed;
+            angle += 5;
+            if(bounce && circleBounce(Circle{center, size.x / 2}, direction, camera)) 
+            {
+                bounce = false;
+            }
+            break;
         case CEO_TEARS:
             center += direction * projectileSpeed;
             break;
@@ -145,6 +153,14 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         }
 
         if (!checkAABBCircleCollision(hitBox, enemyCollider))
+        {
+            return false;
+        }
+        break;
+    }
+    case NUTS:
+    {
+        if (!checkCircleCollision(Circle{center, size.x / 2}, enemyCollider))
         {
             return false;
         }
@@ -376,11 +392,18 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
         return;
     }
+    case NUTS:
+    {
+        ResourceManager::getInstance().Draw((int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 - camY), (int)size.x, (int)size.y);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
+        return;
+    }
     case SPIDER_COOKING:
     {
         ResourceManager::getInstance().Draw(center.x - size.x * 2 / 2 - camX, center.y - size.x * 2 / 2 - camY, size.x * 2, size.y * 2);
         SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(textureID, renderer), 50);
-        ResourceManager::getInstance().PlayFrame(0, 0, 107, 107, 0);
+        ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
@@ -569,6 +592,20 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png";
         break;
     }
+    case NUTS:
+    {
+        dmgArea.duration = 1;
+        timeBetweenAttacks = 1.33;
+        dmgArea.hitLimit = 8;
+        dmgArea.damage = 100;
+        dmgArea.attackCount = 3;
+        dmgArea.projectileSpeed = 5;
+        dmgArea.hitCooldown = 0.5;
+        dmgArea.frames = 0;
+        dmgArea.size = {12, 18};
+        dmgArea.textureID = "res/gfx/spr_RisuCashew.png";
+        break;
+    }
     case SPIDER_COOKING:
     {
         dmgArea.duration = 10;
@@ -729,18 +766,31 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET4:
     {
         dmgArea.damage = 1;
-        if(ID != BULLET1 && ID != BULLET4) 
+        // if(ID != BULLET1 && ID != BULLET4) 
+        // {
+        //     dmgArea.attackCount = 10;
+        //     timeBetweenAttacks = 0.5;
+        // }
+        if(ID == BULLET2) 
         {
             dmgArea.attackCount = 10;
-            timeBetweenAttacks = 0.5;
-            }
+            timeBetweenAttacks = 4;
+        }
         else if(ID == BULLET1){
-            dmgArea.attackCount = 1;
-            timeBetweenAttacks = 0.25;
+            dmgArea.attackCount = 6;
+            timeBetweenAttacks = 4;
+            dmgArea.attackDelay = 0.25;
         }
         else if(ID == BULLET4){
-            dmgArea.attackCount = 1;
-            timeBetweenAttacks = 0.05;
+            dmgArea.attackCount = 120;
+            timeBetweenAttacks = 14;
+            dmgArea.attackDelay = 0.05;
+        }
+        else if(ID == BULLET3)
+        {
+            dmgArea.attackCount = 24;
+            timeBetweenAttacks = 14;
+            dmgArea.attackDelay = 0.25;
         }
         dmgArea.duration = 7;
         dmgArea.frames = 1;
@@ -752,6 +802,8 @@ Weapon::Weapon(WEAPON_ID type)
         break;
     }
     }
+    count = dmgArea.attackCount;
+    // cooldown = timeBetweenAttacks;
 }
 
 void Weapon::setHitLimit(int newHitLimit)
@@ -803,6 +855,12 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
                 dmgArea.angle = playerArrowAngle;
                 // dmgArea.flip = player.flip;
                 break;
+            }
+            case NUTS:
+            {
+                dmgArea.center = playerCenter;
+                dmgArea.direction = {cosf((10 * (count) + playerArrowAngle - 5 * (dmgArea.attackCount - 1)) / 180 * M_PI), sinf((10 * (count) + playerArrowAngle - 5 * (dmgArea.attackCount - 1)) / 180 * M_PI)}; 
+                // dmgArea.direction.print();
             }
             case SPIDER_COOKING:
             {
@@ -917,6 +975,33 @@ void Weapon::updateStats()
             return;
         case 7:
             setDamage(311);
+            return;
+        }
+    }
+    case NUTS:
+    {
+        switch (level)
+        {
+        case 2:
+            setDamage(120);
+            return;
+        case 3:
+            setAttackCount(4);
+            return;
+        case 4:
+            setAttackInterval(1.13);
+            return;
+        case 5:
+            setAttackCount(5);
+            return;
+        case 6:
+            setDamage(144);
+            dmgArea.projectileSpeed = 7.5;
+            return;
+        case 7:
+            setArea(30);
+            setDuration(2.5);
+            dmgArea.bounce = true;
             return;
         }
     }

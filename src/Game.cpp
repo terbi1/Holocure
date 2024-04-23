@@ -63,6 +63,7 @@ void Game::init(const char *p_title, int p_w, int p_h)
 void Game::loadmedia()
 {
 	tabs_title.setUpMenu(renderer);
+	tabs_characterSelect.setUp(renderer);
 	tabs_room1.roomInit(renderer);
 	tabs_levelup.setUp(renderer);
 	tabs_end.setUp(renderer);
@@ -91,6 +92,11 @@ void Game::handleEvents()
 	case Title:
 		tabs_title.handleEvents(isRunning);
 		currentTab = tabs_title.getDirect();
+		// if(currentTab == Room1) gameState.start();
+		break;
+	case Character_Select:
+		tabs_characterSelect.handleEvents(gameState.ID);
+		currentTab = tabs_characterSelect.getDirect();
 		if(currentTab == Room1) gameState.start();
 		break;
 	case Room1:
@@ -127,6 +133,7 @@ void Game::playMusic()
 		}
 		return;
 		case Level_Up:
+		case Character_Select:
 		case End:
 		return;
 	}
@@ -137,6 +144,7 @@ void Game::update(float timeStep)
 	switch ((int)currentTab)
 	{
 	case Title:
+	case Character_Select:
 		// gameState.reset();
 		// playerHUD.HUD_Timer.pause();
 		break;
@@ -163,6 +171,9 @@ void Game::render()
 	{
 	case Title:
 		tabs_title.render(renderer);
+		break;
+	case Character_Select:
+		tabs_characterSelect.render(renderer);
 		break;
 	case Room1:
 		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);

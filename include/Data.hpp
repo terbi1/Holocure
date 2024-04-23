@@ -37,6 +37,16 @@ const std::string IdleAnimation_Suisei[4] = {"res/gfx/character_sprites/spr_Suis
 const std::string RunAnimation_Suisei[6] = {"res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_0.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_1.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_2.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_3.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_4.png", "res/gfx/character_sprites/spr_Suisei_run/spr_Suisei_run_5.png"};
 const std::string SuiseiSpecial{"res/gfx/spr_SuiseiSpecial.png"};
 
+const std::string Portrait_Risu{"res/gfx/character_sprites/spr_RisuPortrait.png"};
+const std::string Title_Risu{"res/gfx/character_sprites/spr_Title_Risu.png"};
+const std::string IdleAnimation_Risu[4] = {"res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_1.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_2.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_3.png"};
+const std::string RunAnimation_Risu[6] = {"res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_0.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_1.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_2.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_3.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_4.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_5.png"};
+
+static const std::string* IdleAnimation[2] = {IdleAnimation_Suisei, IdleAnimation_Risu};
+static const std::string* RunAnimation[2] = {RunAnimation_Suisei, RunAnimation_Risu};
+static const std::string Portrait[2] = {Portrait_Suisei, Portrait_Risu};
+static const std::string Title_Portrait[2] = {Title_Suisei, Title_Risu};
+
 #pragma endregion
 
 #pragma region WeaponSprite
@@ -64,6 +74,7 @@ const std::string BulletBlue_Animation[2]{"res/gfx/spr_AChan_bullet1/spr_AChan_b
 const std::string BulletRed_Animation[2]{"res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_0.png", "res/gfx/spr_AChan_bullet2/spr_AChan_bullet2_1.png"};
 const std::string BulletYellow_Animation[2]{"res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_0.png", "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png"};
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
+const std::string RisuWeapon_Icon[2]{"res/gfx/spr_RisuWeapon.png","res/gfx/spr_RisuMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
 const std::string CuttingBoard_Icon{"res/gfx/spr_CuttingBoardIcon.png"};
@@ -78,6 +89,7 @@ const std::string HPRecover_Icon{"res/gfx/spr_ach_hamburgers.png"};
 #pragma region WeaponDescription
 
 const std::string SuiseiWeaponDescription[7]{"Swing a bloody axe in an arc in front.","Increase damage by 30%.","Increase attack area by 20%.", "Reduce time between attacks by 10%.", "Increase damage by 30%.", "Increase attack area by 20%.", "Deal 3x damage"};
+const std::string RisuWeaponDescription[7]{"Throws several nuts in front.", "Increase damage by 20%.", "1 more Nut.", "Reduce time between attacks by 15%.", "1 more Nut.", "Increase damage by 20% and speed of Nuts by by 50%.", "Increase attack size by by 30%. Nuts bounce once when hitting the edge of the screen."};
 const std::string SpiderCookingDescription[7]{"Create an area of miasma around, dealing slow damage to enemies inside.", "Increase area by 15%.", "Increase damage by 30%.", "Increase area by 25%.", "Increase frequency of hits by 20%.", "Increase damage by 60%.", "Add small knockback on hit"};
 const std::string EliteLavaDescription[7]{"Drop lava on the ground, burning targets slowly.", "Increase lava area by 20%.", "Throw 2 lava buckets.", "Increase damage by 30%% and increase duration of lava by 1 second.", "Increase damage by 30%.", "Throw 3 lava buckets.", "Throw 4 lava buckets and increase lava size by 20%."};
 const std::string PsychoAxeDescription[7]{"Throw an axe that spirals outward from the player.", "Increase size of axe by 20%. Increase damage by 20%.", "Reduce time between attacks by 20%.", "Increase damage by 33%, and size by 20%.", "Remove hit limit, and lasts 1 second longer.", "Increase attack size by 50%.", "Increase damage by 50%."};
@@ -128,5 +140,13 @@ enum Tabs
     Settings,
     Pause,
     Level_Up,
-    End
+    End,
+    Character_Select
+};
+
+enum Character
+{
+    None = - 1,
+    Suisei,
+    Risu
 };

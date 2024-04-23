@@ -21,7 +21,6 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     weaponSlot.loadFromFile(EmptyWeaponSlot, renderer);
     weaponSlot.setAlpha(100);
     SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Black_Screen, renderer),100);
-    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Title_Suisei, renderer), 100);
     hp[0].loadFromFile(HealthBar[0], renderer);
     hpBaseBar.w = 230;
     hp[1].loadFromFile(HealthBar[1], renderer);
@@ -51,8 +50,9 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
     hpText = std::to_string(player.health) + "/" + std::to_string(player.maxHP);
 }
 
-void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
+void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
 {
+    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Title_Portrait[playerID], renderer), 100);
     ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     if (pause)
     {
@@ -61,7 +61,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         ResourceManager::getInstance().Render(Black_Screen, renderer);
 
         ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
-        ResourceManager::getInstance().Render(Title_Suisei, renderer);
+        ResourceManager::getInstance().Render(Title_Portrait[playerID], renderer);
 
         ResourceManager::getInstance().Draw(pauseRect.x, pauseRect.y, pauseRect.w, pauseRect.h);
         ResourceManager::getInstance().Render(Pause_Menu, renderer);
@@ -85,7 +85,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         ResourceManager::getInstance().Render(Black_Screen, renderer);
 
         ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
-        ResourceManager::getInstance().Render(Title_Suisei, renderer);
+        ResourceManager::getInstance().Render(Title_Portrait[playerID], renderer);
     }
     else if (isOver)
     {
@@ -103,9 +103,9 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     ResourceManager::getInstance().PlayFrame(0,0,expTopBar[0].w,expTopBar[0].h,0);
     ResourceManager::getInstance().Render(HUD_expBarTop, renderer);
 
-    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().PlayFrame(0,0,43,24,0);
     ResourceManager::getInstance().Draw(portraitRectDST.x, portraitRectDST.y, portraitRectDST.w, portraitRectDST.h);
-    ResourceManager::getInstance().Render(Portrait_Suisei, renderer);
+    ResourceManager::getInstance().Render(Portrait[playerID], renderer);
 
     int temp{0};
     weaponRect = {52.5f, 55, 25 * 1.5, 20 * 1.5};
@@ -118,6 +118,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         switch ((int)weapons[i].ID)
         {
         case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
+        case NUTS: icon = RisuWeapon_Icon[weapons[i].level / 7]; break;
         case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
         case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
         case BL_BOOK: icon = BLBook_Icon; break;

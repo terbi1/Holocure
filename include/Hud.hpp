@@ -38,7 +38,7 @@ struct HUD
     std::string gameOverText {"GAME OVER"};
     void initHUD(SDL_Renderer *renderer, int health);
     void update(Player player, int expForNextLevel, float specialCD);
-    void render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons);
+    void render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons);
     LTimer HUD_Timer;
     TTF_Font *HUD_font = NULL;
     Uint32 minute;

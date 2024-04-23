@@ -11,13 +11,15 @@ Tabs_End::~Tabs_End()
 }
 
 Tabs Tabs_End::getDirect() {
-    return direct;
+    Tabs temp = direct;
+    direct = End;
+    return temp;
 }
 
 void Tabs_End::setUp(SDL_Renderer* renderer)
 {
-    button[0] = LButton{"", Vector2f{SCREEN_WIDTH / 2, 200}, Vector2f{125, 35}, 0};
-    button[1] = LButton{"Main Menu", Vector2f{SCREEN_WIDTH / 2, 240}, Vector2f{125, 35}, 0};
+    button[0] = LButton{"", Vector2f{SCREEN_WIDTH / 2, 340}, Vector2f{250,52}, 0};
+    button[1] = LButton{"Main Menu", Vector2f{SCREEN_WIDTH / 2, 400}, Vector2f{250,52}, 0};
     button[0].setCurrentButton();
 }
 
@@ -29,7 +31,7 @@ void Tabs_End::update(bool isOver)
 
 void Tabs_End::handleEvents()
 {
-    direct = End;
+    // direct = End;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER])
@@ -54,7 +56,7 @@ void Tabs_End::handleEvents()
 
 void Tabs_End::render(SDL_Renderer* renderer, TTF_Font* font)
 {
-    textureText.renderText(announcement.c_str(), {255, 255, 255}, font, renderer, SCREEN_WIDTH / 2 - 130, 100, 48);
+    textureText.renderText(announcement.c_str(), {255, 255, 255}, font, renderer, SCREEN_WIDTH / 2 - 130, 150, 48);
     currentButton = (currentButton + 2) % 2;
     for(int i = 0; i < 2; ++i)
     {

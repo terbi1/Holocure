@@ -80,8 +80,19 @@ GameStates::~GameStates()
 void GameStates::start()
 {
     playerHUD.HUD_Timer.start();
-    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {AXE, 2}, {IDOL_SONG, 1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
-    weapons.push_back(Weapon(AXE));
+    player.setPlayer(ID);
+    optionPool = {{PSYCHO_AXE, 1}, {BL_BOOK, 1}, {SPIDER_COOKING, 1}, {ELITE_LAVA, 1}, {FAN_BEAM, 1}, {CEO_TEARS, 1}, {IDOL_SONG, 1}, {CUTTING_BOARD, 1}, {ATK_UP, 0}, {HP_UP, 0}, {HP_RECOVER, 0}, {SPD_UP, 0}};
+    switch((int)ID)
+    {
+        case Suisei:
+        weapons.push_back(Weapon(AXE));
+        optionPool[AXE] = 2;
+        break;
+        case Risu:
+        weapons.push_back(Weapon(NUTS));
+        optionPool[NUTS] = 2;
+        break;
+    }
     // weapons.push_back(Weapon(X_POTATO));
     reqNextLevel = 79;
     spawnCooldown = 0;
@@ -104,7 +115,9 @@ void GameStates::loadMedia(SDL_Renderer *renderer)
 
 Tabs GameStates::getDirect()
 {
-    return direct;
+    Tabs temp = direct;
+    direct = Room1;
+    return temp;
 }
 
 bool GameStates::getPause()
@@ -198,6 +211,10 @@ void GameStates::bossSpawn(int minuteTimer, int secondTimer)
         enemies.clear();
         spawn(enemies, player.collider.center, A_CHAN, EnemyCount);
         ++EnemyCount;
+        weapons.push_back(Weapon(BULLET1));
+        weapons.push_back(Weapon(BULLET2));
+        weapons.push_back(Weapon(BULLET3));
+        weapons.push_back(Weapon(BULLET4));
         boss = true;
         finalBoss = true;
     }
@@ -319,6 +336,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
         else if (it->type == A_CHAN)
         {
+            isWon = true;
             boss = false;
             for (auto it = weapons.begin(); it != weapons.end(); ++it)
             {
@@ -405,19 +423,19 @@ void GameStates::update(float timeStep, bool &shake)
     {
         if (enemies[bossIndex].specialCD[0] <= 0)
         {
-            weapons.push_back(Weapon(BULLET1));
+            // weapons.push_back(Weapon(BULLET1));
             enemies[bossIndex].specialCD[0] = 4;
             enemies[bossIndex].specialDuration[0] = 0.8;
         }
         else if (enemies[bossIndex].specialCD[1] <= 0)
         {
-            weapons.push_back(Weapon(BULLET2));
+            // weapons.push_back(Weapon(BULLET2));
             enemies[bossIndex].specialCD[1] = 4;
         }
         else if (enemies[bossIndex].specialCD[2] <= 0)
         {
             int random = rand() % 2;
-            weapons.push_back((random == 0 ? Weapon(BULLET4) : Weapon(BULLET3)));
+            // weapons.push_back((random == 0 ? Weapon(BULLET4) : Weapon(BULLET3)));
             enemies[bossIndex].specialCD[2] = 14;
         }
     }
@@ -432,15 +450,19 @@ void GameStates::update(float timeStep, bool &shake)
             --it;
             continue;
         }
+        if(it->ID == BULLET3 || it->ID == BULLET4)
+        {
+            if(it->ID != enemies[bossIndex].attack)
+            {
+                std::cout << it->cooldown << '\n';
+                continue;
+            }
+        }
 
         it->cooldown -= timeStep;
+        it->timePassed += timeStep;
 
-        if (it->cooldown > 0)
-            continue;
-
-        it->cooldown = it->timeBetweenAttacks;
-
-        for (int i = 0; i < it->dmgArea.attackCount; ++i)
+        while(it->count < it->dmgArea.attackCount && it->timePassed >= it->dmgArea.attackDelay)
         {
             Vector2f temp1{0, 0};
             if (it->ID == CEO_TEARS)
@@ -449,7 +471,7 @@ void GameStates::update(float timeStep, bool &shake)
                 temp1 = vectorNormalize(enemies[index].collider.center - player.collider.center);
             }
 
-            it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, i, temp1);
+            it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, it->count, temp1);
 
             if (it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3 && it->ID != BULLET4)
             {
@@ -473,36 +495,109 @@ void GameStates::update(float timeStep, bool &shake)
             else if (it->ID == BULLET4)
             {
                 it->dmgArea.center = temp;
-                it->dmgArea.angle = it->dmgArea.attackCount * 4;
-                ++it->dmgArea.attackCount;
+                it->dmgArea.angle = it->count * 8;
                 bossAttack.push_back(it->dmgArea);
-                break;
+                enemies[bossIndex].notMoving = true;
             }
             else if (it->ID == BULLET2)
             {
                 // it->dmgArea.center = player.collider.center;
                 it->dmgArea.center = temp;
-                it->dmgArea.angle = i * 36;
+                it->dmgArea.angle = it->count * 36;
                 bossAttack.push_back(it->dmgArea);
             }
             else if (it->ID == BULLET3)
             {
-                it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
+                for(int i = 0; i < 10; ++i)
+                {it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
                 it->dmgArea.angle = i * 72;
                 it->dmgArea.count = i;
                 bossAttack.push_back(it->dmgArea);
+                }
+                enemies[bossIndex].notMoving = true;
             }
+            ++it->count;
+            it->timePassed = 0;
         }
+
+        if((it->ID == BULLET4 || it->ID == BULLET3) && it->count >= it->dmgArea.attackCount)
+        {
+            enemies[bossIndex].notMoving = false;
+            // it->cooldown = it->timeBetweenAttacks; 
+            // it->count = 0;
+        }
+        // if (it->cooldown > 0)
+        //     continue;
+        
+        if(it->cooldown <= 0) 
+        {
+            if(it->ID == BULLET4 || it->ID == BULLET3)
+            enemies[bossIndex].attack = (enemies[bossIndex].attack == BULLET3 ? BULLET4:BULLET3);
+            it->cooldown = it->timeBetweenAttacks; 
+            it->count = 0;
+        }
+
+        // for (int i = 0; i < it->dmgArea.attackCount; ++i)
+        // {
+        //     Vector2f temp1{0, 0};
+        //     if (it->ID == CEO_TEARS)
+        //     {
+        //         int index = rand() % (int)enemies.size();
+        //         temp1 = vectorNormalize(enemies[index].collider.center - player.collider.center);
+        //     }
+        //     it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, i, temp1);
+        //     if (it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3 && it->ID != BULLET4)
+        //     {
+        //         activeAttack.push_back(it->dmgArea);
+        //     }
+        //     else if (it->ID == FUBU_BEAM)
+        //     {
+        //         it->dmgArea.center = temp;
+        //         if (temp2 == SDL_FLIP_HORIZONTAL)
+        //             it->dmgArea.angle = 180;
+        //         else
+        //             it->dmgArea.angle = 0;
+        //         bossAttack.push_back(it->dmgArea);
+        //     }
+        //     else if (it->ID == BULLET1)
+        //     {
+        //         it->dmgArea.center = temp;
+        //         it->dmgArea.direction = vectorNormalize(player.collider.center - it->dmgArea.center);
+        //         bossAttack.push_back(it->dmgArea);
+        //     }
+        //     else if (it->ID == BULLET4)
+        //     {
+        //         it->dmgArea.center = temp;
+        //         it->dmgArea.angle = it->dmgArea.attackCount * 4;
+        //         ++it->dmgArea.attackCount;
+        //         bossAttack.push_back(it->dmgArea);
+        //         break;
+        //     }
+        //     else if (it->ID == BULLET2)
+        //     {
+        //         // it->dmgArea.center = player.collider.center;
+        //         it->dmgArea.center = temp;
+        //         it->dmgArea.angle = i * 36;
+        //         bossAttack.push_back(it->dmgArea);
+        //     }
+        //     else if (it->ID == BULLET3)
+        //     {
+        //         it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
+        //         it->dmgArea.angle = i * 72;
+        //         it->dmgArea.count = i;
+        //         bossAttack.push_back(it->dmgArea);
+        //     }
+        // }
     }
 
-    for (auto it = weapons.begin(); it != weapons.end(); ++it)
-    {
-        if ((it->ID == BULLET1 && enemies[bossIndex].specialDuration[0] <= 0) || it->ID == BULLET2 || ((it->ID == BULLET4 || it->ID == BULLET3) && enemies[bossIndex].specialCD[3] <= 0))
-        {
-            weapons.erase(it);
-            --it;
-        }
-    }
+    // for (auto it = weapons.begin(); it != weapons.end(); ++it)
+    // {
+    //     if ((it->ID == BULLET1 && enemies[bossIndex].specialDuration[0] <= 0) || it->ID == BULLET2 || ((it->ID == BULLET4 || it->ID == BULLET3) && enemies[bossIndex].specialCD[3] <= 0))
+    //     {
+    //         weapons.erase(it);
+    //         --it;
+    //     }
+    // }
 
     // active attacks
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
@@ -659,18 +754,18 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
     camera.x = (player.collider.center.x) - SCREEN_WIDTH / 2 + shakeX;
     camera.y = (player.collider.center.y) - SCREEN_HEIGHT / 2 + shakeY;
 
-    for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
-    {
-        if (isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y))
-            continue;
-        it->render(renderer, camera.x, camera.y);
-    }
-
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
         if (it->weaponID != ELITE_LAVA)
             continue;
         it->render(renderer, player, camera.x, camera.y);
+    }
+    
+    for (auto it = dropItems.begin(); it != dropItems.end(); ++it)
+    {
+        if (isOutsideOfView(Circle{it->pos, 13 * 1.5}, camera.x, camera.y))
+            continue;
+        it->render(renderer, camera.x, camera.y);
     }
 
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
@@ -699,7 +794,7 @@ void GameStates::render(SDL_Renderer *renderer, bool shake)
         it->render(renderer, DMG_font, dmgText, camera.x, camera.y);
     }
 
-    playerHUD.render(renderer, pause, leveledUp, isOver, weapons);
+    playerHUD.render(renderer, (int)player.playerID, pause, leveledUp, isOver, weapons);
 }
 
 void GameStates::reset()

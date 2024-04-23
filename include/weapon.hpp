@@ -17,6 +17,7 @@ const int frames = 8;
 enum WEAPON_ID {
     NONE,
     AXE,
+    NUTS,
     SPIDER_COOKING,
     X_POTATO,
     POTATO_EXPLOSION,
@@ -45,6 +46,7 @@ struct DamagingArea
     std::string textureID;
     DamagingArea();
     bool isActive{true};
+    bool bounce{false};
     float timePassed{0};
     float duration;
     float damage;
@@ -66,6 +68,7 @@ struct DamagingArea
     float radius;
     float fallTime;
     float hitCooldown{0};
+    float attackDelay{0};
     int count{0};
     bool ofPlayer{true};
     bool maxed{false};
@@ -84,6 +87,8 @@ struct Weapon {
     DamagingArea dmgArea;
     float cooldown{0};
     float specialDuration[2] = {5,5};
+    float timePassed{0};
+    int count{0};
     void setHitLimit(int hitLimit);
     void setHitCooldown(float hitCooldown);
     void setDamage(float damage);

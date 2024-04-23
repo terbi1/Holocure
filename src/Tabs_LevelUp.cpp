@@ -11,7 +11,9 @@ Tabs_LevelUp::~Tabs_LevelUp()
 }
 
 Tabs Tabs_LevelUp::getDirect() {
-    return direct;
+    Tabs temp = direct;
+    direct = Level_Up;
+    return temp;
 }
 
 void Tabs_LevelUp::setUp(SDL_Renderer* renderer)
@@ -82,6 +84,14 @@ void Tabs_LevelUp::getResource(std::vector<WEAPON_ID> optionType, std::vector<in
                 else
                     iconTexture[i] = SuiseiWeapon_Icon[0];
                 break;
+            case NUTS:
+                optionName[i] = "Nuts LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(RisuWeaponDescription[optionLevel[i] - 1]);
+                if (optionLevel[i] == 7)
+                    iconTexture[i] = RisuWeapon_Icon[1];
+                else
+                    iconTexture[i] = RisuWeapon_Icon[0];
+                break;
             case ATK_UP:
                 optionName[i] = "ATK Up";
                 upgrade[i].setText("Increase ATK by 8%.");
@@ -107,7 +117,7 @@ void Tabs_LevelUp::getResource(std::vector<WEAPON_ID> optionType, std::vector<in
 
 void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
 {
-    direct = Level_Up;
+    // direct = Level_Up;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER])

@@ -62,8 +62,9 @@ public:
     float timePassed{0.3};
     Vector2f direction;
     Vector2f knockbackDir;
-private:
     bool notMoving{false};
+    WEAPON_ID attack{BULLET3};
+private:
     float speed;
     Vector2f movingCenter{0,0};
     float angle{0};

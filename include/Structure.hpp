@@ -148,6 +148,10 @@ void setText(std::string m_text)
 {
 	text = m_text;
 }
+Vector2f getCenter()
+{
+	return center;
+}
 private:
 std::string text{};
 Vector2f center;

@@ -12,7 +12,7 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     case SHRIMP:
     {
         health = 8;
-        atk = 100;
+        atk = 2;
         speed = 0.35;
         expValue = 6;
         collider.radius = 18;
@@ -145,12 +145,12 @@ void Enemy::update(Vector2f player_center, float timeStep)
     }
     if(notMoving)
     {
-        if(specialCD[3] <= 0)
-        {
-            specialCD[3] = 6;
-            notMoving = false;
-        }
-        specialCD[3] -= timeStep;
+        // if(specialCD[3] <= 0)
+        // {
+        //     specialCD[3] = 6;
+        //     notMoving = false;
+        // }
+        // specialCD[3] -= timeStep;
         return;
     }
     if(timePassed >= 0.3)

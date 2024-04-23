@@ -78,6 +78,7 @@ public:
     std::vector<int> optionLevel;
     float specialCD{0};
     int EnemyCount{0};
+    Character ID = None;
     Player getPlayer() {
         return player;
     }

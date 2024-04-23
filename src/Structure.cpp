@@ -308,6 +308,8 @@ void DamageNumber::update(float timeStep)
 
 #pragma endregion
 
+#pragma region LButton
+
 LButton::LButton()
 {
 }
@@ -323,8 +325,11 @@ void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 	{
 		if (type == 0)
 			texture = Button[0];
-		else
+		else if (type == 1)
 			texture = Upgrade[0];
+		else{
+			texture = Black_Screen;
+		}
 		color = {255, 255, 255};
 	}
 	else
@@ -332,9 +337,10 @@ void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 		if (type == 0)
 			{texture = Button[1];
 			color = {0, 0, 0};}
-		else
+		else if(type == 1)
 			{texture = Upgrade[1];
 			color = {255,255,255};}
+		
 	}
 
 	if (isCurrentButton && type == 0)
@@ -352,6 +358,7 @@ void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 		renderBox.h = size.y;
 	}
 
+	if(!(type == 2 && isCurrentButton))
 	SDL_RenderCopy(renderer, ResourceManager::getInstance().getTexture(texture, renderer), NULL, &renderBox);
 	if (font == NULL)
 		return;
@@ -373,3 +380,5 @@ bool LButton::handleEvent()
 
 	return false;
 }
+
+#pragma endregion LButton
