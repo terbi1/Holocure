@@ -145,8 +145,7 @@ void Game::update(float timeStep)
 	{
 	case Title:
 	case Character_Select:
-		// gameState.reset();
-		// playerHUD.HUD_Timer.pause();
+		tabs_characterSelect.update();
 		break;
 	case Room1:
 		// playerHUD.HUD_Timer.unpause();
@@ -173,7 +172,7 @@ void Game::render()
 		tabs_title.render(renderer);
 		break;
 	case Character_Select:
-		tabs_characterSelect.render(renderer);
+		tabs_characterSelect.render(renderer, font);
 		break;
 	case Room1:
 		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);

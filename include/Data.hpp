@@ -30,6 +30,7 @@ const std::string EmptyWeaponSlot{"res/gfx/ui_empty_slot_weapon.png"};
 #pragma region Player
 
 const std::string PlayerArrow{"res/gfx/spr_Arrow/spr_Arrow_0.png"};
+const std::string Player_Name[2]{"HOSHIMACHI SUISEI", "AYUNDA RISU"};
 
 const std::string Portrait_Suisei{"res/gfx/character_sprites/spr_SuiseiPortrait.png"};
 const std::string Title_Suisei{"res/gfx/character_sprites/spr_Title_Suisei.png"};
@@ -42,6 +43,10 @@ const std::string Title_Risu{"res/gfx/character_sprites/spr_Title_Risu.png"};
 const std::string IdleAnimation_Risu[4] = {"res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_1.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_2.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_3.png"};
 const std::string RunAnimation_Risu[6] = {"res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_0.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_1.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_2.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_3.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_4.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_5.png"};
 const std::string RisuSpecial{"res/gfx/spr_RisuSpecial.png"};
+
+const std::string Special_Description[2]{"Summon a rain of falling blocks that deal 300% damage each for 5 seconds.", "Risu summons Big Nuts that slam down, dealing 400% damage to all targets around."};
+
+const std::string Weapon_Description[2]{"Swing a bloody axe in an arc in front.","Throws several nuts in front."};
 
 static const std::string* IdleAnimation[2] = {IdleAnimation_Suisei, IdleAnimation_Risu};
 static const std::string* RunAnimation[2] = {RunAnimation_Suisei, RunAnimation_Risu};
@@ -87,6 +92,7 @@ const std::string XPotato_Icon{"res/gfx/spr_XPotatoIcon.png"};
 const std::string MaxHPUp_Icon{"res/gfx/spr_maxhpUp.png"};
 const std::string SpeedUp_Icon{"res/gfx/spr_movementUp.png"};
 const std::string HPRecover_Icon{"res/gfx/spr_ach_hamburgers.png"};
+static const std::string WeaponIcon[2] = {SuiseiWeapon_Icon[0], RisuWeapon_Icon[0]};
 
 #pragma endregion
 

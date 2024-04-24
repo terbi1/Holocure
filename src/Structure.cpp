@@ -128,12 +128,12 @@ void LTexture::render(SDL_Renderer *gRenderer, SDL_Rect *renderQuad, SDL_Rect *c
 	SDL_RenderCopyEx(gRenderer, mTexture, clip, renderQuad, angle, center, flip);
 }
 
-void LTexture::renderText(std::string textureText, SDL_Color textColor, TTF_Font *gFont, SDL_Renderer *gRenderer, int x, int y, int size)
+void LTexture::renderText(std::string textureText, SDL_Color textColor, TTF_Font *gFont, SDL_Renderer *gRenderer, int x, int y, int size, int wrappingSize)
 {
 	free();
 
 	TTF_SetFontSize(gFont, size);
-	SDL_Surface *textSurface = TTF_RenderText_Solid_Wrapped(gFont, textureText.c_str(), textColor,600);
+	SDL_Surface *textSurface = TTF_RenderText_Solid_Wrapped(gFont, textureText.c_str(), textColor, wrappingSize);
 	// SDL_Surface *textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
 	if (textSurface == NULL)
 	{
