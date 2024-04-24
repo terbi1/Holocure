@@ -17,7 +17,7 @@ void HUD::initHUD(SDL_Renderer *renderer, int health)
     specialBar[1].loadFromFile(Special_Bar[1], renderer);
     specialBar[2].loadFromFile(Special_Bar[2], renderer);
     specialBar[3].loadFromFile(Special_Bar[3], renderer);
-    specialSymbol.loadFromFile(SuiseiSpecial, renderer);
+    // specialSymbol.loadFromFile(SuiseiSpecial, renderer);
     weaponSlot.loadFromFile(EmptyWeaponSlot, renderer);
     weaponSlot.setAlpha(100);
     SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Black_Screen, renderer),100);
@@ -112,7 +112,7 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
     levelLabel.x = 55.5f;
     for(int i = 0; i < (int)weapons.size(); ++i)
     {
-        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
+        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == BIG_NUT || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
         std::string icon;
         weaponRect.x += 37.5f;
         switch ((int)weapons[i].ID)
@@ -142,7 +142,10 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
         weaponSlot.renderF(renderer, &weaponRect);
     }
 
-    specialSymbol.render(renderer, &specialCase);
+    // specialSymbol.render(renderer, &specialCase);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Draw(0, 100, 18 * 2, 18 * 2);
+    ResourceManager::getInstance().Render(SpecialIcon[playerID], renderer);
 
     if (specialTopBar[1].w < 138)
     {

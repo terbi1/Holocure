@@ -48,7 +48,7 @@ public:
     int currentFrame{0};
     float crit{10};
     float critMod{50};
-    float specialCD{65};
+    float specialCD{15};
     float getATK()
     {
         return atk;

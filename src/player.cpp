@@ -24,7 +24,7 @@ void Player::setPlayer(Character ID)
         atk = 110;
         SPEED = 1.5;
         maxHP = health = 60;
-        specialCD = 70;
+        specialCD = 15;
         return;
     }
 }

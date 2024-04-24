@@ -41,11 +41,13 @@ const std::string Portrait_Risu{"res/gfx/character_sprites/spr_RisuPortrait.png"
 const std::string Title_Risu{"res/gfx/character_sprites/spr_Title_Risu.png"};
 const std::string IdleAnimation_Risu[4] = {"res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_1.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_2.png", "res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_3.png"};
 const std::string RunAnimation_Risu[6] = {"res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_0.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_1.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_2.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_3.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_4.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_5.png"};
+const std::string RisuSpecial{"res/gfx/spr_RisuSpecial.png"};
 
 static const std::string* IdleAnimation[2] = {IdleAnimation_Suisei, IdleAnimation_Risu};
 static const std::string* RunAnimation[2] = {RunAnimation_Suisei, RunAnimation_Risu};
 static const std::string Portrait[2] = {Portrait_Suisei, Portrait_Risu};
 static const std::string Title_Portrait[2] = {Title_Suisei, Title_Risu};
+static const std::string SpecialIcon[2] = {SuiseiSpecial, RisuSpecial};
 
 #pragma endregion
 
@@ -65,6 +67,8 @@ const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"}
 const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
 const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
 const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
+const std::string RisuBigNut{"res/gfx/spr_RisuBigNut/spr_RisuBigNut.png"};
+const std::string Explosion{"res/gfx/spr_Explosion/spr_Explosion.png"};
 const std::string CuttingBoard_Animation{"res/gfx/spr_CuttingBoard.png"};
 const std::string XPotato_Animation{"res/gfx/spr_XPotato.png"};
 const std::string PotatoExplosion_Animation[5]{"res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_0.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_1.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_2.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_3.png","res/gfx/spr_PotatoExplosion/spr_PotatoExplosion_4.png"};

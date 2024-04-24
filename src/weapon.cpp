@@ -89,6 +89,24 @@ void DamagingArea::update(float timeStep, Vector2f player_center, SDL_Rect camer
             }
             break;
         }
+        case BIG_NUT:
+        {
+            if(currentFrame == frames) {
+                --currentFrame;
+            }
+            if (fallTime > 0)
+            {
+                center.y += 20;
+                fallTime -= timeStep;
+                if (fallTime <= 0)
+                {
+                    shake = true;
+                    shakeTime = 30;
+                }
+            }
+            if(duration <= 0.27 && !isExploded) explode();
+            break;
+        }
         case CUTTING_BOARD:
         {
             if (fallTime > 0)
@@ -317,6 +335,19 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         }
         break;
     }
+    case BIG_NUT:
+    {
+        if(isExploded)
+        {
+            if(!checkCircleCollision(Circle{center, size.x / 2}, enemyCollider)) return false;
+        }
+        else
+        {
+            if(!checkAABBCircleCollision({(int)(center.x - size.x / 2), (int)(center.y - size.y / 2 + 200), (int)size.x, (int)size.y - 200}, enemyCollider))
+            return false;
+        }
+        break;
+    }
     case CUTTING_BOARD:
     {
         SDL_Rect hitBox;
@@ -354,6 +385,14 @@ void DamagingArea::explode()
         frames = 4;
         radius *= 15;
         textureID = "res/gfx/spr_PotatoExplosion/spr_PotatoExplosion.png";
+        return;
+        case BIG_NUT:
+        isExploded = true;
+        damage = 400;
+        hitLimit = -1;
+        size = {576,576};
+        frames = 8;
+        textureID = Explosion;
         return;
     }
 }
@@ -511,6 +550,25 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     {
         ResourceManager::getInstance().Draw(center.x - 96 - camX, center.y - 96 - camY, 192, 192);
         ResourceManager::getInstance().PlayFrame(0, 0, 43, 43, count);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
+    case BIG_NUT:
+    {
+        if(isExploded)
+        {
+            // ResourceManager::getInstance().Draw(center.x - 128 * 4.5 / 2 - camX, center.y - 128 * 4.5 / 2 - camY, 128 * 4.5, 128 * 4.5);
+            ResourceManager::getInstance().PlayFrame(0, 0, 128, 128, currentFrame);
+        }
+        else 
+        {
+            // SDL_Rect hitBox{(int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 + 200 - camY), (int)size.x, (int)size.y - 200};
+            // SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+            // SDL_RenderDrawRect(renderer, &hitBox);
+            ResourceManager::getInstance().PlayFrame(0, 0, 78, 96, currentFrame);
+        }
+        ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
+
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
@@ -704,13 +762,30 @@ Weapon::Weapon(WEAPON_ID type)
     case FALLING_BLOCKS:
     {
         dmgArea.damage = 300;
-        timeBetweenAttacks = 0.25;
-        dmgArea.attackCount = 1;
+        timeBetweenAttacks = 1e9;
+        dmgArea.attackCount = 20;
+        dmgArea.attackDelay = 0.25;
         dmgArea.hitLimit = -1;
         dmgArea.hitCooldown = 2;
         dmgArea.duration = 2;
         dmgArea.frames = 0;
         dmgArea.textureID = "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks.png";
+        cooldown = timeBetweenAttacks;
+        break;
+    }
+    case BIG_NUT:
+    {
+        dmgArea.damage = 100;
+        timeBetweenAttacks =1e9;
+        dmgArea.attackCount = 5;
+        dmgArea.attackDelay = 0.25;
+        dmgArea.hitLimit = -1;
+        dmgArea.hitCooldown = 1;
+        dmgArea.duration = 1.77;
+        dmgArea.frames = 2;
+        dmgArea.size = {234, 288};
+        dmgArea.textureID = RisuBigNut;
+        cooldown = timeBetweenAttacks;
         break;
     }
     case CUTTING_BOARD:
@@ -803,7 +878,6 @@ Weapon::Weapon(WEAPON_ID type)
     }
     }
     count = dmgArea.attackCount;
-    // cooldown = timeBetweenAttacks;
 }
 
 void Weapon::setHitLimit(int newHitLimit)
@@ -916,10 +990,18 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             }
             case FALLING_BLOCKS:
             {
-                specialDuration[1] -= timeBetweenAttacks;
+                // specialDuration[1] -= timeBetweenAttacks;
                 dmgArea.center = Vector2f{(float)(randomInt(-5, 5) * 98), -SCREEN_HEIGHT / 2} + playerCenter;
                 dmgArea.fallTime = (rand() % 6 + 1) * 0.12;
                 dmgArea.count = rand() % 12;
+                break;
+            }
+            case BIG_NUT:
+            {
+                // specialDuration[1] -= timeBetweenAttacks;
+                dmgArea.center = Vector2f{(float)(count % 2 == 0 ? -1:1) * 78 * 2, -SCREEN_HEIGHT / 2} + playerCenter;
+                dmgArea.fallTime = count * 0.05;
+                // dmgArea.count = rand() % 12;
                 break;
             }
             case CUTTING_BOARD:

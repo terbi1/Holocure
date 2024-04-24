@@ -85,10 +85,12 @@ void GameStates::start()
     switch((int)ID)
     {
         case Suisei:
+        weapons.push_back(Weapon(FALLING_BLOCKS));
         weapons.push_back(Weapon(AXE));
         optionPool[AXE] = 2;
         break;
         case Risu:
+        weapons.push_back(Weapon(BIG_NUT));
         weapons.push_back(Weapon(NUTS));
         optionPool[NUTS] = 2;
         break;
@@ -225,7 +227,7 @@ void GameStates::checkWeaponLimit()
     int weaponCount = (int)weapons.size();
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        if (it->ID == FUBU_BEAM || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
+        if (it->ID == FUBU_BEAM || it->ID == BIG_NUT || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
             --weaponCount;
     }
     if (weaponCount < MAX_WEAPON)
@@ -443,13 +445,13 @@ void GameStates::update(float timeStep, bool &shake)
     // initiate attacks
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        if (it->specialDuration[1] <= 0)
-        {
-            it->specialDuration[1] = it->specialDuration[0];
-            weapons.erase(it);
-            --it;
-            continue;
-        }
+        // if (it->specialDuration[1] <= 0)
+        // {
+        //     it->specialDuration[1] = it->specialDuration[0];
+        //     weapons.erase(it);
+        //     --it;
+        //     continue;
+        // }
         if(it->ID == BULLET3 || it->ID == BULLET4)
         {
             if(it->ID != enemies[bossIndex].attack)
@@ -536,58 +538,6 @@ void GameStates::update(float timeStep, bool &shake)
             it->cooldown = it->timeBetweenAttacks; 
             it->count = 0;
         }
-
-        // for (int i = 0; i < it->dmgArea.attackCount; ++i)
-        // {
-        //     Vector2f temp1{0, 0};
-        //     if (it->ID == CEO_TEARS)
-        //     {
-        //         int index = rand() % (int)enemies.size();
-        //         temp1 = vectorNormalize(enemies[index].collider.center - player.collider.center);
-        //     }
-        //     it->initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, i, temp1);
-        //     if (it->ID != FUBU_BEAM && it->ID != BULLET1 && it->ID != BULLET2 && it->ID != BULLET3 && it->ID != BULLET4)
-        //     {
-        //         activeAttack.push_back(it->dmgArea);
-        //     }
-        //     else if (it->ID == FUBU_BEAM)
-        //     {
-        //         it->dmgArea.center = temp;
-        //         if (temp2 == SDL_FLIP_HORIZONTAL)
-        //             it->dmgArea.angle = 180;
-        //         else
-        //             it->dmgArea.angle = 0;
-        //         bossAttack.push_back(it->dmgArea);
-        //     }
-        //     else if (it->ID == BULLET1)
-        //     {
-        //         it->dmgArea.center = temp;
-        //         it->dmgArea.direction = vectorNormalize(player.collider.center - it->dmgArea.center);
-        //         bossAttack.push_back(it->dmgArea);
-        //     }
-        //     else if (it->ID == BULLET4)
-        //     {
-        //         it->dmgArea.center = temp;
-        //         it->dmgArea.angle = it->dmgArea.attackCount * 4;
-        //         ++it->dmgArea.attackCount;
-        //         bossAttack.push_back(it->dmgArea);
-        //         break;
-        //     }
-        //     else if (it->ID == BULLET2)
-        //     {
-        //         // it->dmgArea.center = player.collider.center;
-        //         it->dmgArea.center = temp;
-        //         it->dmgArea.angle = i * 36;
-        //         bossAttack.push_back(it->dmgArea);
-        //     }
-        //     else if (it->ID == BULLET3)
-        //     {
-        //         it->dmgArea.center = it->dmgArea.rotatingCenter = temp;
-        //         it->dmgArea.angle = i * 72;
-        //         it->dmgArea.count = i;
-        //         bossAttack.push_back(it->dmgArea);
-        //     }
-        // }
     }
 
     // for (auto it = weapons.begin(); it != weapons.end(); ++it)
@@ -826,8 +776,9 @@ void GameStates::handleEvent()
     }
     else if (currentKeyStates[SDL_SCANCODE_X] && specialCD <= 0)
     {
-        weapons.push_back(Weapon(FALLING_BLOCKS));
+        // weapons.push_back(Weapon(FALLING_BLOCKS));
         specialCD = player.specialCD;
+        weapons.front().count = 0;
     }
 
     playerHUD.handleEvents(pause, leveledUp, direct, choice);
