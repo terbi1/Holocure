@@ -145,12 +145,12 @@ void Enemy::update(Vector2f player_center, float timeStep)
     }
     if(notMoving)
     {
-        if(specialCD[3] <= 0)
-        {
-            specialCD[3] = 6;
-            notMoving = false;
-        }
-        specialCD[3] -= timeStep;
+        // if(specialCD[3] <= 0)
+        // {
+        //     specialCD[3] = 6;
+        //     notMoving = false;
+        // }
+        // specialCD[3] -= timeStep;
         return;
     }
     if(timePassed >= 0.3)

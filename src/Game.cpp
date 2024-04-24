@@ -63,8 +63,10 @@ void Game::init(const char *p_title, int p_w, int p_h)
 void Game::loadmedia()
 {
 	tabs_title.setUpMenu(renderer);
+	tabs_characterSelect.setUp(renderer);
 	tabs_room1.roomInit(renderer);
 	tabs_levelup.setUp(renderer);
+	tabs_end.setUp(renderer);
 	gameState.loadMedia(renderer);
     titleMusic = Mix_LoadMUS("res/gfx/bgm/bgm_SSS.ogg");
     roomMusic = Mix_LoadMUS("res/gfx/bgm/bgm_suspect.ogg");
@@ -90,18 +92,28 @@ void Game::handleEvents()
 	case Title:
 		tabs_title.handleEvents(isRunning);
 		currentTab = tabs_title.getDirect();
+		// if(currentTab == Room1) gameState.start();
+		break;
+	case Character_Select:
+		tabs_characterSelect.handleEvents(gameState.ID);
+		currentTab = tabs_characterSelect.getDirect();
 		if(currentTab == Room1) gameState.start();
 		break;
 	case Room1:
 		// tabs_room1.handleEvents();
 		gameState.handleEvent();
 		currentTab = gameState.getDirect();
-		if(currentTab == Title) gameState.reset();
+		if(currentTab == Title || currentTab == End) gameState.reset();
 		break;
-	// case Level_Up:
-	// 	tabs_levelup.handleEvents();
-	// 	currentTab = tabs_levelup.getDirect();
-	// 	break;
+	case Level_Up:
+		tabs_levelup.handleEvents(gameState.leveledUp, gameState.choice);
+		currentTab = tabs_levelup.getDirect();
+		break;
+	case End:
+		tabs_end.handleEvents();
+		currentTab = tabs_end.getDirect();
+		if(currentTab == Room1) gameState.start();
+		break;
 	}
 }
 void Game::playMusic()
@@ -119,31 +131,11 @@ void Game::playMusic()
 		{
 			Mix_PlayMusic(roomMusic, -1);
 		}
-	// case Title:
-	// 	if( Mix_PlayingMusic() == 0 && !gameState->isInCountDown() && gameState->getPlaying())
-	// 	{
-	// 		Mix_PlayMusic( me_playing, -1 );
-	// 	}
-	// 	if (gameState->getPause() && gameState->getPlaying())
-	// 	{
-	// 		Mix_HaltMusic();
-	// 	}
-	// 	break;
-	// case InGame_BattleMode:
-	// 	if( Mix_PlayingMusic() == 0 && !battleProcessor->getGameState1()->isInCountDown() && battleProcessor->getGameState1()->getPlaying())
-	// 	{
-	// 		Mix_PlayMusic( me_playing, -1 );
-	// 	}
-	// 	if (battleProcessor->getGameState1()->getPause() && battleProcessor->getGameState1()->getPlaying())
-	// 	{
-	// 		Mix_HaltMusic();
-	// 	}
-	// 	break;
-	// default:
-	// 	if( Mix_PlayingMusic() == 0 ){
-	// 		Mix_PlayMusic( me_theme, -1 );
-	// 	}
-	// 	break;
+		return;
+		case Level_Up:
+		case Character_Select:
+		case End:
+		return;
 	}
 }
 
@@ -152,13 +144,19 @@ void Game::update(float timeStep)
 	switch ((int)currentTab)
 	{
 	case Title:
-		// gameState.reset();
-		// playerHUD.HUD_Timer.pause();
+	case Character_Select:
+		tabs_characterSelect.update();
 		break;
 	case Room1:
 		// playerHUD.HUD_Timer.unpause();
 		// playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
 		gameState.update(timeStep, shake);
+		break;
+	case Level_Up:
+		tabs_levelup.getResource(gameState.optionKey, gameState.optionLevel);
+		break;
+	case End:
+		tabs_end.update(gameState.getOver());
 		break;
 	}
 }
@@ -167,24 +165,30 @@ void Game::render()
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
-	// static LTexture backGround {backGroundPicture, renderer};
-	// backGround.render(renderer, 0, 0);
 
 	switch ((int)currentTab)
 	{
 	case Title:
 		tabs_title.render(renderer);
 		break;
+	case Character_Select:
+		tabs_characterSelect.render(renderer, font);
+		break;
 	case Room1:
 		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
 		gameState.render(renderer, shake);
 		// playerHUD.render(renderer, gameState.getPause());
 		break;
-	// case Level_Up:
-	// 	tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
-	// 	gameState.render(renderer, shake);
-	// 	tabs_levelup.render(renderer);
-	// 	break;
+	case Level_Up:
+		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
+		gameState.render(renderer, shake);
+		tabs_levelup.render(renderer, font);
+		break;
+	case End:
+		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
+		gameState.render(renderer, shake);
+		tabs_end.render(renderer, font);
+		break;
 	}
 	SDL_RenderPresent(renderer);
 }

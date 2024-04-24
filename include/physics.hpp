@@ -17,4 +17,4 @@ bool checkAABBCircleCollision(SDL_Rect rect, Circle cir);
 
 bool checkInside(SDL_Rect rect, Circle cir);
 
-void circleBounce(Circle object, Vector2f& direction, SDL_Rect boundingBox);
+bool circleBounce(Circle object, Vector2f& direction, SDL_Rect boundingBox);

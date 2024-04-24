@@ -11,6 +11,8 @@
 #include "Room1.hpp"
 #include "Hud.hpp"
 #include "Tabs_LevelUp.hpp"
+#include "Tabs_End.hpp"
+#include "Tabs_CharacterSelect.hpp"
 
 class Game {
 
@@ -38,8 +40,10 @@ private:
     Tabs currentTab{Title};
     GameStates gameState;
     Tabs_Title tabs_title;
+    Tabs_CharacterSelect tabs_characterSelect;
     Tabs_Room1 tabs_room1;
     Tabs_LevelUp tabs_levelup;
+    Tabs_End tabs_end;
     TTF_Font* font;
     Mix_Music* titleMusic = NULL;
     Mix_Music* roomMusic = NULL;

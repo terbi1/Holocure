@@ -9,9 +9,9 @@
 #include "ResourceManager.hpp"
 #include "Data.hpp"
 
-enum PLAYER_TYPE {
-    SUISEI
-};
+// enum PLAYER_TYPE {
+//     SUISEI
+// };
 
 enum State {
     IDLE = 4,
@@ -29,6 +29,8 @@ private:
     float timePassed{0};
 public:
     Player();
+    Character playerID;
+    void setPlayer(Character ID);
     void handleEvent();
     void update(float timeStep);
     Vector2f getPos() {
@@ -46,7 +48,7 @@ public:
     int currentFrame{0};
     float crit{10};
     float critMod{50};
-    float specialCD{65};
+    float specialCD{15};
     float getATK()
     {
         return atk;

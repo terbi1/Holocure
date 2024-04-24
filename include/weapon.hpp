@@ -17,6 +17,7 @@ const int frames = 8;
 enum WEAPON_ID {
     NONE,
     AXE,
+    NUTS,
     SPIDER_COOKING,
     X_POTATO,
     POTATO_EXPLOSION,
@@ -28,6 +29,7 @@ enum WEAPON_ID {
     ELITE_LAVA,
     CUTTING_BOARD,
     FALLING_BLOCKS,
+    BIG_NUT,
     ATK_UP,
     SPD_UP,
     HP_UP,
@@ -39,12 +41,15 @@ enum WEAPON_ID {
     BULLET4
 };
 
+const std::unordered_set<WEAPON_ID> Exception = {FUBU_BEAM, FALLING_BLOCKS, BIG_NUT, BULLET1, BULLET2, BULLET3, BULLET4};
+
 struct DamagingArea
 {
     WEAPON_ID weaponID;
     std::string textureID;
     DamagingArea();
     bool isActive{true};
+    bool bounce{false};
     float timePassed{0};
     float duration;
     float damage;
@@ -66,9 +71,10 @@ struct DamagingArea
     float radius;
     float fallTime;
     float hitCooldown{0};
+    float attackDelay{0};
     int count{0};
     bool ofPlayer{true};
-    bool maxed{false};
+    bool isExploded{false};
     float areaMultiplier[2]{0,0};
     void update(float timeStep, Vector2f player_center, SDL_Rect camera, bool &shake, int &shakeTime);
     bool hitEnemy(Circle &enemyCollider, int enemyID);
@@ -84,6 +90,8 @@ struct Weapon {
     DamagingArea dmgArea;
     float cooldown{0};
     float specialDuration[2] = {5,5};
+    float timePassed{0};
+    int count{0};
     void setHitLimit(int hitLimit);
     void setHitCooldown(float hitCooldown);
     void setDamage(float damage);

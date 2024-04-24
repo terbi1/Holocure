@@ -11,17 +11,16 @@ HUD::~HUD()
 
 void HUD::initHUD(SDL_Renderer *renderer, int health)
 {
-    tabs_levelup.setUp(renderer);
+    // tabs_levelup.setUp(renderer);
     HUD_font = TTF_OpenFont(font_8bitPLus.c_str(), 28);
     specialBar[0].loadFromFile(Special_Bar[0], renderer);
     specialBar[1].loadFromFile(Special_Bar[1], renderer);
     specialBar[2].loadFromFile(Special_Bar[2], renderer);
     specialBar[3].loadFromFile(Special_Bar[3], renderer);
-    specialSymbol.loadFromFile(SuiseiSpecial, renderer);
+    // specialSymbol.loadFromFile(SuiseiSpecial, renderer);
     weaponSlot.loadFromFile(EmptyWeaponSlot, renderer);
     weaponSlot.setAlpha(100);
     SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Black_Screen, renderer),100);
-    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Title_Suisei, renderer), 100);
     hp[0].loadFromFile(HealthBar[0], renderer);
     hpBaseBar.w = 230;
     hp[1].loadFromFile(HealthBar[1], renderer);
@@ -51,8 +50,9 @@ void HUD::update(Player player, int reqNextLevel, float specialCD)
     hpText = std::to_string(player.health) + "/" + std::to_string(player.maxHP);
 }
 
-void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
+void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons)
 {
+    SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(Title_Portrait[playerID], renderer), 100);
     ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     if (pause)
     {
@@ -61,7 +61,7 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         ResourceManager::getInstance().Render(Black_Screen, renderer);
 
         ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
-        ResourceManager::getInstance().Render(Title_Suisei, renderer);
+        ResourceManager::getInstance().Render(Title_Portrait[playerID], renderer);
 
         ResourceManager::getInstance().Draw(pauseRect.x, pauseRect.y, pauseRect.w, pauseRect.h);
         ResourceManager::getInstance().Render(Pause_Menu, renderer);
@@ -85,16 +85,13 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         ResourceManager::getInstance().Render(Black_Screen, renderer);
 
         ResourceManager::getInstance().Draw(pausePortrait.x, pausePortrait.y, pausePortrait.w, pausePortrait.h);
-        ResourceManager::getInstance().Render(Title_Suisei, renderer);
-
-        tabs_levelup.render(renderer, HUD_font);
+        ResourceManager::getInstance().Render(Title_Portrait[playerID], renderer);
     }
     else if (isOver)
     {
         ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
         ResourceManager::getInstance().Draw(screen.x, screen.y, screen.w, screen.h);
         ResourceManager::getInstance().Render(Black_Screen, renderer);
-        textureText.renderText(gameOverText.c_str(), {255, 255, 255}, HUD_font, renderer, SCREEN_WIDTH / 2 - 130, 100, 48);
     }
 
 
@@ -106,21 +103,22 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
     ResourceManager::getInstance().PlayFrame(0,0,expTopBar[0].w,expTopBar[0].h,0);
     ResourceManager::getInstance().Render(HUD_expBarTop, renderer);
 
-    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().PlayFrame(0,0,43,24,0);
     ResourceManager::getInstance().Draw(portraitRectDST.x, portraitRectDST.y, portraitRectDST.w, portraitRectDST.h);
-    ResourceManager::getInstance().Render(Portrait_Suisei, renderer);
+    ResourceManager::getInstance().Render(Portrait[playerID], renderer);
 
     int temp{0};
     weaponRect = {52.5f, 55, 25 * 1.5, 20 * 1.5};
     levelLabel.x = 55.5f;
     for(int i = 0; i < (int)weapons.size(); ++i)
     {
-        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
+        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == BIG_NUT || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
         std::string icon;
         weaponRect.x += 37.5f;
         switch ((int)weapons[i].ID)
         {
         case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
+        case NUTS: icon = RisuWeapon_Icon[weapons[i].level / 7]; break;
         case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
         case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
         case BL_BOOK: icon = BLBook_Icon; break;
@@ -144,7 +142,10 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
         weaponSlot.renderF(renderer, &weaponRect);
     }
 
-    specialSymbol.render(renderer, &specialCase);
+    // specialSymbol.render(renderer, &specialCase);
+    ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
+    ResourceManager::getInstance().Draw(0, 100, 18 * 2, 18 * 2);
+    ResourceManager::getInstance().Render(SpecialIcon[playerID], renderer);
 
     if (specialTopBar[1].w < 138)
     {
@@ -174,15 +175,15 @@ void HUD::render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver
 
 void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
 {
-    if(leveledUp)
-    {
-        tabs_levelup.handleEvents(leveledUp, choice);
-        // direct = Level_Up;
-        // leveledUp = false;
-        // SDL_ResetKeyboard();
-        return;
-    }
-    direct = Room1;
+    // if(leveledUp)
+    // {
+    //     tabs_levelup.handleEvents(leveledUp, choice);
+    //     // direct = Level_Up;
+    //     // leveledUp = false;
+    //     // SDL_ResetKeyboard();
+    //     return;
+    // }
+    // direct = Room1;
     if (!pause) return;
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);

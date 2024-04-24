@@ -58,7 +58,7 @@ bool checkInside(SDL_Rect rect, Circle cir)
     return true;
 }
 
-void circleBounce(Circle object, Vector2f& direction, SDL_Rect boundingBox)
+bool circleBounce(Circle object, Vector2f& direction, SDL_Rect boundingBox)
 {
     bool collided{false};
     float lowX{-1}, highX{1}, lowY{-1}, highY{1};
@@ -82,9 +82,11 @@ void circleBounce(Circle object, Vector2f& direction, SDL_Rect boundingBox)
         lowY = 0;
         collided = true;
     }
-    if(!collided) return;
+    if(!collided) return false;
     do
     {
         direction = vectorNormalize({randomFloat(lowX, highX), randomFloat(lowY, highY)});
     }while(direction.x == 0 && direction.y == 0);
+    
+    return true;
 }

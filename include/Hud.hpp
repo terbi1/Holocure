@@ -17,7 +17,6 @@ struct HUD
 {
     HUD();
     ~HUD();
-    LTexture expBar[2];
     LTexture hp[2];
     LTexture specialSymbol;
     LTexture specialBar[4];
@@ -39,7 +38,7 @@ struct HUD
     std::string gameOverText {"GAME OVER"};
     void initHUD(SDL_Renderer *renderer, int health);
     void update(Player player, int expForNextLevel, float specialCD);
-    void render(SDL_Renderer *renderer, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons);
+    void render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledUp, bool isOver, const std::vector<Weapon>& weapons);
     LTimer HUD_Timer;
     TTF_Font *HUD_font = NULL;
     Uint32 minute;
@@ -55,5 +54,5 @@ struct HUD
     int currentButton{0};
     int count{0};
     void handleEvents(bool &isRunning, bool &leveledUp, Tabs& direct, int &choice);
-    Tabs_LevelUp tabs_levelup;
+    // Tabs_LevelUp tabs_levelup;
 };

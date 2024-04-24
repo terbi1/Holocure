@@ -9,6 +9,26 @@ Player::Player()
 {
 }
 
+void Player::setPlayer(Character ID)
+{
+    playerID = ID;
+    switch((int)ID)
+    {
+        case Suisei:
+        atk = 130;
+        SPEED = 1.3;
+        maxHP = health = 70;
+        specialCD = 65;
+        return;
+        case Risu:
+        atk = 110;
+        SPEED = 1.5;
+        maxHP = health = 60;
+        specialCD = 15;
+        return;
+    }
+}
+
 void Player::handleEvent()
 {
     velocity.x = velocity.y = 0;
@@ -69,7 +89,7 @@ void Player::update(float timeStep)
     if (timePassed <= 0)
     {
         currentFrame = (currentFrame + 1) % (int)state;
-        timePassed = 0.1;
+        timePassed = 0.2;
     }
 }
 
@@ -82,10 +102,10 @@ void Player::render(SDL_Renderer *renderer, int frame, int camX, int camY)
     switch ((int)state)
     {
     case IDLE:
-        textureID = IdleAnimation_Suisei[frame];
+        textureID = IdleAnimation[playerID][frame];
         break;
     case RUN:
-        textureID = RunAnimation_Suisei[frame];
+        textureID = RunAnimation[playerID][frame];
         break;
     }
     SDL_QueryTexture(ResourceManager::getInstance().getTexture(textureID, renderer), NULL, NULL, &dst.w, &dst.h);

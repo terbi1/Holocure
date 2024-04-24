@@ -16,10 +16,7 @@
 #include "ResourceManager.hpp"
 #include "Data.hpp"
 #include "Structure.hpp"
-#include "RenderWindow.hpp"
 #include "Hud.hpp"
-
-const int chunkSize = 16;
 
 bool isOutsideOfView(Circle object, int camX, int camY);
 
@@ -27,8 +24,6 @@ class GameStates
 {
 private:
     std::unordered_map<WEAPON_ID, int> optionPool;
-    std::vector<WEAPON_ID> optionKey;
-    std::vector<int> optionLevel;
     int shakeStrength{1};
     int shakeTime{0};
     TTF_Font *DMG_font = NULL;
@@ -38,8 +33,8 @@ private:
     int time;
     Tabs direct{Room1};
     bool isOver{false};
+    bool isWon{false};
     bool recordScore;
-    bool leveledUp{false};
     Vector2f moved;
     Player player;
     HUD playerHUD;
@@ -51,7 +46,6 @@ private:
     std::vector<DamagingArea> activeAttack;
     std::vector<DamagingArea> bossAttack;
     std::unordered_set<ENEMY_TYPE> spawnPool;
-    // std::vector<ENEMY_TYPE> bosses; 
     std::vector<DamageNumber> dmgNumbers;
     int MAX_WEAPON{6};
     float spawnCooldown{200};
@@ -79,8 +73,12 @@ public:
     void handleEvent();
     void startCD();
     bool gameOver();
+    bool leveledUp{false};
+    std::vector<WEAPON_ID> optionKey;
+    std::vector<int> optionLevel;
     float specialCD{0};
     int EnemyCount{0};
+    Character ID = None;
     Player getPlayer() {
         return player;
     }

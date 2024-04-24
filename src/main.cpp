@@ -18,7 +18,6 @@ int main(int argc, char *args[])
 
     while (game.running())
     {
-        // time stepping
         float deltaTime = utils::hireTimeInSeconds() - currentTime;
         currentTime += deltaTime;
         accumulator += deltaTime;
