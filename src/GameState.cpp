@@ -94,6 +94,12 @@ void GameStates::start()
         weapons.push_back(Weapon(NUTS));
         optionPool[NUTS] = 2;
         break;
+        case Ayame:
+        weapons.push_back(Weapon(SPIRIT));
+        weapons.push_back(Weapon(DUAL_KATANA));
+        weapons.push_back(Weapon(SPIRIT_FIRE));
+        optionPool[DUAL_KATANA] = 2;
+        break;
     }
     // weapons.push_back(Weapon(X_POTATO));
     reqNextLevel = 79;
@@ -227,7 +233,9 @@ void GameStates::checkWeaponLimit()
     int weaponCount = (int)weapons.size();
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        if (it->ID == FUBU_BEAM || it->ID == BIG_NUT || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
+        // if (it->ID == FUBU_BEAM || it->ID == BIG_NUT || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
+        //     --weaponCount;
+        if(Exception.find(it->ID) != Exception.end())
             --weaponCount;
     }
     if (weaponCount < MAX_WEAPON)
@@ -323,6 +331,12 @@ void GameStates::update(float timeStep, bool &shake)
     {
         if (it->health > 0)
             continue;
+
+        if(it->atk == -1)
+        {
+            weapons[2].initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, 0, it->collider.center);
+            activeAttack.push_back(weapons[2].dmgArea);
+        }
         dropItems.push_back(ExpDrop(it->expValue, it->collider.center));
         if (it->type == FUBUZILLA)
         {
@@ -445,13 +459,7 @@ void GameStates::update(float timeStep, bool &shake)
     // initiate attacks
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        // if (it->specialDuration[1] <= 0)
-        // {
-        //     it->specialDuration[1] = it->specialDuration[0];
-        //     weapons.erase(it);
-        //     --it;
-        //     continue;
-        // }
+        
         if(it->ID == BULLET3 || it->ID == BULLET4)
         {
             if(it->ID != enemies[bossIndex].attack)
@@ -466,6 +474,8 @@ void GameStates::update(float timeStep, bool &shake)
 
         while(it->count < it->dmgArea.attackCount && it->timePassed >= it->dmgArea.attackDelay)
         {
+            if(it->ID == SPIRIT) weapons[1].setAttackInterval(1.67 / 5);
+
             Vector2f temp1{0, 0};
             if (it->ID == CEO_TEARS)
             {
@@ -540,15 +550,6 @@ void GameStates::update(float timeStep, bool &shake)
         }
     }
 
-    // for (auto it = weapons.begin(); it != weapons.end(); ++it)
-    // {
-    //     if ((it->ID == BULLET1 && enemies[bossIndex].specialDuration[0] <= 0) || it->ID == BULLET2 || ((it->ID == BULLET4 || it->ID == BULLET3) && enemies[bossIndex].specialCD[3] <= 0))
-    //     {
-    //         weapons.erase(it);
-    //         --it;
-    //     }
-    // }
-
     // active attacks
     for (auto it = activeAttack.begin(); it != activeAttack.end(); ++it)
     {
@@ -557,6 +558,7 @@ void GameStates::update(float timeStep, bool &shake)
 
         if (!it->isActive)
         {
+            if(it->weaponID == SPIRIT) weapons[1].setAttackInterval(1.67);
             activeAttack.erase(it);
             --it;
             continue;
@@ -578,6 +580,10 @@ void GameStates::update(float timeStep, bool &shake)
                 it2->getKnockedBack(vectorNormalize(it2->collider.center - player.collider.center), it->knockbackTime, it->knockbackSpeed);
                 it2->takeDamage(damageCal(*it, player));
                 dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
+                if(it2->health <= 0 && it->weaponID == DUAL_KATANA && weapons[1].level == 7)
+                {
+                    it2->atk = -1;
+                }
             }
             if (it->hitLimit == 0)
             {
@@ -588,6 +594,17 @@ void GameStates::update(float timeStep, bool &shake)
 
         }
     }
+
+    // if(weapons[1].ID == DUAL_KATANA)
+    // {
+    //     for (auto it = enemies.begin(); it != enemies.end(); ++it)
+    //     {
+    //         if(it->health == 0)
+    //         {
+    //             weapons[1].initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, 0, it->collider.center);
+    //         }
+    //     }
+    // }
 
     for (auto it = bossAttack.begin(); it != bossAttack.end(); ++it)
     {
@@ -696,7 +713,7 @@ void GameStates::update(float timeStep, bool &shake)
 void GameStates::render(SDL_Renderer *renderer, bool shake)
 {
     int shakeX{0}, shakeY{0};
-    if (shake)
+    if (shake && !pause)
     {
         shakeX = rand() % 10;
         shakeY = rand() % 10;
@@ -776,7 +793,6 @@ void GameStates::handleEvent()
     }
     else if (currentKeyStates[SDL_SCANCODE_X] && specialCD <= 0)
     {
-        // weapons.push_back(Weapon(FALLING_BLOCKS));
         specialCD = player.specialCD;
         weapons.front().count = 0;
     }

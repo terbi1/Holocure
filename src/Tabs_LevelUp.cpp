@@ -84,6 +84,14 @@ void Tabs_LevelUp::getResource(std::vector<WEAPON_ID> optionType, std::vector<in
                 else
                     iconTexture[i] = SuiseiWeapon_Icon[0];
                 break;
+            case DUAL_KATANA:
+                optionName[i] = "Dual Katana LV " + std::to_string(optionLevel[i]);
+                upgrade[i].setText(AyameWeaponDescription[optionLevel[i] - 1]);
+                if (optionLevel[i] == 7)
+                    iconTexture[i] = AyameWeapon_Icon[1];
+                else
+                    iconTexture[i] = AyameWeapon_Icon[0];
+                break;
             case NUTS:
                 optionName[i] = "Nuts LV " + std::to_string(optionLevel[i]);
                 upgrade[i].setText(RisuWeaponDescription[optionLevel[i] - 1]);

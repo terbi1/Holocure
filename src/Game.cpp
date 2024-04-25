@@ -145,7 +145,7 @@ void Game::update(float timeStep)
 	{
 	case Title:
 	case Character_Select:
-		tabs_characterSelect.update();
+		tabs_characterSelect.update(timeStep);
 		break;
 	case Room1:
 		// playerHUD.HUD_Timer.unpause();

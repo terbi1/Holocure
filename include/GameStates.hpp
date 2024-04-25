@@ -50,6 +50,7 @@ private:
     int MAX_WEAPON{6};
     float spawnCooldown{200};
     float spawnRate;
+    bool endless{false};
     bool boss {false};
     bool finalBoss{false};
     int bossIndex{0};

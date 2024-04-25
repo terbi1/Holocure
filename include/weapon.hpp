@@ -18,6 +18,8 @@ enum WEAPON_ID {
     NONE,
     AXE,
     NUTS,
+    DUAL_KATANA,
+    SPIRIT_FIRE,
     SPIDER_COOKING,
     X_POTATO,
     POTATO_EXPLOSION,
@@ -30,6 +32,7 @@ enum WEAPON_ID {
     CUTTING_BOARD,
     FALLING_BLOCKS,
     BIG_NUT,
+    SPIRIT,
     ATK_UP,
     SPD_UP,
     HP_UP,
@@ -41,7 +44,7 @@ enum WEAPON_ID {
     BULLET4
 };
 
-const std::unordered_set<WEAPON_ID> Exception = {FUBU_BEAM, FALLING_BLOCKS, BIG_NUT, BULLET1, BULLET2, BULLET3, BULLET4};
+const std::unordered_set<WEAPON_ID> Exception = {FUBU_BEAM, FALLING_BLOCKS, BIG_NUT, SPIRIT, SPIRIT_FIRE, BULLET1, BULLET2, BULLET3, BULLET4};
 
 struct DamagingArea
 {
@@ -58,7 +61,7 @@ struct DamagingArea
     Vector2f direction;
     Vector2f size;
     float projectileSpeed;
-    int hitLimit;
+    int hitLimit{-1};
     float knockbackSpeed{0};
     float knockbackTime{0};
     std::unordered_map<int, float> hitID;
