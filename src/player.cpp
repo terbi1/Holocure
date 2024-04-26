@@ -18,13 +18,19 @@ void Player::setPlayer(Character ID)
         atk = 130;
         SPEED = 1.3;
         maxHP = health = 70;
-        specialCD = 65;
+        specialCD = 40;
         return;
         case Risu:
         atk = 110;
         SPEED = 1.5;
         maxHP = health = 60;
-        specialCD = 15;
+        specialCD = 30;
+        return;
+        case Ayame:
+        atk = 130;
+        SPEED = 1.3;
+        maxHP = health = 60;
+        specialCD = 35;
         return;
     }
 }

@@ -30,7 +30,8 @@ enum ENEMY_TYPE {
     HOSHIYOMI,
     SORATOMO,
     FUBUZILLA,
-    A_CHAN
+    A_CHAN,
+    YAGOO
 };
 
 class Enemy

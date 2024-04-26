@@ -112,13 +112,15 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
     levelLabel.x = 55.5f;
     for(int i = 0; i < (int)weapons.size(); ++i)
     {
-        if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == BIG_NUT || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
+        // if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == BIG_NUT || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
+        if(Exception.find(weapons[i].ID) != Exception.end()) continue;
         std::string icon;
         weaponRect.x += 37.5f;
         switch ((int)weapons[i].ID)
         {
         case AXE: icon = SuiseiWeapon_Icon[weapons[i].level / 7]; break;
         case NUTS: icon = RisuWeapon_Icon[weapons[i].level / 7]; break;
+        case DUAL_KATANA: icon = AyameWeapon_Icon[weapons[i].level / 7]; break;
         case PSYCHO_AXE: icon = PsychoAxe_Icon; break;
         case SPIDER_COOKING: icon = SpiderCooking_Icon; break;
         case BL_BOOK: icon = BLBook_Icon; break;

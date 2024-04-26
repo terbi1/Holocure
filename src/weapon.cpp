@@ -42,6 +42,17 @@ void DamagingArea::update(float timeStep, Vector2f player_center, SDL_Rect camer
                 bounce = false;
             }
             break;
+        case DUAL_KATANA:
+        {
+            center = player_center + Vector2f{size.x * cosf(angle / 180.0f * M_PI), size.y * sinf(angle / 180.0f * M_PI)};
+            
+            break;
+        }
+        case SPIRIT_FIRE:
+        {
+            circularMotion(center, rotatingCenter, -0.01 * projectileSpeed);
+            break;
+        }
         case CEO_TEARS:
             center += direction * projectileSpeed;
             break;
@@ -107,6 +118,19 @@ void DamagingArea::update(float timeStep, Vector2f player_center, SDL_Rect camer
             if(duration <= 0.27 && !isExploded) explode();
             break;
         }
+        case SPIRIT:
+            center = player_center;
+            if(fallTime > 0)
+            {
+                fallTime -= timeStep;
+                if(fallTime <= 0)
+                {
+                    explode();
+                    shake = true;
+                    shakeTime = 30;
+                }
+            }
+            break;
         case CUTTING_BOARD:
         {
             if (fallTime > 0)
@@ -183,6 +207,37 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
             return false;
         }
         break;
+    }
+    case DUAL_KATANA:
+    {
+        Vector2f temp{size.x / 2, size.y / 2};
+
+            switch ((int)angle % 360)
+            {
+            case 45:
+                temp += {-size.x, -size.y};
+                break;
+            case 225:
+                break;
+            case 315:
+                temp.x += -size.x;
+                // dst.x -= size.x;
+                break;
+            case 135:
+                temp.y += -size.y;
+                // dst.y -= size.y;
+                break;
+            }
+        if(!checkCircleCollision({center + temp, size.y / 2}, enemyCollider))
+        return false;
+
+        break;
+    }
+    case SPIRIT_FIRE:
+    {
+        if(!checkAABBCircleCollision({(int)(center.x - size.x / 2), (int)(center.y - size.y / 2), (int)size.x, (int)size.y}, enemyCollider)) return false;
+
+        return true;
     }
     case SPIDER_COOKING:
     {
@@ -348,6 +403,14 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
         }
         break;
     }
+    case SPIRIT:
+    {
+        if(!isExploded) return false;
+
+        if(!checkAABBCircleCollision({(int)center.x - SCREEN_WIDTH/2, (int)center.y - SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT}, enemyCollider)) return false;
+        
+        return true;
+    }
     case CUTTING_BOARD:
     {
         SDL_Rect hitBox;
@@ -394,6 +457,14 @@ void DamagingArea::explode()
         frames = 8;
         textureID = Explosion;
         return;
+        case SPIRIT:
+        isExploded = true;
+        damage = 1000;
+        hitLimit = -1;
+        size = {SCREEN_WIDTH, SCREEN_HEIGHT};
+        frames = 8;
+        textureID = "res/gfx/spr_AyameSpiritSlash/spr_AyameSpiritSlash.png";
+        return;
     }
 }
 
@@ -436,6 +507,44 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         ResourceManager::getInstance().Draw((int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 - camY), (int)size.x, (int)size.y);
         ResourceManager::getInstance().PlayFrame(0, 0, 0, 0, 0);
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
+        return;
+    }
+    case DUAL_KATANA:
+    {
+        SDL_Rect dst;
+        dst.w = size.x;
+        dst.h = size.y;
+        dst.x = center.x - camX;
+        dst.y = center.y - camY;
+
+            switch ((int)angle % 360)
+            {
+            case 45:
+                dst.x -= dst.w;
+                dst.y -= dst.h;
+                break;
+            case 225:
+                break;
+            case 315:
+                dst.x -= dst.w;
+                break;
+            case 135:
+                dst.y -= dst.h;
+                break;
+            }
+        
+        ResourceManager::getInstance().Draw(dst.x, dst.y, dst.w, dst.h);
+        ResourceManager::getInstance().PlayFrame(0, 0, 150, 143, currentFrame);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, angle);
+        SDL_SetRenderDrawColor(renderer, 255, 0,0,255);
+        SDL_RenderDrawPoint(renderer, dst.x + dst.w / 2, dst.y + dst.h / 2);
+        return;
+    }
+    case SPIRIT_FIRE:
+    {
+        ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
+        ResourceManager::getInstance().PlayFrame(0, 0, 26, 45, currentFrame);
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
     case SPIDER_COOKING:
@@ -572,6 +681,21 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
         ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
         return;
     }
+    case SPIRIT:
+    {
+        ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x , size.y );
+        if(isExploded)
+        {
+            ResourceManager::getInstance().PlayFrame(0, 0, 640, 360, currentFrame);
+            
+        }
+        else
+        {ResourceManager::getInstance().PlayFrame(0, 0, 484, 352, currentFrame);
+        SDL_SetTextureAlphaMod(ResourceManager::getInstance().getTexture(textureID, renderer), 150);}
+
+        ResourceManager::getInstance().Render(textureID, renderer, SDL_FLIP_NONE, 0);
+        return;
+    }
     case CUTTING_BOARD:
     {
         SDL_Rect dst;
@@ -648,6 +772,35 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frames = 5;
         dmgArea.size = {107, 144};
         dmgArea.textureID = "res/gfx/spr_SuiseiAxeSwing/spr_SuiseiAxeSwing2.png";
+        break;
+    }
+    case DUAL_KATANA:
+    {
+        dmgArea.duration = 0.25;
+        timeBetweenAttacks = 1.67;
+        dmgArea.hitLimit = -1;
+        dmgArea.damage = 120;
+        dmgArea.hitCooldown = 0.5;
+        dmgArea.attackCount = 2;
+        dmgArea.attackDelay = 0.08;
+        dmgArea.frames = 8;
+        dmgArea.size = {150 * 1.5, 143 * 1.5};
+        dmgArea.textureID = "res/gfx/spr_AyameSlash/spr_AyameSlash.png";
+        break;
+    }
+    case SPIRIT_FIRE:
+    {
+        dmgArea.duration = 3;
+        timeBetweenAttacks = 1e9;
+        dmgArea.hitLimit = -1;
+        dmgArea.damage = 432;
+        dmgArea.hitCooldown = 0.75;
+        dmgArea.attackCount = 1;
+        dmgArea.projectileSpeed = 3;
+        dmgArea.frames = 3;
+        dmgArea.size = {26 * 2, 45 * 2};
+        dmgArea.textureID = "res/gfx/spr_AyameSpiritFire/spr_AyameSpiritFire.png";
+        cooldown = timeBetweenAttacks;
         break;
     }
     case NUTS:
@@ -731,7 +884,7 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.frames = 7;
         dmgArea.radius = 100;
         dmgArea.size = {46, 46};
-        dmgArea.textureID = "res/gfx/spr_PsychoAxe/spr_PsychoAxe.png";
+        dmgArea.textureID = PsychoAxe_Animation;
         break;
     }
     case IDOL_SONG:
@@ -769,7 +922,19 @@ Weapon::Weapon(WEAPON_ID type)
         dmgArea.hitCooldown = 2;
         dmgArea.duration = 2;
         dmgArea.frames = 0;
-        dmgArea.textureID = "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks.png";
+        dmgArea.textureID = SuiseiFallingBlocks;
+        cooldown = timeBetweenAttacks;
+        break;
+    }
+    case SPIRIT:
+    {
+        dmgArea.damage = 0;
+        timeBetweenAttacks = 1e9;
+        dmgArea.duration = 4.24;
+        dmgArea.fallTime = 4;
+        dmgArea.frames = 5;
+        dmgArea.size = {484 * 2, 352 * 2};
+        dmgArea.textureID = "res/gfx/spr_AyameSpirit/spr_AyameSpirit.png";
         cooldown = timeBetweenAttacks;
         break;
     }
@@ -930,6 +1095,21 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
                 // dmgArea.flip = player.flip;
                 break;
             }
+            case DUAL_KATANA:
+            {
+                dmgArea.angle = playerArrowAngle + (count % 2 == 0 ? 1:-1) * 45 + 180 * (count / 2);
+                while(dmgArea.angle < 0) dmgArea.angle += 360;
+                dmgArea.center = playerCenter + Vector2f{dmgArea.size.x * cosf(dmgArea.angle / 180.0f * M_PI), dmgArea.size.y * sinf(dmgArea.angle / 180.0f * M_PI)};
+                dmgArea.count = count;
+                dmgArea.textureID = DualKatana_Animation[std::max(count % 2, level / 7 * 2)];
+                break;
+            }
+            case SPIRIT_FIRE:
+            {
+                dmgArea.center = direction;
+                dmgArea.rotatingCenter = playerCenter;
+                break;
+            }
             case NUTS:
             {
                 dmgArea.center = playerCenter;
@@ -1002,6 +1182,11 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
                 dmgArea.center = Vector2f{(float)(count % 2 == 0 ? -1:1) * 78 * 2, -SCREEN_HEIGHT / 2} + playerCenter;
                 dmgArea.fallTime = count * 0.05;
                 // dmgArea.count = rand() % 12;
+                break;
+            }
+            case SPIRIT:
+            {
+                dmgArea.center = playerCenter;
                 break;
             }
             case CUTTING_BOARD:

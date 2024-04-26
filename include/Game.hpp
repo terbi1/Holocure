@@ -13,6 +13,7 @@
 #include "Tabs_LevelUp.hpp"
 #include "Tabs_End.hpp"
 #include "Tabs_CharacterSelect.hpp"
+#include "Tabs_ModeSelect.hpp"
 
 class Game {
 
@@ -43,6 +44,7 @@ private:
     Tabs_CharacterSelect tabs_characterSelect;
     Tabs_Room1 tabs_room1;
     Tabs_LevelUp tabs_levelup;
+    Tabs_ModeSelect tabs_modeselect;
     Tabs_End tabs_end;
     TTF_Font* font;
     Mix_Music* titleMusic = NULL;

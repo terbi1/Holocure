@@ -30,7 +30,7 @@ const std::string EmptyWeaponSlot{"res/gfx/ui_empty_slot_weapon.png"};
 #pragma region Player
 
 const std::string PlayerArrow{"res/gfx/spr_Arrow/spr_Arrow_0.png"};
-const std::string Player_Name[2]{"HOSHIMACHI SUISEI", "AYUNDA RISU"};
+const std::string Player_Name[3]{"HOSHIMACHI SUISEI", "AYUNDA RISU", "NAKIRI AYAME"};
 
 const std::string Portrait_Suisei{"res/gfx/character_sprites/spr_SuiseiPortrait.png"};
 const std::string Title_Suisei{"res/gfx/character_sprites/spr_Title_Suisei.png"};
@@ -44,25 +44,34 @@ const std::string IdleAnimation_Risu[4] = {"res/gfx/character_sprites/spr_Risu_i
 const std::string RunAnimation_Risu[6] = {"res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_0.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_1.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_2.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_3.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_4.png", "res/gfx/character_sprites/spr_Risu_run/spr_Risu_run_5.png"};
 const std::string RisuSpecial{"res/gfx/spr_RisuSpecial.png"};
 
-const std::string Special_Description[2]{"Summon a rain of falling blocks that deal 300% damage each for 5 seconds.", "Risu summons Big Nuts that slam down, dealing 400% damage to all targets around."};
+const std::string Portrait_Ayame{"res/gfx/character_sprites/spr_AyamePortrait.png"};
+const std::string Title_Ayame{"res/gfx/character_sprites/spr_Title_Ayame.png"};
+const std::string IdleAnimation_Ayame[4] = {"res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_0.png", "res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_1.png", "res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_2.png", "res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_3.png"};
+const std::string RunAnimation_Ayame[6] = {"res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_0.png", "res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_1.png", "res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_2.png", "res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_3.png", "res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_4.png", "res/gfx/character_sprites/spr_Ayame_run/spr_Ayame_run_5.png"};
+const std::string AyameSpecial{"res/gfx/spr_AyameSpecial.png"};
 
-const std::string Weapon_Description[2]{"Swing a bloody axe in an arc in front.","Throws several nuts in front."};
+const std::string Special_Name[3]{"Summon Blocks", "Big Nuts", "Spirit of the Oni"};
+const std::string Special_Description[3]{"Summon a rain of falling blocks that deal 300% damage each for 5 seconds.", "Risu summons Big Nuts that slam down, dealing 400% damage to all targets around.", "Increase the attack speed of Dual Katana by 200%. After 4 seconds, the spirit slashes the screen, dealing 1000% damage to all targets."};
 
-static const std::string* IdleAnimation[2] = {IdleAnimation_Suisei, IdleAnimation_Risu};
-static const std::string* RunAnimation[2] = {RunAnimation_Suisei, RunAnimation_Risu};
-static const std::string Portrait[2] = {Portrait_Suisei, Portrait_Risu};
-static const std::string Title_Portrait[2] = {Title_Suisei, Title_Risu};
-static const std::string SpecialIcon[2] = {SuiseiSpecial, RisuSpecial};
+const std::string Weapon_Name[3]{"Axe Swing", "Nuts", "Dual Katana"};
+const std::string Weapon_Description[3]{"Swing a bloody axe in an arc in front.","Throws several nuts in front.", "Slashes twice in front."};
+
+static const std::string* IdleAnimation[3] = {IdleAnimation_Suisei, IdleAnimation_Risu, IdleAnimation_Ayame};
+static const std::string* RunAnimation[3] = {RunAnimation_Suisei, RunAnimation_Risu, RunAnimation_Ayame};
+static const std::string Portrait[3] = {Portrait_Suisei, Portrait_Risu, Portrait_Ayame};
+static const std::string Title_Portrait[3] = {Title_Suisei, Title_Risu, Title_Ayame};
+static const std::string SpecialIcon[3] = {SuiseiSpecial, RisuSpecial, AyameSpecial};
 
 #pragma endregion
 
 #pragma region WeaponSprite
 
+const std::string DualKatana_Animation[3]{"res/gfx/spr_AyameSlash/spr_AyameSlash.png", "res/gfx/spr_AyameSlash2/spr_AyameSlash2.png", "res/gfx/spr_AyameOniSlash/spr_AyameOniSlash.png"};
 const std::string FanBeam_Animation[10] = {"res/gfx/spr_HoloBeam/spr_HoloBeam_0.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_1.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_2.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_3.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_4.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_5.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_6.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_7.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_8.png", "res/gfx/spr_HoloBeam/spr_HoloBeam_9.png"};
 const std::string FanBeam_Icon{"res/gfx/spr_HoloBeamIcon.png"};
 const std::string BLBook_Animation = {"res/gfx/spr_BLBook.png"};
 const std::string BLBook_Icon{"res/gfx/spr_BLBookIcon.png"};
-const std::string PsychoAxe_Animation[8] = {"res/gfx/spr_PsychoAxe/spr_PsychoAxe_0.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_1.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_2.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_3.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_4.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_5.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_6.png", "res/gfx/spr_PsychoAxe/spr_PsychoAxe_7.png"};
+const std::string PsychoAxe_Animation{"res/gfx/spr_PsychoAxe/spr_PsychoAxe.png"};
 const std::string PsychoAxe_Icon{"res/gfx/spr_PsychoAxeIcon.png"};
 const std::string IdolSong_Animation = {"res/gfx/spr_MusicalNote/spr_MusicalNote_0.png"};
 const std::string IdolSong_Icon = {"res/gfx/spr_MusicNoteIcon.png"};
@@ -71,7 +80,7 @@ const std::string LavaPoolStart_Animation[9] = {"res/gfx/spr_LavaPoolStart/spr_L
 const std::string LavaPool = {"res/gfx/spr_LavaPoolLoop/spr_LavaPoolLoop_0.png"};
 const std::string LavaPoolEnd_Animation[6] = {"res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_0.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_1.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_2.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_3.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_4.png","res/gfx/spr_LavaPoolEnd/spr_LavaPoolEnd_5.png"};
 const std::string LavaPool_Icon {"res/gfx/spr_elitelava.png"};
-const std::string SuiseiFallingBlocks[12]{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_0.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_1.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_2.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_3.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_4.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_5.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_6.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_7.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_8.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_9.png", "res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_10.png","res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks_11.png"};
+const std::string SuiseiFallingBlocks{"res/gfx/spr_SuiseiFallingBlocks/spr_SuiseiFallingBlocks.png"};
 const std::string RisuBigNut{"res/gfx/spr_RisuBigNut/spr_RisuBigNut.png"};
 const std::string Explosion{"res/gfx/spr_Explosion/spr_Explosion.png"};
 const std::string CuttingBoard_Animation{"res/gfx/spr_CuttingBoard.png"};
@@ -84,6 +93,7 @@ const std::string BulletRed_Animation[2]{"res/gfx/spr_AChan_bullet2/spr_AChan_bu
 const std::string BulletYellow_Animation[2]{"res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_0.png", "res/gfx/spr_AChan_bullet3/spr_AChan_bullet3_1.png"};
 const std::string SuiseiWeapon_Icon[2]{"res/gfx/spr_SuiseiWeapon.png","res/gfx/spr_SuiseiMaxedWeapon.png"};
 const std::string RisuWeapon_Icon[2]{"res/gfx/spr_RisuWeapon.png","res/gfx/spr_RisuMaxedWeapon.png"};
+const std::string AyameWeapon_Icon[2]{"res/gfx/spr_AyameWeapon.png","res/gfx/spr_AyameMaxedWeapon.png"};
 const std::string SpiderCooking_Icon{"res/gfx/spr_SpiderCookingIcon.png"};
 const std::string CEOTears_Icon{"res/gfx/spr_CEOTearsIcon.png"};
 const std::string CuttingBoard_Icon{"res/gfx/spr_CuttingBoardIcon.png"};
@@ -92,7 +102,7 @@ const std::string XPotato_Icon{"res/gfx/spr_XPotatoIcon.png"};
 const std::string MaxHPUp_Icon{"res/gfx/spr_maxhpUp.png"};
 const std::string SpeedUp_Icon{"res/gfx/spr_movementUp.png"};
 const std::string HPRecover_Icon{"res/gfx/spr_ach_hamburgers.png"};
-static const std::string WeaponIcon[2] = {SuiseiWeapon_Icon[0], RisuWeapon_Icon[0]};
+static const std::string WeaponIcon[3] = {SuiseiWeapon_Icon[0], RisuWeapon_Icon[0], AyameWeapon_Icon[0]};
 
 #pragma endregion
 
@@ -100,8 +110,10 @@ static const std::string WeaponIcon[2] = {SuiseiWeapon_Icon[0], RisuWeapon_Icon[
 
 const std::string SuiseiWeaponDescription[7]{"Swing a bloody axe in an arc in front.","Increase damage by 30%.","Increase attack area by 20%.", "Reduce time between attacks by 10%.", "Increase damage by 30%.", "Increase attack area by 20%.", "Deal 3x damage"};
 const std::string RisuWeaponDescription[7]{"Throws several nuts in front.", "Increase damage by 20%.", "1 more Nut.", "Reduce time between attacks by 15%.", "1 more Nut.", "Increase damage by 20% and speed of Nuts by by 50%.", "Increase attack size by by 30%. Nuts bounce once when hitting the edge of the screen."};
+const std::string AyameWeaponDescription[7]{"Slashes twice in front.","Increase damage by 20%.","Increase size by 10%.","Reduce time between attacks by 15%.","Slashes twice behind.","Increase damage by 20%.","If a slash defeats a target, there is a 40% chance for the defeated enemy to turn into a Spirit that flies outwards, damaging targets in its path."};
+
 const std::string SpiderCookingDescription[7]{"Create an area of miasma around, dealing slow damage to enemies inside.", "Increase area by 15%.", "Increase damage by 30%.", "Increase area by 25%.", "Increase frequency of hits by 20%.", "Increase damage by 60%.", "Add small knockback on hit"};
-const std::string EliteLavaDescription[7]{"Drop lava on the ground, burning targets slowly.", "Increase lava area by 20%.", "Throw 2 lava buckets.", "Increase damage by 30%% and increase duration of lava by 1 second.", "Increase damage by 30%.", "Throw 3 lava buckets.", "Throw 4 lava buckets and increase lava size by 20%."};
+const std::string EliteLavaDescription[7]{"Drop lava on the ground, burning targets slowly.", "Increase lava area by 20%.", "Throw 2 lava buckets.", "Increase damage by 30% and increase duration of lava by 1 second.", "Increase damage by 30%.", "Throw 3 lava buckets.", "Throw 4 lava buckets and increase lava size by 20%."};
 const std::string PsychoAxeDescription[7]{"Throw an axe that spirals outward from the player.", "Increase size of axe by 20%. Increase damage by 20%.", "Reduce time between attacks by 20%.", "Increase damage by 33%, and size by 20%.", "Remove hit limit, and lasts 1 second longer.", "Increase attack size by 50%.", "Increase damage by 50%."};
 const std::string BLBookDescription[7]{"Repels targets with orbiting BL Books.", "Add 1 additional book.", "Increase damage by 30% and increase duration by 1 second.", "Add 1 additional book.", "Increase radius and spinning speed by 25%.", "Add 1 additional book.", "Increase damage by 40%."};
 const std::string IdolSongDescription[7]{"Magical music notes that float vertically in both directions.", "Increase damage by 25%.", "Increase speed and travel width.", "Increase music note size by 25%.", "Reduce the time between attacks by 20%.", "Increase music note size by 25%.", "Increase damage by 50%."};
@@ -151,12 +163,14 @@ enum Tabs
     Pause,
     Level_Up,
     End,
-    Character_Select
+    Character_Select,
+    Mode_Select
 };
 
 enum Character
 {
     None = - 1,
     Suisei,
-    Risu
+    Risu,
+    Ayame
 };

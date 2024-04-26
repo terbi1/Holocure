@@ -74,6 +74,7 @@ public:
     void startCD();
     bool gameOver();
     bool leveledUp{false};
+    bool endless{false};
     std::vector<WEAPON_ID> optionKey;
     std::vector<int> optionLevel;
     float specialCD{0};

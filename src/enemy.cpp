@@ -130,6 +130,16 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
         frames = 3;
         break;
     }
+    case YAGOO:
+    {
+        health = 2000;
+        atk = 5;
+        speed = 1.0;
+        expValue = 10;
+        collider.radius = 64;
+        frames = 0;
+        break;
+    }
     }
 }
 
@@ -257,6 +267,9 @@ void Enemy::render(SDL_Renderer *renderer, int frame, int camX, int camY)
         currentTexture = Soratomo_Animation[frame];
         multiplier = 1.5;
         break;
+    case YAGOO:
+        currentTexture = "res/gfx/testEnemy.png";
+        multiplier = 2;
     }
 
     SDL_Rect dst;
