@@ -4,7 +4,6 @@
 #include <SDL2/SDL_image.h>
 
 #include "math.hpp"
-#include "RenderWindow.hpp"
 #include "Structure.hpp"
 #include "ResourceManager.hpp"
 #include "Data.hpp"

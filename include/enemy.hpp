@@ -8,7 +8,6 @@
 #include <string>
 
 #include "math.hpp"
-#include "RenderWindow.hpp"
 #include "Data.hpp"
 #include "Structure.hpp"
 #include "ResourceManager.hpp"
