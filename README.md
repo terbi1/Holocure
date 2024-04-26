@@ -1,5 +1,3 @@
-[[English]](README_en.md)
-
 # Holocure but made in C++
 
 - Demo game: https://youtu.be/E1_W9Wdg1-E
@@ -13,7 +11,7 @@ Holocure là một game thuộc thể loại survivor (tương tự Vampire Surv
 ## a. Cách 1: Không bao gồm code.
 
 Tải game (được nén thành .zip) tại link
-sau: https://github.com/nmhienbn/PVZ-Kaito-NMH-Edition/releases/tag/published<br/>
+sau: https://github.com/terbi1/Holocure/releases/tag/publish<br/>
 Giải nén game vào một thư mục và bật main.exe lên và chơi.<br/>
 
 ## b. Cách 2: Bao gồm code và có thể biên dịch.
