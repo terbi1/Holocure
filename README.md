@@ -99,68 +99,39 @@ Thời điểm hiện tại game có 2 chế độ chơi: Stage Mode và Endless
 - Portrait: hình chân dung ở góc trái bên trên màn hình thay đổi tùy thuộc vào nhân vật mà người chơi chọn.
 - Special Bar: thanh biểu thị thời gian hồi của chiêu đặc biệt. Người chơi sử dụng được chiêu đặc biệt bằng cách nhấn phím x khi thanh đầy.
 - Thanh vũ khí: liệt kê những vũ khí người chơi đang sở hữu và cấp độ của chúng.
+- Timer: Hiển thị thời gian chơi game
 
 <div style="text-align: center;">
 
 ![image](resources/preview/plant_seed.png)
 </div>
 
-- Shovel (Xẻng): Là vật dụng vô cùng hữu hiệu để bạn có thể đào đi những cây không cần thiết và thay vào đó cây mới.
+- Vũ khí: là thứ giúp bạn tiêu diệt quái vật qua màn. Hiện tại game có 3 vũ khí khởi đầu và 8 vũ khí chung.
 
 <div style="text-align: center;">
 
 ![image](resources/preview/shovel.png)
 </div>
 
-- Thanh tiến trình game (progress bar): Là thanh bạn có thể theo dõi để xem còn bao nhiêu zombie tiếp theo sẽ ra hay bạn
-  đã chơi được bao nhiêu phần của level. Bên trái sẽ là level hiện tại bạn đang chơi.
-
-<div style="text-align: center;">
-
-![image](resources/preview/progress_bar.png)
-</div>
-
-- Nút tua nhanh game (Turbo button): Nếu thấy game quá chậm hay quá dễ mà bạn cần tiết kiệm thời gian, hãy nhấn nút để
-  trải nghiệm game với tốc độ x2 tốc độ gốc.
-- Và nếu thấy game quá đáng sợ ở tốc độ này, hãy nhấn lại để game trở về tốc độ bình thường.
-  ● Game ở tốc độ ban đầu:  ![image](resources/preview/faster.png)
-
-● Game đang ở tốc độ nhanh gấp 2 ban đầu:  ![image](resources/preview/faster_triggered.png)
-
-- Nút dừng game (Pause Button): Bạn có việc cần dừng game để lúc sau chơi tiếp ư? Hay bạn muốn điều chỉnh âm lượng của
-  nhạc nền và hiệu ứng âm thanh? Quá đơn giản, game có thể dừng lại bằng cách click ![image](resources/preview/pause.png)  hoặc
-  click đâu đó bên ngoài game.
-- Máy cắt cỏ (Mower): Nếu bạn để zombie lại quá gần nhà, máy cắt cỏ sẽ tự động kích hoạt và tiêu diệt tất cả zombie hiện
-  tại đang ở hàng đó. Chú ý là mỗi hàng chỉ có một máy cắt cỏ thôi.
-
-<div style="text-align: center;">
-
-![image](resources/preview/mower.png)
-</div>
-
 - Bố cục game cơ bản:
 
 <div style="text-align: center;">
 
-![image](resources/preview/game.png)
+![image](resources/preview/PlayScreen.png)
 </div>
-
- 
 
 # 4. Cách chơi
 
-Trồng cây để tấn công và phòng thủ, không cho zombie bước vào nhà bạn.<br/>
-Để trồng cây, Chọn hạt giống của cây đó (bàn phím hoặc click chuột) rồi đặt vào ô muốn trồng. <br/>
-Có thể đào những cây đang sử dụng bằng xẻng.<br/>
-Cây sẽ bị zombie ăn mất.
+Điều khiển nhân vật sử dụng các nút mũi tên kết hợp với phím z (cố định hướng xoay của nhân vật) để tiêu diệt quái vật. <br/>
+Quái vật khi bị tiêu diệt sẽ đánh rơi kinh nghiệm hoặc đồ ăn. Thu thập kinh nghiệm để lên cấp lấy vũ khí và đồ ăn để hồi máu.
 
-## a. Các loại cây
+## a. Các nhân vật
 
-Có 6 loại cây, lần lượt theo thứ tự có thể nhận được trong game là:
+Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu thức khác nhau, bao gồm:
 
-|                                                                             | Tên cây	     | Chức năng                                                                                                                    |
-|-----------------------------------------------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------|
-| <img src="resources/images/Plant_sheet/peashooter/Peashooter.png" width=50>  | Peashooter	  | Mỗi lần bắn một đậu vào zombie.                                                                                              |
+|                                                                             | Tên nhân vật	     | Vũ khí khởi đầu   | Chiêu đặc biệt                                                                                                     |
+|-----------------------------------------------------------------------------|--------------|-----------------------------|-------------------------------------------------------------------------------------------------|
+| <img src="resources/Character/Peashooter.png" width=64>  | Peashooter	  | Mỗi lần bắn một đậu vào zombie.                                                                                              |
 | <img src="resources/images/Plant_sheet/sunflower/Sunflower.png" width=44>    | Sunflower	   | Tạo thêm mặt trời để trồng cây                                                                                               |
 | <img src="resources/images/Plant_sheet/walnut/Walnut.png" width=42>          | Wall-nut	    | Chịu được nhiều phát ăn của zombie để bảo vệ các cây khác.                                                                   |
 | <img src="resources/images/Plant_sheet/snowpea/SnowPea.png" width=52>        | Snow Pea	    | Mỗi lần bắn một đậu băng vào zombie. Đậu băng không tăng sát thương nhưng làm chậm tốc độ di chuyển và tốc độ ăn của zombie. |
