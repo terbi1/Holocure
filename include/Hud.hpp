@@ -46,7 +46,6 @@ struct HUD
     SDL_Rect portraitRectSRC{0, 0, 43, 24};
     SDL_Rect portraitRectDST{0, 40, 86, 48};
     SDL_Rect pauseRect{(int)(SCREEN_WIDTH / 2 - 128 * 1.5 / 2), (int)(SCREEN_HEIGHT / 2 - 245 * 1.5 / 2), (int)(128 * 1.5), (int)(245 * 1.5)};
-    // SDL_Rect overRect{SCREEN_WIDTH / 2 - 150, 100, 300, 50};
     SDL_FRect levelLabel{0,88, 32, 11};
     LTexture textureText;
     int totalButtons{2};
@@ -54,5 +53,4 @@ struct HUD
     int currentButton{0};
     int count{0};
     void handleEvents(bool &isRunning, bool &leveledUp, Tabs& direct, int &choice);
-    // Tabs_LevelUp tabs_levelup;
 };

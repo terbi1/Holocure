@@ -8,10 +8,6 @@
 #include "ResourceManager.hpp"
 #include "Data.hpp"
 
-// enum PLAYER_TYPE {
-//     SUISEI
-// };
-
 enum State {
     IDLE = 4,
     RUN = 6

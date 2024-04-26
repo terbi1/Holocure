@@ -7,7 +7,6 @@
 #include <algorithm>
 
 #include "physics.hpp"
-// #include "enemy.hpp"
 #include "math.hpp"
 #include "player.hpp"
 #include "AnimatedSprites.hpp"

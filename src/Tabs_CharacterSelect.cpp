@@ -41,7 +41,6 @@ void Tabs_CharacterSelect::update(float timeStep)
 
 void Tabs_CharacterSelect::setUp(SDL_Renderer *renderer)
 {
-    // CharacterSelectFont = TTF_OpenFont(font_8bitPLus.c_str(),12);
     character[0] = LButton{"", Vector2f{410, 226}, Vector2f{86, 76}, 2};
     character[1] = LButton{"", Vector2f{500, 226}, Vector2f{86, 76}, 2};
     character[2] = LButton{"", Vector2f{590, 226}, Vector2f{86, 76}, 2};

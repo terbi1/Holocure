@@ -31,7 +31,6 @@ void Tabs_End::update(bool isOver)
 
 void Tabs_End::handleEvents()
 {
-    // direct = End;
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
 
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER])

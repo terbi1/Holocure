@@ -22,7 +22,6 @@ void Tabs_ModeSelect::update(float timeStep)
 
 void Tabs_ModeSelect::setUp(SDL_Renderer *renderer)
 {
-    // CharacterSelectFont = TTF_OpenFont(font_8bitPLus.c_str(),12);
     mode[0] = LButton{"", Vector2f{300, 226}, Vector2f{400, 200}, 1};
     mode[1] = LButton{"", Vector2f{750, 226}, Vector2f{400, 200}, 1};
     mode[0].setCurrentButton();
@@ -58,6 +57,7 @@ void Tabs_ModeSelect::handleEvents(bool &endless)
     {
         if(mode[1].getState()) endless = true;
         direct = Room1;
+        Mix_HaltMusic();
         SDL_ResetKeyboard();
         return;
     }

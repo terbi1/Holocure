@@ -155,12 +155,6 @@ void Enemy::update(Vector2f player_center, float timeStep)
     }
     if(notMoving)
     {
-        // if(specialCD[3] <= 0)
-        // {
-        //     specialCD[3] = 6;
-        //     notMoving = false;
-        // }
-        // specialCD[3] -= timeStep;
         return;
     }
     if(timePassed >= 0.3)
@@ -178,12 +172,6 @@ void Enemy::update(Vector2f player_center, float timeStep)
 
         collider.center.x = 400 * sinf(angle / 180.0f * M_PI) + movingCenter.x;
         collider.center.y = 400 * sinf(angle / 180.0f * M_PI) * cosf(angle / 180.0f * M_PI) + movingCenter.y;
-        // circularMotion(collider.center, player_center, 0.01 * speed);
-        specialCD[0] -= timeStep;
-        specialCD[1] -= timeStep;
-        specialCD[2] -= timeStep;
-        specialDuration[0] -= timeStep;
-        if(specialCD[2] <= 0) notMoving = true;
         movingCenter += direction * speed;
         if(notMoving)
         {
@@ -203,7 +191,7 @@ void Enemy::update(Vector2f player_center, float timeStep)
 
 void Enemy::getKnockedBack(Vector2f direction, float time, float speed)
 {
-    if(type == FUBUZILLA) return;
+    if(type == FUBUZILLA || type == A_CHAN) return;
     knockbackDir = direction;
     knockbackTime = time;
     knockbackSpeed = speed;

@@ -263,6 +263,7 @@ void GameStates::update(float timeStep, bool &shake)
     }
     else if (isOver || isWon)
     {
+        Mix_HaltMusic();
         direct = End;
         return;
     }
@@ -395,6 +396,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
     }
 
+    // sweep and prune algorithm to optimize collision cheking
     sort(enemies.begin(), enemies.end(), compareByX);
 
     std::vector<std::vector<int>> possibleCollision;
@@ -434,6 +436,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
     }
 
+    // enemies attack
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
         if (it->cd > 0)
@@ -444,27 +447,6 @@ void GameStates::update(float timeStep, bool &shake)
             it->cd = EnemyCD;
             player.health -= it->atk;
             dmgNumbers.push_back(DamageNumber{it->atk, player.collider.center, {255, 0, 0}});
-        }
-    }
-
-    if (finalBoss)
-    {
-        if (enemies[bossIndex].specialCD[0] <= 0)
-        {
-            // weapons.push_back(Weapon(BULLET1));
-            enemies[bossIndex].specialCD[0] = 4;
-            enemies[bossIndex].specialDuration[0] = 0.8;
-        }
-        else if (enemies[bossIndex].specialCD[1] <= 0)
-        {
-            // weapons.push_back(Weapon(BULLET2));
-            enemies[bossIndex].specialCD[1] = 4;
-        }
-        else if (enemies[bossIndex].specialCD[2] <= 0)
-        {
-            int random = rand() % 2;
-            // weapons.push_back((random == 0 ? Weapon(BULLET4) : Weapon(BULLET3)));
-            enemies[bossIndex].specialCD[2] = 14;
         }
     }
 
@@ -606,6 +588,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
     }
 
+    // boss active attacks
     for (auto it = bossAttack.begin(); it != bossAttack.end(); ++it)
     {
 
@@ -658,6 +641,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
     }
 
+    // drop pickup
     for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
     {
         if (isOutsideOfView(Circle{itDrop->pos, 13 * 1.5}, camera.x, camera.y))
@@ -711,7 +695,6 @@ void GameStates::update(float timeStep, bool &shake)
             optionKey.push_back(it->first);
             optionLevel.push_back(it->second);
         }
-        // playerHUD.tabs_levelup.getResource(optionKey, optionLevel);
         trace.clear();
         leveledUp = true;
         direct = Level_Up;
@@ -725,7 +708,7 @@ void GameStates::update(float timeStep, bool &shake)
 void GameStates::render(SDL_Renderer *renderer, bool shake)
 {
     int shakeX{0}, shakeY{0};
-    if (shake && !pause)
+    if (shake && !pause && !leveledUp)
     {
         shakeX = rand() % 10;
         shakeY = rand() % 10;
@@ -810,14 +793,6 @@ void GameStates::handleEvent()
     }
 
     playerHUD.handleEvents(pause, leveledUp, direct, choice);
-
-    if (currentKeyStates[SDL_SCANCODE_ESCAPE] && isOver)
-    {
-        reset();
-        direct = Title;
-        SDL_ResetKeyboard();
-        return;
-    }
 
     if (pause)
         return;

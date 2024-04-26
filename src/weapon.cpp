@@ -235,7 +235,7 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
     {
         if(!checkAABBCircleCollision({(int)(center.x - size.x / 2), (int)(center.y - size.y / 2), (int)size.x, (int)size.y}, enemyCollider)) return false;
 
-        return true;
+        break;
     }
     case SPIDER_COOKING:
     {
@@ -1078,7 +1078,6 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             {
                 dmgArea.center = playerCenter;
                 dmgArea.angle = playerArrowAngle;
-                // dmgArea.flip = player.flip;
                 break;
             }
             case DUAL_KATANA:
@@ -1100,7 +1099,6 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             {
                 dmgArea.center = playerCenter;
                 dmgArea.direction = {cosf((10 * (count) + playerArrowAngle - 5 * (dmgArea.attackCount - 1)) / 180 * M_PI), sinf((10 * (count) + playerArrowAngle - 5 * (dmgArea.attackCount - 1)) / 180 * M_PI)}; 
-                // dmgArea.direction.print();
             }
             case SPIDER_COOKING:
             {
@@ -1116,10 +1114,6 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             case FAN_BEAM:
             {
                 dmgArea.center = playerCenter;
-                // if (player.flip == SDL_FLIP_HORIZONTAL)
-                //     dmgArea.angle = 180 + 180 * i;
-                // else
-                //     dmgArea.angle = 0 + 180 * i;
                 dmgArea.angle = (playerFlip == SDL_FLIP_HORIZONTAL ? 180 + 180 * count: 180 * count);
                 break;
             }
@@ -1156,7 +1150,6 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             }
             case FALLING_BLOCKS:
             {
-                // specialDuration[1] -= timeBetweenAttacks;
                 dmgArea.center = Vector2f{(float)(randomInt(-5, 5) * 98), -SCREEN_HEIGHT / 2} + playerCenter;
                 dmgArea.fallTime = (rand() % 6 + 1) * 0.12;
                 dmgArea.count = rand() % 12;
@@ -1164,10 +1157,8 @@ void Weapon::initiateDmgArea(Vector2f playerCenter,float playerArrowAngle, SDL_R
             }
             case BIG_NUT:
             {
-                // specialDuration[1] -= timeBetweenAttacks;
                 dmgArea.center = Vector2f{(float)(count % 2 == 0 ? -1:1) * 78 * 2, -SCREEN_HEIGHT / 2} + playerCenter;
                 dmgArea.fallTime = count * 0.05;
-                // dmgArea.count = rand() % 12;
                 break;
             }
             case SPIRIT:
