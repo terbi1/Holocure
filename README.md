@@ -66,7 +66,7 @@ Sử dụng các phím mũi tên, Enter, Esc, x và z để tương tác với t
 Ở màn hình chính người chơi chọn nút Play để tiến hành chọn nhân vật hoặc Quit để thoát trò chơi. 
 <div style="text-align: center;">
 
-![image](resources/preview/MainMenu.png)
+![image](res/preview/MainMenu.png)
 
 </div>
 
@@ -75,7 +75,7 @@ Sử dụng các phím mũi tên, Enter, Esc, x và z để tương tác với t
 Hiện tại game có tổng cộng 3 nhân vật khác nhau. Mỗi nhân vật có vũ khí khởi đầu và chiêu đặc biệt riêng. Người chơi có thể xem vũ khí và chiêu của nhân vật ở hộp bên phải màn hình.
 <div style="text-align: center;">
 
-![image](resources/preview/CharacterSelect.png)
+![image](res/preview/CharacterSelect.png)
 </div>
 
 Nhân vật phát sáng khi người chơi đang lựa chọn. Nhấn Enter để lựa chọn nhân vật.
@@ -84,7 +84,7 @@ Nhân vật phát sáng khi người chơi đang lựa chọn. Nhấn Enter đ�
 Thời điểm hiện tại game có 2 chế độ chơi: Stage Mode và Endless Mode. Stage Mode kết thúc khi người chơi đánh bại được trùm cuối. Endless Mode thử thách người chơi với làn sóng quái vật không ngơi nghỉ.
 <div style="text-align: center;">
 
-![image](resources/preview/ModeSelect.png)
+![image](res/preview/ModeSelect.png)
 </div>
 
 # 3. Các thành phần trong game:
