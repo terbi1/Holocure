@@ -55,6 +55,7 @@ public:
     bool isHit{false};
     int currentFrame{0};
     float cd{0};
+    float maximumLifeTime{120};
     float specialCD[4]{4,4,14,6};
     float specialDuration[3]{2.1,0,6};
     int expValue;
