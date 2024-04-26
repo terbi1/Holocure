@@ -103,21 +103,15 @@ Thời điểm hiện tại game có 2 chế độ chơi: Stage Mode và Endless
 
 <div style="text-align: center;">
 
-![image](resources/preview/plant_seed.png)
-</div>
-
 - Vũ khí: là thứ giúp bạn tiêu diệt quái vật qua màn. Hiện tại game có 3 vũ khí khởi đầu và 8 vũ khí chung.
 
 <div style="text-align: center;">
-
-![image](resources/preview/shovel.png)
-</div>
 
 - Bố cục game cơ bản:
 
 <div style="text-align: center;">
 
-![image](resources/preview/PlayScreen.png)
+![image](res/preview/PlayScreen.png)
 </div>
 
 # 4. Cách chơi
@@ -135,7 +129,7 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 | <img src="res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png" width=64>    | Ayunda Risu	   | <img src="res/gfx/spr_RisuWeapon.png" width=25> Nuts|<img src="res/gfx/spr_RisuSpecial.png" width=25> Big Nuts|
 | <img src="res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_0.png" width=64>       | Nakiri Ayame	    | <img src="res/gfx/spr_AyameWeapon.png" width=25> Dual Katana|<img src="res/gfx/spr_AyameSpecial.png" width=25> Spirit of the Oni|
 
-## b. Các loại zombie
+## b. Các loại q
 
 - Có 5 loại zombie:
 
@@ -156,10 +150,11 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 ![image](resources/preview/win.png)
 </div>
 
-- Bạn sẽ thất bại nếu có một zombie nào đó đi hết sân để vào nhà bạn.
+- Trong Stage Mode: bạn chiến thắng khi đánh bại trùm cuối của màn, thua cuộc khi máu giảm về dưới 0.
 
 <div style="text-align: center;">
 
+- Trong Endless Mode: không có điều kiện chiến thắng vì mục đích của chế độ này là sống sót càng lâu càng tốt.
 ![image](resources/preview/lose.png)
 </div>
 
@@ -167,46 +162,35 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 
 ### Về đồ họa của game:
 
-[[Cách làm hiệu ứng từng cây, zombie trong game]](about_graphics.md)
+- Lấy từ file đồ họa của game gốc Holocure: https://kay-yu.itch.io/holocure
 
 ### Về source code game:
 
-- Folder draw:
-    * khởi tạo window và renderer
-    * chứa tất cả các ảnh trong game (được đánh số)
-    * chứa hầu hết các câu lệnh của SDL2, SDL2_image, SDL2_ttf, sử dụng để vẽ load ảnh, chữ và vẽ lên renderer, window.
-- Folder elements: Chứa tất cả các thành phần của game:
-    * bullets: các loại đạn
-    * button: các loại nút trong game (có thể nhấn được hoặc không)
-    * Map: chứa hàm random và khởi tạo bảng 5 x 9 cho màn chơi.
-    * mower: máy cắt cỏ (Cán zombie)
-    * plants: chứa tất cả các loại plant (được kế thừa từ class Plants)
-    * zombies: chứa tất cả các loại zombies (được kế thừa từ class Zombie)
-    * elements: gom lại các loại plants và zombies.
-    * elements_actions:
-        + chứa hầu hết các tương tác giữa các thành phần game với nhau, và với màn chơi.
-        + tạo ngẫu nhiên zombie
-        + cập nhật tất cả các thay đổi của game theo từng khung hình
-- Folder events: Xử lý các sự kiện trong game (sự kiện chuột, bàn phím)
-    * in_game: xử lý các sự kiện khi đang trong một màn chơi
-        + credit: phần giới thiệu các loại zombie & ready-set-plant
-        + game: tất cả các sự kiện trong một màn chơi
-        + lose: xử lý khi thua
-        + main_menu: xử lý khi người chơi muốn trở lại phần chọn màn chơi
-        + pause_menu: xử lý khi người chơi dừng game (nút dừng hoặc click ra ngoài game)
-        + restart_menu: xử lý khi người chơi muốn chơi lại màn chơi
-        + turbo: xử lý nút tăng tốc game
-        + volume: xử lý nút điều chỉnh âm lượng nhạc nền và hiệu ứng.
-        + win: xử lý khi chiến thắng trò chơi.
-    * mouse_cursor: xử lý con trỏ chuột
-    * out_game: xử lý các sự kiện ngoài màn chơi
-        + choose_level: xử lý chọn màn chơi
-        + quit_menu: xử lý nút quit game: tắt game
-        + reset_level: xử lý nút reset level: xóa tiến trình chơi
-        + start_game: xử lý nút "Click to start" để bắt đầu vào game.
-        + unlock_plant: xử lý mở khóa plant mới.
-- Folder level: xử lý phần lấy dữ liệu ván chơi.
-- Folder music: xử lý phần âm thanh của game - SDL2_mixer
-- Folder player: xử lý phần dữ liệu người chơi. Bao gồm việc lấy và thay đổi tên, tiến trình.
-- game_stats.hpp: chứa tất cả thông số game
-- game.hpp và game.cpp: hàm main() của trò chơi.
+- Data:
+  * chứa đường dẫn đến file đồ họa của game.
+  * chứa thông tin trong game
+- drop:
+  * kinh nghiệm, đồ ăn mà quái vật tạo ra sau khi bị đánh bại
+- enemy:
+  * quái vật tấn công người chơi
+- weapon:
+  * vũ khí và các chiêu thức của nhân vật
+- Hud:
+  * giao diện game dành cho người dùng (health bar, exp bar,...)
+- Tabs_Title:
+  * menu chính khi vừa vào game
+- Tabs_CharacterSelect:
+  * phòng chọn nhân vật
+- Tabs_ModeSelect:
+  * chọn chế độ chơi
+- Tabs_LevelUp:
+  * màn hình lên cấp
+- Tabs_End
+  * màn hình kết thúc trò chơi (thắng hoặc thua)
+- ResourceManager:
+  * một singleton phụ trách việc render các thành phần trong game
+- Structure:
+  * các cấu trúc sử dụng tạo các thành phần của game
+    * LTimer: lấy từ LazyFoo: https://lazyfoo.net/tutorials/SDL/23_advanced_timers/index.php
+    * LTexture: render texture và chữ, lấy từ LazyFoo (có tự phát triển thêm): https://lazyfoo.net/tutorials/SDL/16_true_type_fonts/index.php
+    * LButton: các nút bấm trong game
