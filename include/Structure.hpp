@@ -75,54 +75,6 @@ struct DamageNumber
     void update(float timeStep);
 };
 
-// xử lý fps: print, capping
-// class FPS_Processor
-// {
-//     public:
-//         long long countedFrames;
-//         LTexture* gFPSTextTexture;
-//         LTimer* fpsTimer;
-//         LTimer* capTimer;
-//     public:
-//         FPS_Processor();
-//         ~FPS_Processor();
-//         void initTimeCounting();
-//         void cappingFrame();
-//         void printFPS(SDL_Renderer* renderer, TTF_Font* gFont);
-// };
-
-// class LButton
-// {
-//     public:
-// 		LTexture* keyUp;
-//         LTexture* keyDown;
-//         bool inside;
-//         bool motionMouse;
-//         bool pressed;
-//         int xCen, yCen, width, height;
-//         int xPos, yPos;
-// 	public:
-// 		LButton();
-//         LButton(LTexture* _keyUp, LTexture* _keyDown);
-//         ~LButton();
-//         bool getPressed();
-//         bool getInside();
-//         int getXCen();
-//         int getYCen();
-//         int getXPos();
-//         int getYPos();
-//         int getWidth();
-//         int getHeight();
-//         void setSize(int w, int h);
-//         void setPressed(bool _pressed);
-//         void setTexture(LTexture* _keyUp, LTexture* _keyDown);
-//         void setPosition( int x, int y );
-// 		void setCenterPosition( int x, int y );
-//         void handleEvents(SDL_Event* e, bool circleButton = 0);
-// 		void render(SDL_Renderer* renderer, int x = 0, int y = 0);
-//         bool isInside(int x, int y);
-// };
-
 class LButton
 {
 public:

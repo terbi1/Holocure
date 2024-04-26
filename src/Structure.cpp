@@ -316,9 +316,6 @@ LButton::LButton()
 
 void LButton::render(SDL_Renderer *renderer, TTF_Font *font)
 {
-	// if(!isCurrentButton) texture[0].render(renderer, &box);
-	// else texture[0].render(renderer, &box);
-
 	SDL_Rect renderBox;
 
 	if (!isCurrentButton)

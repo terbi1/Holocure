@@ -13,9 +13,6 @@ Tabs Tabs_Room1::getDirect() {
 
 
 void Tabs_Room1::roomInit(SDL_Renderer* renderer) {
-    // roomBackground.loadFromFile(BG_Room1, renderer);
-    
-    // roomBackground.importTexture(ResourceManager::getInstance().getTexture(BG_Room1, renderer));
 }
 
 void Tabs_Room1::render(SDL_Renderer* renderer, Vector2f player_pos, bool shake) {

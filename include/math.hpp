@@ -77,10 +77,6 @@ struct Circle
 {
     Vector2f center{0,0};
     float radius{0};
-    // Circle(Vector2f m_center, float m_radius) {
-    //     center = m_center;
-    //     radius = m_radius;
-    // }
 };
 
 Vector2f vectorNormalize(Vector2f vector);

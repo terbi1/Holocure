@@ -37,14 +37,11 @@ void Tabs_Title::render(SDL_Renderer* renderer) {
 }
 
 void Tabs_Title::handleEvents(bool &isRunning) {
-    // direct = Title;    
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);
     if (currentKeyStates[SDL_SCANCODE_RETURN] || currentKeyStates[SDL_SCANCODE_KP_ENTER] || currentKeyStates[SDL_SCANCODE_Z])
     {
         if(button[0].getState()) {
             direct = Character_Select; 
-            
-            Mix_HaltMusic();
         }
         else if(button[1].getState()) isRunning = false;
         SDL_ResetKeyboard();

@@ -112,7 +112,6 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
     levelLabel.x = 55.5f;
     for(int i = 0; i < (int)weapons.size(); ++i)
     {
-        // if(weapons[i].ID == FALLING_BLOCKS || weapons[i].ID == BIG_NUT || weapons[i].ID == FUBU_BEAM || weapons[i].ID == BULLET1 || weapons[i].ID == BULLET2 || weapons[i].ID == BULLET3 || weapons[i].ID == BULLET4) continue;
         if(Exception.find(weapons[i].ID) != Exception.end()) continue;
         std::string icon;
         weaponRect.x += 37.5f;
@@ -144,7 +143,6 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
         weaponSlot.renderF(renderer, &weaponRect);
     }
 
-    // specialSymbol.render(renderer, &specialCase);
     ResourceManager::getInstance().PlayFrame(0,0,0,0,0);
     ResourceManager::getInstance().Draw(0, 100, 18 * 2, 18 * 2);
     ResourceManager::getInstance().Render(SpecialIcon[playerID], renderer);
@@ -177,15 +175,6 @@ void HUD::render(SDL_Renderer *renderer, int playerID, bool pause, bool leveledU
 
 void HUD::handleEvents(bool &pause, bool &leveledUp, Tabs &direct, int &choice)
 {
-    // if(leveledUp)
-    // {
-    //     tabs_levelup.handleEvents(leveledUp, choice);
-    //     // direct = Level_Up;
-    //     // leveledUp = false;
-    //     // SDL_ResetKeyboard();
-    //     return;
-    // }
-    // direct = Room1;
     if (!pause) return;
 
     const Uint8 *currentKeyStates = SDL_GetKeyboardState(NULL);

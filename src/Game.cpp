@@ -93,12 +93,10 @@ void Game::handleEvents()
 	case Title:
 		tabs_title.handleEvents(isRunning);
 		currentTab = tabs_title.getDirect();
-		// if(currentTab == Room1) gameState.start();
 		break;
 	case Character_Select:
 		tabs_characterSelect.handleEvents(gameState.ID);
 		currentTab = tabs_characterSelect.getDirect();
-		// if(currentTab == Room1) gameState.start();
 		break;
 	case Mode_Select:
 		tabs_modeselect.handleEvents(gameState.endless);
@@ -106,7 +104,6 @@ void Game::handleEvents()
 		if(currentTab == Room1) gameState.start();
 		break;
 	case Room1:
-		// tabs_room1.handleEvents();
 		gameState.handleEvent();
 		currentTab = gameState.getDirect();
 		if(currentTab == Title || currentTab == End) gameState.reset();
@@ -129,6 +126,7 @@ void Game::playMusic()
 		case Title:
 		if( Mix_PlayingMusic() == 0 )
 		{
+			Mix_VolumeMusic(64);
 			Mix_PlayMusic(titleMusic, -1);
 		}
 		return;
@@ -141,7 +139,9 @@ void Game::playMusic()
 		case Level_Up:
 		case Character_Select:
 		case Mode_Select:
+		return;
 		case End:
+		Mix_HaltMusic();
 		return;
 	}
 }
@@ -151,6 +151,7 @@ void Game::update(float timeStep)
 	switch ((int)currentTab)
 	{
 	case Title:
+		break;
 	case Character_Select:
 		tabs_characterSelect.update(timeStep);
 		break;
@@ -158,8 +159,6 @@ void Game::update(float timeStep)
 		tabs_modeselect.update(timeStep);
 		break;
 	case Room1:
-		// playerHUD.HUD_Timer.unpause();
-		// playerHUD.update(gameState.getPlayer(), gameState.reqNextLevel);
 		gameState.update(timeStep, shake);
 		break;
 	case Level_Up:
@@ -190,7 +189,6 @@ void Game::render()
 	case Room1:
 		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
 		gameState.render(renderer, shake);
-		// playerHUD.render(renderer, gameState.getPause());
 		break;
 	case Level_Up:
 		tabs_room1.render(renderer, gameState.getPlayer().collider.center, shake);
