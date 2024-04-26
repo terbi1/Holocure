@@ -109,20 +109,11 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 | <img src="res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_0.png" width=64>       | Nakiri Ayame	    | <img src="res/gfx/spr_AyameWeapon.png" width=25> Dual Katana|<img src="res/gfx/spr_AyameSpecial.png" width=25> Spirit of the Oni|
 
 # 6. Chiến thắng và thất bại
-
-- Bạn sẽ chiến thắng nếu tiêu diệt hết tất cả zombie trong ván đó.
-
-<div style="text-align: center;">
-
-![image](resources/preview/win.png)
-</div>
-
 - Trong Stage Mode: bạn chiến thắng khi đánh bại trùm cuối của màn, thua cuộc khi máu giảm về dưới 0.
 
 <div style="text-align: center;">
 
 - Trong Endless Mode: không có điều kiện chiến thắng vì mục đích của chế độ này là sống sót càng lâu càng tốt.
-![image](resources/preview/lose.png)
 </div>
 
 ---
