@@ -11,6 +11,7 @@ Holocure là một game thuộc thể loại survivor (tương tự Vampire Surv
 - [0. Cách tải game](#0-cách-tải-game)
     * [a. Cách 1: Không bao gồm code.](#a-cách-1-không-bao-gồm-code)
     * [b. Cách 2: Bao gồm code và có thể biên dịch.](#b-cách-2-bao-gồm-code-và-có-thể-biên-dịch)
+- [0.5. Điều khiển](#1bắt-đầu-game)
 - [1. Bắt đầu game](#1bắt-đầu-game)
 - [2. Chọn level](#2chọn-level)
 - [3. Các thành phần trong game:](#3-các-thành-phần-trong-game)
@@ -88,16 +89,16 @@ Thời điểm hiện tại game có 2 chế độ chơi: Stage Mode và Endless
 
 # 3. Các thành phần trong game:
 
--    Sun (Mặt trời) ![image](resources/preview/sun.png)
-     : là đơn vị để mua plant (cây) trong game. Nhấp vào để thu. Và nên chú ý là nếu một sun tồn tại quá lâu, nó sẽ mờ
-     dần rồi biến mất. Bạn sẽ không thể thu chúng sau khi chúng đã biến mất.
+-    Player (Người chơi)
+     : luôn ở giữa màn hình. Có một mũi tên màu trắng thể hiện hướng đi. Điều khiển bằng các phím mũi tên. Giữ nút z để nhân vật luôn chỉ quay một hướng.
 
--    Sun bar (Thanh mặt trời) ![image](resources/preview/sun_bar.png)
-     : là bảng đếm số mặt trời mà người chơi đang có
+-    Health bar (Thanh mặt trời) 
+     : là thanh hiển thị máu của người chơi. Nếu giá trị của thanh máu xuống dưới 0, người chơi sẽ thua.
 
-- Plant seeds: tất cả các giống cây là người chơi đang sở hữu. Để chọn một giống cây mang đi trồng, người chơi phải
-  click vào plant seed hoặc nhấn phím 1, 2, 3, 4, 5 (như trong game đánh dấu) để chọn cây rồi trồng trên sân. Tất nhiên,
-  bạn phải đủ sun để mua cây và plant seed phải có thời gian chờ khác nhau để trồng cây giống đó lần nữa.
+- EXP bar: thanh kinh nghiệm của người chơi. Người chơi lên cấp khi thanh kinh nghiệm đầy.
+- Portrait: hình chân dung ở góc trái bên trên màn hình thay đổi tùy thuộc vào nhân vật mà người chơi chọn.
+- Special Bar: thanh biểu thị thời gian hồi của chiêu đặc biệt. Người chơi sử dụng được chiêu đặc biệt bằng cách nhấn phím x khi thanh đầy.
+- Thanh vũ khí: liệt kê những vũ khí người chơi đang sở hữu và cấp độ của chúng.
 
 <div style="text-align: center;">
 
