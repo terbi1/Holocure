@@ -129,14 +129,11 @@ Quái vật khi bị tiêu diệt sẽ đánh rơi kinh nghiệm hoặc đồ ă
 
 Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu thức khác nhau, bao gồm:
 
-|                                                                             | Tên nhân vật	     | Vũ khí khởi đầu   | Chiêu đặc biệt                                                                                                     |
-|-----------------------------------------------------------------------------|--------------|-----------------------------|-------------------------------------------------------------------------------------------------|
-| <img src="resources/Character/Peashooter.png" width=64>  | Peashooter	  | Mỗi lần bắn một đậu vào zombie.                                                                                              |
-| <img src="resources/images/Plant_sheet/sunflower/Sunflower.png" width=44>    | Sunflower	   | Tạo thêm mặt trời để trồng cây                                                                                               |
-| <img src="resources/images/Plant_sheet/walnut/Walnut.png" width=42>          | Wall-nut	    | Chịu được nhiều phát ăn của zombie để bảo vệ các cây khác.                                                                   |
-| <img src="resources/images/Plant_sheet/snowpea/SnowPea.png" width=52>        | Snow Pea	    | Mỗi lần bắn một đậu băng vào zombie. Đậu băng không tăng sát thương nhưng làm chậm tốc độ di chuyển và tốc độ ăn của zombie. |
-| <img src="resources/images/Plant_sheet/potatomine/Potato_Mine.png" width=56> | Potato Mine  | Tiêu diệt zombie khi chạm nó nhưng cần thời gian để kích hoạt.                                                               |
-| <img src="resources/images/Plant_sheet/cherrybomb/Cherrybomb.png" width=48>  | Cherry Bomb	 | Ngay lập tức tiêu diệt tất cả zombie trong khu vực 3x3.                                                                      |
+|                                                                             | Tên nhân vật	     | Vũ khí khởi đầu   | Chiêu đặc biệt                                                                          |
+|-----------------------------------------------------------------------------|--------------|---------------------------------------|----------------------------------------------------------|
+| <img src="res/gfx/character_sprites/spr_Suisei_idle/spr_Suisei_idle_0.png" width=64>  | Hoshimachi Suisei	  |<img src="res/gfx/spr_SuiseiWeapon.png" width=25> Axe Swing|<img src="res/gfx/spr_SuiseiSpecial.png" width=25> Summon Blocks|
+| <img src="res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png" width=64>    | Ayunda Risu	   | <img src="res/gfx/spr_RisuWeapon.png" width=25> Nuts|<img src="res/gfx/spr_RisuSpecial.png" width=25> Big Nuts|
+| <img src="res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_0.png" width=64>       | Nakiri Ayame	    | <img src="res/gfx/spr_AyameWeapon.png" width=25> Dual Katana|<img src="res/gfx/spr_AyameSpecial.png" width=25> Spirit of the Oni|
 
 ## b. Các loại zombie
 
