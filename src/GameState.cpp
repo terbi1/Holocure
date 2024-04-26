@@ -208,7 +208,7 @@ void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
         spawnPool.insert(YAGOO);
     }
 
-    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1) + 20 * minuteTimer / 15 * (minuteTimer - 14);
+    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1) + 20 * (minuteTimer / 15) * (minuteTimer - 14);
 }
 
 void GameStates::bossSpawn(int minuteTimer, int secondTimer)
@@ -220,7 +220,7 @@ void GameStates::bossSpawn(int minuteTimer, int secondTimer)
         weapons.push_back(Weapon(FUBU_BEAM));
         boss = true;
     }
-    if (minuteTimer == 12 && secondTimer == 0)
+    if (minuteTimer >= 12 && secondTimer == 0)
     {
         enemies.clear();
         spawn(enemies, player.collider.center, A_CHAN, EnemyCount);
@@ -239,8 +239,6 @@ void GameStates::checkWeaponLimit()
     int weaponCount = (int)weapons.size();
     for (auto it = weapons.begin(); it != weapons.end(); ++it)
     {
-        // if (it->ID == FUBU_BEAM || it->ID == BIG_NUT || it->ID == FALLING_BLOCKS || it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET3 || it->ID == BULLET4)
-        //     --weaponCount;
         if(Exception.find(it->ID) != Exception.end())
             --weaponCount;
     }
@@ -335,6 +333,15 @@ void GameStates::update(float timeStep, bool &shake)
     // create drops
     for (auto it = enemies.begin(); it != enemies.end(); ++it)
     {
+        if(isOutsideOfView(it->collider, camera.x, camera.y)) it->maximumLifeTime -= timeStep;
+
+        if(it->maximumLifeTime <= 0 && (it->ID != A_CHAN && it->ID != FUBUZILLA))
+        {
+            it = enemies.erase(it);
+            --it;
+            continue;
+        }
+
         if (it->health > 0)
             continue;
 
@@ -359,7 +366,6 @@ void GameStates::update(float timeStep, bool &shake)
         else if (it->type == A_CHAN)
         {
             if(!endless) isWon = true;
-            boss = false;
             for (auto it = weapons.begin(); it != weapons.end(); ++it)
             {
                 if (it->ID == BULLET1 || it->ID == BULLET2 || it->ID == BULLET4 || it->ID == BULLET3)
@@ -470,7 +476,6 @@ void GameStates::update(float timeStep, bool &shake)
         {
             if(it->ID != enemies[bossIndex].attack)
             {
-                std::cout << it->cooldown << '\n';
                 continue;
             }
         }
@@ -588,7 +593,7 @@ void GameStates::update(float timeStep, bool &shake)
                 dmgNumbers.push_back(DamageNumber{damageCal(*it, player), it2->collider.center, {255, 255, 255}});
                 if(it2->health <= 0 && it->weaponID == DUAL_KATANA && weapons[1].level == 7)
                 {
-                    it2->atk = -1;
+                    if(rand() % 10 < 4) it2->atk = -1;
                 }
             }
             if (it->hitLimit == 0)
@@ -600,17 +605,6 @@ void GameStates::update(float timeStep, bool &shake)
 
         }
     }
-
-    // if(weapons[1].ID == DUAL_KATANA)
-    // {
-    //     for (auto it = enemies.begin(); it != enemies.end(); ++it)
-    //     {
-    //         if(it->health == 0)
-    //         {
-    //             weapons[1].initiateDmgArea(player.collider.center, player.arrowAngle, player.flip, 0, it->collider.center);
-    //         }
-    //     }
-    // }
 
     for (auto it = bossAttack.begin(); it != bossAttack.end(); ++it)
     {
@@ -666,6 +660,17 @@ void GameStates::update(float timeStep, bool &shake)
 
     for (auto itDrop = dropItems.begin(); itDrop != dropItems.end(); ++itDrop)
     {
+        if (isOutsideOfView(Circle{itDrop->pos, 13 * 1.5}, camera.x, camera.y))
+        {
+            itDrop->maximumLifeTime -= timeStep;
+            if(itDrop->maximumLifeTime <= 0)
+            {
+                dropItems.erase(itDrop);
+                --itDrop;
+            }
+            continue;
+        }
+
         if (itDrop->pickedUp(player.collider.center))
         {
             switch(itDrop->ID)
@@ -681,6 +686,7 @@ void GameStates::update(float timeStep, bool &shake)
             itDrop = dropItems.erase(itDrop);
             --itDrop;
         }
+
     }
 
     // level up

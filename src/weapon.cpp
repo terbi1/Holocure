@@ -221,11 +221,9 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
                 break;
             case 315:
                 temp.x += -size.x;
-                // dst.x -= size.x;
                 break;
             case 135:
                 temp.y += -size.y;
-                // dst.y -= size.y;
                 break;
             }
         if(!checkCircleCollision({center + temp, size.y / 2}, enemyCollider))
@@ -326,7 +324,6 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
             }
             if (!checkAABBCircleCollision(hitBox, enemyCollider))
             {
-                // inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
                 return false;
             }
         }
@@ -349,7 +346,6 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
             }
             if (!checkAABBCircleCollision(hitBox, enemyCollider))
             {
-                // inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
                 return false;
             }
         }
@@ -385,8 +381,6 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
                 return false;
                 break;
             }
-            // inflictDamage(weapon, player, enemyHealth, isHit, enemyID);
-            // return true;
         }
         break;
     }
@@ -409,7 +403,7 @@ bool DamagingArea::hitEnemy(Circle &enemyCollider, int enemyID)
 
         if(!checkAABBCircleCollision({(int)center.x - SCREEN_WIDTH/2, (int)center.y - SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT}, enemyCollider)) return false;
         
-        return true;
+        break;
     }
     case CUTTING_BOARD:
     {
@@ -666,14 +660,10 @@ void DamagingArea::render(SDL_Renderer* renderer, Player player, int camX, int c
     {
         if(isExploded)
         {
-            // ResourceManager::getInstance().Draw(center.x - 128 * 4.5 / 2 - camX, center.y - 128 * 4.5 / 2 - camY, 128 * 4.5, 128 * 4.5);
             ResourceManager::getInstance().PlayFrame(0, 0, 128, 128, currentFrame);
         }
         else 
         {
-            // SDL_Rect hitBox{(int)(center.x - size.x / 2 - camX), (int)(center.y - size.y / 2 + 200 - camY), (int)size.x, (int)size.y - 200};
-            // SDL_SetRenderDrawColor(renderer, 255,0,0,255);
-            // SDL_RenderDrawRect(renderer, &hitBox);
             ResourceManager::getInstance().PlayFrame(0, 0, 78, 96, currentFrame);
         }
         ResourceManager::getInstance().Draw(center.x - size.x / 2 - camX, center.y - size.y / 2 - camY, size.x, size.y);
@@ -932,6 +922,7 @@ Weapon::Weapon(WEAPON_ID type)
         timeBetweenAttacks = 1e9;
         dmgArea.duration = 4.24;
         dmgArea.fallTime = 4;
+        dmgArea.hitCooldown = 4.24;
         dmgArea.frames = 5;
         dmgArea.size = {484 * 2, 352 * 2};
         dmgArea.textureID = "res/gfx/spr_AyameSpirit/spr_AyameSpirit.png";
@@ -1006,30 +997,25 @@ Weapon::Weapon(WEAPON_ID type)
     case BULLET4:
     {
         dmgArea.damage = 1;
-        // if(ID != BULLET1 && ID != BULLET4) 
-        // {
-        //     dmgArea.attackCount = 10;
-        //     timeBetweenAttacks = 0.5;
-        // }
         if(ID == BULLET2) 
         {
             dmgArea.attackCount = 10;
-            timeBetweenAttacks = 4;
+            timeBetweenAttacks = 6;
         }
         else if(ID == BULLET1){
             dmgArea.attackCount = 6;
-            timeBetweenAttacks = 4;
+            timeBetweenAttacks = 6;
             dmgArea.attackDelay = 0.25;
         }
         else if(ID == BULLET4){
             dmgArea.attackCount = 120;
-            timeBetweenAttacks = 14;
+            timeBetweenAttacks = 20;
             dmgArea.attackDelay = 0.05;
         }
         else if(ID == BULLET3)
         {
             dmgArea.attackCount = 24;
-            timeBetweenAttacks = 14;
+            timeBetweenAttacks = 20;
             dmgArea.attackDelay = 0.25;
         }
         dmgArea.duration = 7;
@@ -1272,6 +1258,30 @@ void Weapon::updateStats()
             return;
         }
     }
+    case DUAL_KATANA:
+    {
+        switch (level)
+        {
+        case 2:
+            setDamage(120);
+            return;
+        case 3:
+            setArea(10);
+            return;
+        case 4:
+            setAttackInterval(1.42);
+            return;
+        case 5:
+            setAttackCount(4);
+            return;
+        case 6:
+            setDamage(144);
+            return;
+        case 7:
+            setArea(10);
+            return;
+        }
+    }
     case SPIDER_COOKING:
     {
         switch (level)
@@ -1490,7 +1500,7 @@ bool hitPlayer(DamagingArea &weapon, Player &player)
     {
         if (checkCircleCollision(Circle{weapon.center, 10}, player.collider))
         {
-            player.health -= 0;
+            player.health -= 1;
             weapon.hitID[1] = weapon.hitCooldown;
             --weapon.hitLimit;
             return true;

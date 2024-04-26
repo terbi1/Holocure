@@ -22,7 +22,7 @@ Drop::Drop()
 ExpDrop::ExpDrop(int m_expValue, Vector2f m_pos) 
 {
     pos = m_pos;
-    if(rand() % 200 == 0)
+    if(rand() % 100 == 0)
     {
         expValue = -1;
         ID = FOOD;

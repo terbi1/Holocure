@@ -122,8 +122,8 @@ Enemy::Enemy(ENEMY_TYPE m_type, Vector2f m_center, int m_ID)
     }
     case A_CHAN:
     {
-        health = 20000;
-        atk = 5;
+        health = 6000;
+        atk = 3;
         speed = 1.0;
         expValue = 6000;
         collider.radius = 14;

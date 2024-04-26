@@ -138,7 +138,6 @@ void Tabs_LevelUp::handleEvents(bool &leveledUp, int &choice)
                 break;
             }
         }
-        std::cout << choice;
         leveledUp = false;
         direct = Room1;
         return;
