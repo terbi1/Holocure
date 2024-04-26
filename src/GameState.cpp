@@ -202,7 +202,13 @@ void GameStates::updateSpawnPool(int minuteTimer, int secondTimer)
         spawnPool.insert(SORATOMO);
     }
 
-    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1);
+    if(minuteTimer == 15 && secondTimer == 0)
+    {
+        spawnPool.clear();
+        spawnPool.insert(YAGOO);
+    }
+
+    spawnRate = (minuteTimer * 60 + secondTimer) / 25 + 10 * (minuteTimer == 11 ? secondTimer / 10:1) + 20 * minuteTimer / 15 * (minuteTimer - 14);
 }
 
 void GameStates::bossSpawn(int minuteTimer, int secondTimer)
@@ -352,7 +358,7 @@ void GameStates::update(float timeStep, bool &shake)
         }
         else if (it->type == A_CHAN)
         {
-            isWon = true;
+            if(!endless) isWon = true;
             boss = false;
             for (auto it = weapons.begin(); it != weapons.end(); ++it)
             {

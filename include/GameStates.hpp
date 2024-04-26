@@ -50,7 +50,6 @@ private:
     int MAX_WEAPON{6};
     float spawnCooldown{200};
     float spawnRate;
-    bool endless{false};
     bool boss {false};
     bool finalBoss{false};
     int bossIndex{0};
@@ -75,6 +74,7 @@ public:
     void startCD();
     bool gameOver();
     bool leveledUp{false};
+    bool endless{false};
     std::vector<WEAPON_ID> optionKey;
     std::vector<int> optionLevel;
     float specialCD{0};

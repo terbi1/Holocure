@@ -163,7 +163,8 @@ enum Tabs
     Pause,
     Level_Up,
     End,
-    Character_Select
+    Character_Select,
+    Mode_Select
 };
 
 enum Character

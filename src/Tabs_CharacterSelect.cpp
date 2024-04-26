@@ -105,7 +105,8 @@ void Tabs_CharacterSelect::handleEvents(Character &player)
                 player = (Character)i;
             }
         }
-        direct = Room1;
+        direct = Mode_Select;
+        SDL_ResetKeyboard();
         return;
     }
     else if (currentKeyStates[SDL_SCANCODE_RIGHT])
