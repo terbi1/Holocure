@@ -2,25 +2,11 @@
 
 # Holocure but made in C++
 
-- Demo game:
+- Demo game: https://youtu.be/E1_W9Wdg1-E
 
 # Giới thiệu game
 
 Holocure là một game thuộc thể loại survivor (tương tự Vampire Survivors). Người chơi điều khiển nhân vật tiêu diệt những con quái vật, lên cấp để nâng cấp vũ khí và chiến thắng trò chơi/
-
-- [0. Cách tải game](#0-cách-tải-game)
-    * [a. Cách 1: Không bao gồm code.](#a-cách-1-không-bao-gồm-code)
-    * [b. Cách 2: Bao gồm code và có thể biên dịch.](#b-cách-2-bao-gồm-code-và-có-thể-biên-dịch)
-- [0.5. Điều khiển](#1bắt-đầu-game)
-- [1. Bắt đầu game](#1bắt-đầu-game)
-- [2. Chọn level](#2chọn-level)
-- [3. Các thành phần trong game:](#3-các-thành-phần-trong-game)
-- [4. Cách chơi](#4-cách-chơi)
-    * [a. Các loại cây](#acác-loại-cây)
-    * [b. Các loại zombie](#bcác-loại-zombie)
-- [5. Chiến thắng và thất bại](#5-chiến-thắng-và-thất-bại)
-- [Về đồ họa của game:](#về-đồ-họa-của-game)
-- [Về source code game](#về-source-code-game)
 
 # 0. Cách tải game
 
@@ -28,33 +14,26 @@ Holocure là một game thuộc thể loại survivor (tương tự Vampire Surv
 
 Tải game (được nén thành .zip) tại link
 sau: https://github.com/nmhienbn/PVZ-Kaito-NMH-Edition/releases/tag/published<br/>
-Cách này tiết kiệm bộ nhớ và thời gian tải đi rất nhiều (khoảng 103MB).<br/>
-Giải nén game vào một thư mục và bật pvz.exe lên và chơi.<br/>
+Giải nén game vào một thư mục và bật main.exe lên và chơi.<br/>
 
 ## b. Cách 2: Bao gồm code và có thể biên dịch.
 
-**Bước 1:** Clone repo này về (Khoảng 800 MB - do có cả lịch sử các phiên bản). <br/>
-Hoặc Chọn Code -> Download Zip (Khoảng 90MB)
-
-![image](resources/preview/download.png)
+**Bước 1:** Clone repo này về. <br/>
+Hoặc Chọn Code -> Download Zip
 
 - Tất cả code đều nằm trong thư mục src.<br/>
 - Có thể nhảy đến bước 5 để chơi luôn.
 
-**Bước 2:** Cài mingw. Ở đây tôi cài đặt phiên bản MinGW-W64
-GCC-8.1.0 [x86_64-posix-seh](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/seh/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z/download).<br/>
-Một số chú ý: <br/>
+**Bước 2:** Cài MSYS64
 
-- Nếu sử dụng trình biên dịch khác thì phải dịch lại icon: vào thư mục icon rồi dùng
-  lệnh `windres main.rc -O coff main.res` trong cmd.<br/>
-- Phải xóa ba dll của c++ trong thư mục chứa pvz.exe: `libgcc_s_seh-1.dll`, `libstdc++-6.dll`, `libwinpthread-1.dll`. Ba
+- Phải xóa ba dll của c++ trong thư mục chứa main.exe: `libgcc_s_seh-1.dll`, `libstdc++-6.dll`, `libwinpthread-1.dll`. Ba
   dll này chỉ dành cho người chơi không cài sẵn c++ trong máy.
 
 **Bước 3:** Cài GNU make
 
-**Bước 4:** Mở cmd trong thư mục chứa Makefile và gõ lệnh make.
+**Bước 4:** Mở cmd trong thư mục chứa Makefile và gõ lệnh mingw32-make.
 
-**Bước 5:** Bật pvz.exe và chơi
+**Bước 5:** Bật main.exe và chơi
 
 # 0.5. Điều khiển
 Do thời gian eo hẹp nên hiện tại game chỉ cho phép điều khiển bằng bàn phím.
@@ -116,10 +95,10 @@ Thời điểm hiện tại game có 2 chế độ chơi: Stage Mode và Endless
 
 # 4. Cách chơi
 
-Điều khiển nhân vật sử dụng các nút mũi tên kết hợp với phím z (cố định hướng xoay của nhân vật) để tiêu diệt quái vật. <br/>
+Điều khiển nhân vật sử dụng các nút mũi tên kết hợp với phím z (cố định hướng xoay của nhân vật) để tiêu diệt quái vật. Nhấn x để sử dụng chiêu đặc biệt. <br/>
 Quái vật khi bị tiêu diệt sẽ đánh rơi kinh nghiệm hoặc đồ ăn. Thu thập kinh nghiệm để lên cấp lấy vũ khí và đồ ăn để hồi máu.
 
-## a. Các nhân vật
+## 5. Các nhân vật
 
 Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu thức khác nhau, bao gồm:
 
@@ -129,19 +108,7 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 | <img src="res/gfx/character_sprites/spr_Risu_idle/spr_Risu_idle_0.png" width=64>    | Ayunda Risu	   | <img src="res/gfx/spr_RisuWeapon.png" width=25> Nuts|<img src="res/gfx/spr_RisuSpecial.png" width=25> Big Nuts|
 | <img src="res/gfx/character_sprites/spr_Ayame_idle/spr_Ayame_idle_0.png" width=64>       | Nakiri Ayame	    | <img src="res/gfx/spr_AyameWeapon.png" width=25> Dual Katana|<img src="res/gfx/spr_AyameSpecial.png" width=25> Spirit of the Oni|
 
-## b. Các loại q
-
-- Có 5 loại zombie:
-
-|                                         | Tên zombie 	       | Chức năng                                                                                        |
-|-----------------------------------------|--------------------|--------------------------------------------------------------------------------------------------|
-| ![image](resources/images/Choose_level/normal.png) | Browncoat Zombie	  | Ăn cây và não của bạn.                                                                           |
-| ![image](resources/images/Choose_level/flag.png)   | Flag Zombie	       | Báo hiệu một lượng lớn zombie đang chuẩn bị ra.                                                  |
-| ![image](resources/images/Choose_level/cone.png)   | Conehead Zombie	   | Trâu gấp 3 lần zombie thường                                                                     |
-| ![image](resources/images/Choose_level/bucket.png) | Buckethead Zombie	 | Trâu gấp 6.5 lần zombie thường                                                                   |
-| ![image](resources/images/Choose_level/door.png)   | Door Zombie	       | Trâu gấp 6.5 lần zombie thường. Không bị ảnh hưởng bởi sự làm chậm của đạn băng nếu vẫn còn cửa. |
-
-# 5. Chiến thắng và thất bại
+# 6. Chiến thắng và thất bại
 
 - Bạn sẽ chiến thắng nếu tiêu diệt hết tất cả zombie trong ván đó.
 
@@ -174,7 +141,7 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
 - enemy:
   * quái vật tấn công người chơi
 - weapon:
-  * vũ khí và các chiêu thức của nhân vật
+  * cách hoạt động vũ khí và các chiêu thức của nhân vật
 - Hud:
   * giao diện game dành cho người dùng (health bar, exp bar,...)
 - Tabs_Title:
@@ -189,6 +156,7 @@ Có 3 nhân vật người chơi có thể chọn sở hữu vũ khí và chiêu
   * màn hình kết thúc trò chơi (thắng hoặc thua)
 - ResourceManager:
   * một singleton phụ trách việc render các thành phần trong game
+  * Học hỏi tại: https://youtu.be/_DGIRmHUtwQ?feature=shared
 - Structure:
   * các cấu trúc sử dụng tạo các thành phần của game
     * LTimer: lấy từ LazyFoo: https://lazyfoo.net/tutorials/SDL/23_advanced_timers/index.php
